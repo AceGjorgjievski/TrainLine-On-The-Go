@@ -5,6 +5,8 @@ import { Locale, routing } from "../../../i18n/routing";
 import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
+import Header from "@/components/header/header";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +42,7 @@ export default async function RootLayout(props: {
     <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <NextIntlClientProvider messages={messages}>
+          <Header/>
           {children}
         </NextIntlClientProvider>
       </body>
