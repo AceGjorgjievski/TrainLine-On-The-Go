@@ -1,5 +1,15 @@
 {
-    "Home": {
-        "title": "Mirë se vini në transportin e Hekurudhave Maqedonase"
-    }
+  "Home": {
+    "title": "Mirësevini në Transportin e Hekurudhave të Maqedonisë"
+  },
+  "Locale": {
+    "en": { "flagCode": "GB", "name": "Anglisht" },
+    "mk": { "flagCode": "MK", "name": "Maqedonisht" },
+    "sqi": { "flagCode": "AL", "name": "Shqip" }
+  },
+  "Header": {
+    "home": "Faqja kryesore",
+    "timetable": "Orari",
+    "live": "Ndjekje e drejtpërdrejtë"
+  }
 }

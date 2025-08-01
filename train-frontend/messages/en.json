@@ -1,5 +1,15 @@
 {
-    "Home": {
-        "title": "Welcome to Macedonian Railways transport"
-    }
+  "Home": {
+    "title": "Welcome to Macedonian Railways transport"
+  },
+  "Locale": {
+    "en": { "flagCode": "GB", "name": "English" },
+    "mk": { "flagCode": "MK", "name": "Macedonian" },
+    "sqi": { "flagCode": "AL", "name": "Shqip" }
+  },
+  "Header": {
+    "home": "Home page",
+    "timetable": "Timetable",
+    "live": "Live tracking"
+  }
 }
