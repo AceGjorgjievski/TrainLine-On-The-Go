@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Button,
   Drawer,
@@ -7,7 +9,12 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
-} from "@mui/material";
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  InputLabel,
+} from '@mui/material';
+import { useState } from 'react';
 
 type Props = {
   drawerOpen: boolean;
@@ -15,55 +22,103 @@ type Props = {
 };
 
 export default function SideDrawer({ drawerOpen, toggleDrawer }: Props) {
+  const [direction, setDirection] = useState('');
+  const [route, setRoute] = useState('');
+  const [viewOption, setViewOption] = useState('');
+
+  const handleRouteChange = (event: SelectChangeEvent) => {
+    setRoute(event.target.value);
+  };
+
+  const handleDirectionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDirection(event.target.value);
+    setRoute('');
+    setViewOption('');
+  };
+
   return (
     <Drawer
       anchor="right"
       open={drawerOpen}
       onClose={() => toggleDrawer(false)}
       sx={{
-        "& .MuiDrawer-paper": {
-          height: "50%",
-          top: "10%",
+        '& .MuiDrawer-paper': {
+          height: '70%',
+          top: '11.4%',
         },
       }}
     >
-      <Box sx={{ width: 300, padding: 2 }}>
+      <Box sx={{ width: 300, p: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Choose options
+          Choose Options
         </Typography>
-        <FormControl>
+
+        {/* Step 1: Direction */}
+        <FormControl fullWidth sx={{ mb: 3 }}>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            Please select whether you&apos;re departing from or arriving in
-            Skopje.
+            Are you departing from or arriving in Skopje?
           </Typography>
-          <RadioGroup
-            row
-            aria-labelledby="demo-row-radio-buttons-group-label"
-            name="row-radio-buttons-group"
-            defaultValue="Departure from Skopje"
-          >
+          <RadioGroup value={direction} onChange={handleDirectionChange}>
             <FormControlLabel
-              value="Departure from Skopje"
+              value="departure"
               control={<Radio />}
-              label={
-                <Typography variant="body2" color="primary">
-                  Departure from Skopje
-                </Typography>
-              }
+              label="Departure from Skopje"
             />
             <FormControlLabel
-              value="Arrival in Skopje"
+              value="arrival"
               control={<Radio />}
-              label={
-                <Typography variant="body2" color="primary">
-                  Arrival in Skopje
-                </Typography>
-              }
+              label="Arrival in Skopje"
             />
           </RadioGroup>
         </FormControl>
-        <Button variant="outlined" onClick={() => toggleDrawer(false)}>
-          Close
+
+        {/* Step 2: Route - appears only if direction is selected */}
+        {direction && (
+          <FormControl fullWidth sx={{ mb: 3 }}>
+            <InputLabel id="route-select-label">Choose Train Route</InputLabel>
+            <Select
+              labelId="route-select-label"
+              id="route-select"
+              value={route}
+              label="Choose Train Route"
+              onChange={handleRouteChange}
+            >
+              <MenuItem value="tabanovce">Skopje – Tabanovce</MenuItem>
+              <MenuItem value="veles">Skopje – Veles</MenuItem>
+              <MenuItem value="gevgelija">Skopje – Gevgelija</MenuItem>
+              <MenuItem value="bitola">Skopje – Bitola</MenuItem>
+              <MenuItem value="kochani">Skopje – Kochani</MenuItem>
+              <MenuItem value="kichevo">Skopje – Kichevo</MenuItem>
+            </Select>
+          </FormControl>
+        )}
+
+        {/* Step 3: View option - appears only if route is selected */}
+        {route && (
+          <FormControl fullWidth sx={{ mb: 3 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              What would you like to view?
+            </Typography>
+            <RadioGroup
+              value={viewOption}
+              onChange={(e) => setViewOption(e.target.value)}
+            >
+              <FormControlLabel
+                value="stations"
+                control={<Radio />}
+                label="Station Map Points"
+              />
+              <FormControlLabel
+                value="live"
+                control={<Radio />}
+                label="Train Live Tracking"
+              />
+            </RadioGroup>
+          </FormControl>
+        )}
+
+        <Button variant="outlined" fullWidth onClick={() => toggleDrawer(false)}>
+          Submit
         </Button>
       </Box>
     </Drawer>
