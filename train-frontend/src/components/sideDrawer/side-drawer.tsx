@@ -53,7 +53,6 @@ export default function SideDrawer({ drawerOpen, toggleDrawer }: Props) {
           Choose Options
         </Typography>
 
-        {/* Step 1: Direction */}
         <FormControl fullWidth sx={{ mb: 3 }}>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
             Are you departing from or arriving in Skopje?
@@ -72,7 +71,6 @@ export default function SideDrawer({ drawerOpen, toggleDrawer }: Props) {
           </RadioGroup>
         </FormControl>
 
-        {/* Step 2: Route - appears only if direction is selected */}
         {direction && (
           <FormControl fullWidth sx={{ mb: 3 }}>
             <InputLabel id="route-select-label">Choose Train Route</InputLabel>
@@ -93,7 +91,6 @@ export default function SideDrawer({ drawerOpen, toggleDrawer }: Props) {
           </FormControl>
         )}
 
-        {/* Step 3: View option - appears only if route is selected */}
         {route && (
           <FormControl fullWidth sx={{ mb: 3 }}>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
