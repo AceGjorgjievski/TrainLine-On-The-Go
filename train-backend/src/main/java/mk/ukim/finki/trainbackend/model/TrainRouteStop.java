@@ -1,5 +1,6 @@
 package mk.ukim.finki.trainbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class TrainRouteStop {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     private TrainRoute trainRoute;
 
     @ManyToOne
