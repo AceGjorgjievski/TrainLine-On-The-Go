@@ -16,7 +16,7 @@ import java.util.List;
 public class TrainRoute {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -30,9 +30,11 @@ public class TrainRoute {
     @OneToMany(mappedBy = "trainRoute", cascade = CascadeType.ALL)
     private List<TrainRouteStop> stationStops;
 
-    private String totalRouteTime;
+    private Double totalRouteTime;
 
-    private String routeDistance;
+    private Double routeDistance;
+
+    private boolean isWorking;
 
 
 }
