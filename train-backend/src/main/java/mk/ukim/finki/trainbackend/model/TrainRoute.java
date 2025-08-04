@@ -31,10 +31,10 @@ public class TrainRoute {
     private List<TrainRouteStop> stationStops;
 
     private Double totalRouteTime;
-
     private Double routeDistance;
-
     private boolean isWorking;
 
-
+    private Double centerLatitude;
+    private Double centerLongitude;
+    private Integer zoomLevel;
 }
