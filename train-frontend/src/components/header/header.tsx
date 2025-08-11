@@ -59,6 +59,9 @@ export default function Header() {
           <Link href="/live" color="text.primary">
             {tHeader('live')}
           </Link>
+          <Link href="/login" color="text.primary">
+            Login
+          </Link>
           <IconButton onClick={handleClick} color="inherit">
             <LanguageIcon />
           </IconButton>

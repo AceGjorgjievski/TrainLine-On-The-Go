@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import Header from "@/components/header/header";
+import { AuthProvider } from "@/auth/context/jwt/auth-provider";
 
 
 const geistSans = Geist({
@@ -42,8 +43,10 @@ export default async function RootLayout(props: {
     <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <NextIntlClientProvider messages={messages}>
-          <Header/>
-          {children}
+          <AuthProvider>
+            <Header/>
+            {children}
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>
