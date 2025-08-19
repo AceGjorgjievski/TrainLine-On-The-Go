@@ -2,12 +2,11 @@ package mk.ukim.finki.trainbackend.model;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalTime;
 
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +23,6 @@ public class TrainStopTime {
     @ManyToOne
     private TrainRouteStop trainRouteStop;
 
-    private String arrivalTime;
+    private LocalTime trainStopTime;
 
-    private String departureTime;
 }

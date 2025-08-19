@@ -2,12 +2,10 @@ package mk.ukim.finki.trainbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,8 +24,4 @@ public class TrainRouteStop {
     private TrainStop trainStop;
 
     private Integer stationSequenceNumber;
-
-//    private String arrivalTime;
-//
-//    private String departureTime;
 }
