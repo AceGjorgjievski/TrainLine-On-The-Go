@@ -1,6 +1,7 @@
 package mk.ukim.finki.trainbackend.config;
 
 import lombok.AllArgsConstructor;
+import mk.ukim.finki.trainbackend.config.filters.JWTAuthorizationFilter;
 import mk.ukim.finki.trainbackend.config.filters.JwtAuthenticationFilter;
 import mk.ukim.finki.trainbackend.service.inter.UserService;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,6 +18,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @Profile("jwt")
@@ -33,13 +37,20 @@ public class JWTWebSecurityConfig {
     public SecurityFilterChain jwtSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
+                .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home", "/assets/**", "/register", "/api/train-route/**", "/api/login").permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/home",
+                                "/api/login",
+                                "/api/login/refresh"
+                        ).permitAll()
+                        .requestMatchers("/api/train-route/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(authorizationFilter(), JwtAuthenticationFilter.class);
 
         return http.build();
     }
@@ -50,7 +61,27 @@ public class JWTWebSecurityConfig {
     }
 
     @Bean
+    public JWTAuthorizationFilter authorizationFilter() throws Exception {
+        return new JWTAuthorizationFilter(authenticationManager(), userService);
+    }
+
+
+    @Bean
     public JwtAuthenticationFilter authenticationFilter() {
         return new JwtAuthenticationFilter(authenticationManager(), userService, passwordEncoder);
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:3000")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+            }
+        };
     }
 }

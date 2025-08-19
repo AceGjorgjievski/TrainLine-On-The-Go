@@ -10,8 +10,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import mk.ukim.finki.trainbackend.config.JwtAuthConstants;
 import mk.ukim.finki.trainbackend.model.User;
+import mk.ukim.finki.trainbackend.model.dtos.JwtLoginResponseDto;
 import mk.ukim.finki.trainbackend.model.dtos.UserDetailsDto;
 import mk.ukim.finki.trainbackend.model.exceptions.PasswordsDoNotMatchException;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Date;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -76,7 +79,41 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         super.successfulAuthentication(request, response, chain, authResult);
     }
 
-    public String generateJwt(HttpServletResponse response, Authentication authResult) throws JsonProcessingException {
+    public JwtLoginResponseDto generateTokens(Authentication auth, HttpServletResponse response) throws JsonProcessingException {
+        String accessToken = this.generateJwt(response, auth);
+
+        User user = (User) auth.getPrincipal();
+        String refreshToken = this.generateRefreshToken(user);
+
+        /*
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge((int) JwtAuthConstants.REFRESH_EXPIRATION_TIME / 1000);
+//        cookie.setDomain("localhost");
+//        cookie.setAttribute("SameSite", "None");
+
+        response.addCookie(cookie);
+        */
+
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(Duration.ofDays(10))
+                .build();
+
+        response.addHeader("Set-Cookie", refreshCookie.toString());
+
+
+        UserDetailsDto userDetailsDto = UserDetailsDto.of(user);
+
+        return new JwtLoginResponseDto(accessToken, null, userDetailsDto);
+    }
+
+    private String generateJwt(HttpServletResponse response, Authentication authResult) throws JsonProcessingException {
         User userDetails = (User) authResult.getPrincipal();
         String token = JWT.create()
                 .withSubject(new ObjectMapper().writeValueAsString(UserDetailsDto.of(userDetails)))
@@ -84,6 +121,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .sign(Algorithm.HMAC256(JwtAuthConstants.SECRET.getBytes()));
 
         response.addHeader(JwtAuthConstants.HEADER_STRING, JwtAuthConstants.TOKEN_PREFIX + token);
-        return JwtAuthConstants.TOKEN_PREFIX + token;
+        return token;
+    }
+
+    private String generateRefreshToken(User user) {
+        return JWT.create()
+                .withSubject(user.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + JwtAuthConstants.REFRESH_EXPIRATION_TIME))
+                .sign(Algorithm.HMAC256(JwtAuthConstants.SECRET.getBytes()));
     }
 }
