@@ -2,10 +2,12 @@ package mk.ukim.finki.trainbackend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import mk.ukim.finki.trainbackend.model.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 
 @Entity
 @Data
@@ -25,18 +27,21 @@ public class User implements UserDetails {
     private boolean isCredentialsNonExpired = true;
     private boolean isEnabled = true;
 
+    @Enumerated(value = EnumType.STRING)
+    private Role userRole;
 
     public User() {
     }
 
-    public User(String username, String password) {
+    public User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
+        this.userRole = role;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.singletonList(this.userRole);
     }
 
     @Override
