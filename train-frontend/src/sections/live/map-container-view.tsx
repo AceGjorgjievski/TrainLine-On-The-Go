@@ -60,7 +60,7 @@ export default function MapContainerView() {
 
   useEffect(() => {
     if (routeData?.stationStops) {
-      console.log("✅ Station Stops:", routeData.stationStops);
+      console.log("Station Stops:", routeData.stationStops);
     }
   }, [routeData]);
 
@@ -87,17 +87,15 @@ export default function MapContainerView() {
       getActiveTrainsByRouteName(encodeURIComponent(routeName)),
     ])
       .then(([routeDataResponse, activeTrainsResponse]) => {
-        console.log("✅ Fetched route data:", routeDataResponse);
-        console.log("✅ Active trains:", activeTrainsResponse);
-
         setRouteData(routeDataResponse);
         setActiveTrains(activeTrainsResponse);
       })
       .catch((err) => {
-        console.error("❌ Error fetching data:", err);
+        console.error("Error fetching data:", err);
       })
       .finally(() => {
         setLoading(false);
+        setFormData(null);
       });
   }, [formData]);
 
