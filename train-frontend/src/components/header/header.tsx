@@ -2,16 +2,25 @@
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { Container, IconButton, Menu, MenuItem, Stack } from "@mui/material";
+import {
+  Button,
+  Container,
+  IconButton,
+  Menu,
+  MenuItem,
+  Stack,
+} from "@mui/material";
 import { Link, routing, usePathname, useRouter } from "../../../i18n/routing";
 import LanguageIcon from "@mui/icons-material/Language";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-
+import { useAuthContext } from "@/auth/hooks";
+import { paths } from "@/routes/paths";
 
 export default function Header() {
   const { locales } = routing;
+  const { authenticated, logout } = useAuthContext();
   const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations("Locale");
@@ -19,6 +28,14 @@ export default function Header() {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const logoutUser = async () => {
+    if (pathname.split("/")[1] === "admin") {
+      console.log("enters");
+      router.replace(paths.home);
+    }
+    await logout();
+  };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -48,20 +65,31 @@ export default function Header() {
         }}
       >
         <Typography>
-          <Link href="/">
-            {tHeader('home')}
-          </Link>
+          <Link href="/">{tHeader("home")}</Link>
         </Typography>
         <Stack direction="row" spacing={4}>
           <Link href="/timetable" color="text.primary">
-            {tHeader('timetable')}
+            {tHeader("timetable")}
           </Link>
           <Link href="/live" color="text.primary">
-            {tHeader('live')}
+            {tHeader("live")}
           </Link>
-          <Link href="/login" color="text.primary">
-            Login
-          </Link>
+
+          {!authenticated && (
+            <Link href="/login" color="text.primary">
+              Login
+            </Link>
+          )}
+
+          {authenticated && (
+            <>
+              <Link href="/admin" color="text.primary">
+                Admin
+              </Link>
+              <Button onClick={logoutUser}>Log out</Button>
+            </>
+          )}
+
           <IconButton onClick={handleClick} color="inherit">
             <LanguageIcon />
           </IconButton>

@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 
 import "leaflet/dist/leaflet.css";
 import L, { LatLngExpression } from "leaflet";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Polyline,
+} from "react-leaflet";
 
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
@@ -18,7 +24,8 @@ import { getTrainRoutesByName } from "@/services/trainRouteServices";
 import { TrainRouteDTO } from "@/types/TrainRouteDTO";
 import { TrainRouteStop } from "@/types/trainRouteStop";
 import { TrainStop } from "@/types/trainStop";
-
+import { getActiveTrainsByRouteName } from "@/services/train-service";
+import { ActiveTrainDTO } from "@/types/ActiveTrainDTO";
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
@@ -29,6 +36,7 @@ L.Icon.Default.mergeOptions({
 export default function MapContainerView() {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [routeData, setRouteData] = useState<TrainRouteDTO | null>(null);
+  const [activeTrains, setActiveTrains] = useState<ActiveTrainDTO | null>(null);
   const [formData, setFormData] = useState<{
     direction: string;
     route: string;
@@ -46,8 +54,15 @@ export default function MapContainerView() {
     route: string;
     viewOption: string;
   }) => {
+    console.log("data: ", data);
     setFormData(data);
   };
+
+  useEffect(() => {
+    if (routeData?.stationStops) {
+      console.log("✅ Station Stops:", routeData.stationStops);
+    }
+  }, [routeData]);
 
   useEffect(() => {
     if (!formData?.route || !formData?.viewOption) return;
@@ -59,7 +74,7 @@ export default function MapContainerView() {
       bitola: "Skopje - Bitola",
       kochani: "Skopje - Kochani",
       kichevo: "Skopje - Kichevo",
-      prishtina: "Skopje - Prishtina"
+      prishtina: "Skopje - Prishtina",
     };
 
     const routeName = routeNameMap[formData.route];
@@ -67,18 +82,22 @@ export default function MapContainerView() {
 
     setLoading(true);
 
-    getTrainRoutesByName(encodeURIComponent(routeName))
-      .then((data) => {
-        setRouteData(data);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1500);
-        setFormData(null);
+    Promise.all([
+      getTrainRoutesByName(encodeURIComponent(routeName)),
+      getActiveTrainsByRouteName(encodeURIComponent(routeName)),
+    ])
+      .then(([routeDataResponse, activeTrainsResponse]) => {
+        console.log("✅ Fetched route data:", routeDataResponse);
+        console.log("✅ Active trains:", activeTrainsResponse);
+
+        setRouteData(routeDataResponse);
+        setActiveTrains(activeTrainsResponse);
       })
       .catch((err) => {
+        console.error("❌ Error fetching data:", err);
+      })
+      .finally(() => {
         setLoading(false);
-        setFormData(null);
-        console.error(err);
       });
   }, [formData]);
 
@@ -86,12 +105,6 @@ export default function MapContainerView() {
     ? [routeData.centerLatitude, routeData.centerLongitude]
     : [41.9981, 21.4254];
 
-  console.log(
-    "center: ",
-    centerPosition[0],
-    centerPosition[1],
-    routeData?.zoomLevel
-  );
 
   return (
     <Container
@@ -136,19 +149,39 @@ export default function MapContainerView() {
           />
         )}
 
-        {routeData?.stationStops?.map((stopWrapper: TrainRouteStop, idx: number) => {
-          const stop: TrainStop = stopWrapper.trainStop;
-          return (
-            <Marker key={idx} position={[stop.latitude, stop.longitude]}>
-              <Popup>
-                <strong>{stop.name}</strong>
-                <p>Station number: {stopWrapper.stationSequenceNumber}</p>
-                <br />
-                Lat: {stop.latitude}, Lng: {stop.longitude}
-              </Popup>
-            </Marker>
-          );
-        })}
+        {routeData?.stationStops && (
+          <Polyline
+            positions={routeData.stationStops
+              .sort((a, b) => a.stationSequenceNumber - b.stationSequenceNumber)
+              .filter(
+                (stop) => stop.trainStop?.latitude && stop.trainStop?.longitude
+              )
+              .map(
+                (stop) =>
+                  [
+                    stop.trainStop.latitude,
+                    stop.trainStop.longitude,
+                  ] as LatLngExpression
+              )}
+            pathOptions={{ color: "red", weight: 5 }}
+          />
+        )}
+
+        {routeData?.stationStops?.map(
+          (stopWrapper: TrainRouteStop, idx: number) => {
+            const stop: TrainStop = stopWrapper.trainStop;
+            return (
+              <Marker key={idx} position={[stop.latitude, stop.longitude]}>
+                <Popup>
+                  <strong>{stop.name}</strong>
+                  <p>Station number: {stopWrapper.stationSequenceNumber}</p>
+                  <br />
+                  Lat: {stop.latitude}, Lng: {stop.longitude}
+                </Popup>
+              </Marker>
+            );
+          }
+        )}
 
         {loading && (
           <Box
