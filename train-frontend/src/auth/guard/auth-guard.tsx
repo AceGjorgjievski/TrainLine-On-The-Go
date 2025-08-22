@@ -8,7 +8,7 @@ import { usePathname, useRouter } from '@/routes/hooks';
 // ----------------------------------------------------------------------
 
 const loginPaths: Record<string, (locale: string) => string> = {
-  jwt: (locale: string) => paths.auth.jwt.login(locale),
+  jwt: (locale: string) => paths.login(locale),
 };
 
 // ----------------------------------------------------------------------
