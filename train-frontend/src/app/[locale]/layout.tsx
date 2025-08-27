@@ -5,8 +5,8 @@ import { Locale, routing } from "../../../i18n/routing";
 import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
-import Header from "@/components/header/header";
 import { AuthProvider } from "@/auth/context/jwt/auth-provider";
+import DashBoardLayout from "@/layouts/dashboard";
 
 
 const geistSans = Geist({
@@ -44,8 +44,9 @@ export default async function RootLayout(props: {
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>
-            <Header/>
-            {children}
+            <DashBoardLayout>
+              {children}
+            </DashBoardLayout>
           </AuthProvider>
         </NextIntlClientProvider>
       </body>
