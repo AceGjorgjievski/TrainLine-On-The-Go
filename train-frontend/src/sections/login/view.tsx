@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { useRouter } from "@/routes/hooks";
+import { usePathname, useRouter } from "../../../i18n/routing";
 import { paths } from "@/routes/paths";
 
 export default function LoginView() {
@@ -18,16 +18,18 @@ export default function LoginView() {
   const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
+  const pathName = usePathname();
 
   const { login } = useAuthContext();
 
   const onSubmit = async () => {
     try {
       setError(null);
-      console.log(username, password);
       await login(username, password);
 
-      router.replace(paths.home);
+      if (pathName) {
+        router.replace(paths.home());
+      }
     } catch (err) {
       setError("Login failed");
       console.log(err);
