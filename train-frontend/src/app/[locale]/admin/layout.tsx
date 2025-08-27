@@ -1,6 +1,6 @@
 'use client';
 
-import AuthGuard from "@/auth/guard/auth-guard";
+import { AuthGuard } from "@/auth/guard";
 
 
 type Props = {
