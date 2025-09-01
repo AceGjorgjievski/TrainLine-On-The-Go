@@ -11,6 +11,13 @@ import java.util.List;
 @Repository
 public interface TrainStopTimeRepository extends JpaRepository<TrainStopTime, Long> {
 
-    @Query("select ts from TrainStopTime ts where ts.train.id = :trainId order by ts.trainStopTime asc")
+    @Query("select ts from TrainStopTime ts " +
+            "where ts.train.id = :trainId " +
+            "order by ts.trainStopTime asc")
     List<TrainStopTime> findByTrainOrderByTrainStopTimeAsc(@Param("trainId") Long trainId);
+
+    @Query("select ts from TrainStopTime ts " +
+            "where ts.trainRouteStop.trainRoute.name = :routeName " +
+            "order by ts.trainStopTime")
+    List<TrainStopTime> findByRouteName(@Param("routeName") String routeName);
 }
