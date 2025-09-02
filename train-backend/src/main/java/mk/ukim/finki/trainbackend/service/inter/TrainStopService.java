@@ -7,5 +7,5 @@ import java.util.List;
 public interface TrainStopService {
 
     List<TrainStop> findAll();
-    List<TrainStop> getTrainStopsForRoute(Long routeId);
+    List<TrainStop> getTrainStopsForRoute(String routeName);
 }

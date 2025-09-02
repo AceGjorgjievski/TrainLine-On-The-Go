@@ -1,6 +1,8 @@
 package mk.ukim.finki.trainbackend.web;
 
+import mk.ukim.finki.trainbackend.model.Train;
 import mk.ukim.finki.trainbackend.model.dtos.ActiveTrainDto;
+import mk.ukim.finki.trainbackend.model.dtos.TrainDto;
 import mk.ukim.finki.trainbackend.service.inter.TrainService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,16 @@ public class TrainRestController {
         this.trainService = trainService;
     }
 
-    @GetMapping("/{routeName}")
+
+    @GetMapping("/{routeName}/all")
+    public ResponseEntity<List<TrainDto>> getAllTrainsByTrainRoute(@PathVariable String routeName) {
+        List<Train> allTrainList = this.trainService.findAllByRouteName(routeName);
+
+        List<TrainDto> trainDtos = this.trainService.convertToDto(allTrainList);
+        return ResponseEntity.ok(trainDtos);
+    }
+
+    @GetMapping("/{routeName}/active")
     public ResponseEntity<List<ActiveTrainDto>> getActiveTrainsByTrainRoute(
             @PathVariable("routeName") String routeName
     ) {

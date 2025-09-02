@@ -18,9 +18,9 @@ public class TrainStopTimeRestController {
 
     private final TrainStopTimeService trainStopTimeService;
 
-    @GetMapping("/{routeName}/timetable")
-    public ResponseEntity<List<TimetableDto>> getTimetableForRoute(@PathVariable String routeName) {
-        List<TimetableDto> timetableDtoList = this.trainStopTimeService.getTimetableByRouteName(routeName);
+    @GetMapping("/{mode}/timetable")
+    public ResponseEntity<List<TimetableDto>> getTimetableForRoute(@PathVariable String mode) {
+        List<TimetableDto> timetableDtoList = this.trainStopTimeService.getTimetableByMode(mode);
         return ResponseEntity.ok(timetableDtoList);
     }
 

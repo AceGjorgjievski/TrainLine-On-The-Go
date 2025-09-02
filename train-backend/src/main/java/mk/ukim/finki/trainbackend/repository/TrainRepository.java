@@ -13,4 +13,10 @@ public interface TrainRepository extends JpaRepository<Train, Long> {
 
     @Query("select t from Train t where t.route.name = :routeName")
     List<Train> findAllByRouteName(@Param("routeName") String routeName);
+
+    @Query("select t from Train t where t.route.name like concat(:routeNamePrefix, '%')")
+    List<Train> findAllByRouteNameStartingWith(@Param("routeNamePrefix") String routeNamePrefix);
+
+    @Query("select t from Train t where t.route.name like concat('%', :routeNameSuffix)")
+    List<Train> findAllByRouteNameEndingWith(@Param("routeNameSuffix") String routeNameSuffix);
 }

@@ -1,9 +1,17 @@
 package mk.ukim.finki.trainbackend.service.impl;
 
+import lombok.AllArgsConstructor;
+import mk.ukim.finki.trainbackend.model.Train;
+import mk.ukim.finki.trainbackend.model.TrainRouteStop;
 import mk.ukim.finki.trainbackend.model.TrainStopTime;
+import mk.ukim.finki.trainbackend.model.dtos.StationDto;
 import mk.ukim.finki.trainbackend.model.dtos.TimetableDto;
+import mk.ukim.finki.trainbackend.model.dtos.TrainRouteDTO;
 import mk.ukim.finki.trainbackend.model.exceptions.TrainStopTimeNotFoundException;
 import mk.ukim.finki.trainbackend.repository.TrainStopTimeRepository;
+import mk.ukim.finki.trainbackend.service.inter.TrainRouteService;
+import mk.ukim.finki.trainbackend.service.inter.TrainRouteStopService;
+import mk.ukim.finki.trainbackend.service.inter.TrainService;
 import mk.ukim.finki.trainbackend.service.inter.TrainStopTimeService;
 import org.springframework.stereotype.Service;
 
@@ -11,39 +19,72 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class TrainStopTimeServiceImpl implements TrainStopTimeService {
 
     private final TrainStopTimeRepository trainStopTimeRepository;
-
-    public TrainStopTimeServiceImpl(TrainStopTimeRepository trainStopTimeRepository) {
-        this.trainStopTimeRepository = trainStopTimeRepository;
-    }
+    private final TrainRouteService trainRouteService;
+    private final TrainService trainService;
+    private final TrainRouteStopService trainRouteStopService;
 
     @Override
     public List<TrainStopTime> findByTrainOrderByTrainStopTimeAsc(Long trainId) {
         return this.trainStopTimeRepository.findByTrainOrderByTrainStopTimeAsc(trainId);
     }
 
+
     @Override
-    public List<TimetableDto> getTimetableByRouteName(String routeName) {
-        List<TrainStopTime> trainStopTimeList =
-                this.trainStopTimeRepository.findByRouteName(routeName);
+    public List<TimetableDto> getTimetableByMode(String mode) {
+        List<String> routeNameList;
 
-        List<TimetableDto> timetableDtoList = new ArrayList<>();
+        if (mode.equalsIgnoreCase("departure")) {
+            routeNameList = this.trainRouteService.findAllByNameStartingWith("Skopje")
+                    .stream()
+                    .map(TrainRouteDTO::getName)
+                    .collect(Collectors.toList());
+        } else { //arrival
+            routeNameList = this.trainRouteService.findAllByNameEndingWith("Skopje")
+                    .stream()
+                    .map(TrainRouteDTO::getName)
+                    .collect(Collectors.toList());
+        }
 
-        for(TrainStopTime tst : trainStopTimeList) {
-            timetableDtoList.add(new TimetableDto(
-                    tst.getId(),
-                    tst.getTrain().getName(),
-                    tst.getTrainStopTime(),
-                    tst.getTrainRouteStop().getTrainStop().getName(),
-                    routeName
+        List<TimetableDto> result = new ArrayList<>();
+
+        for (String routeName : routeNameList) {
+            List<Train> trains = this.trainService.findAllByRouteName(routeName);
+            List<TrainRouteStop> stops = this.trainRouteStopService.findStopsByRouteName(routeName);
+
+            List<StationDto> stationDtos = new ArrayList<>();
+            for (TrainRouteStop trainRouteStop : stops) {
+                String stationName = trainRouteStop.getTrainStop().getName();
+
+                List<String> times = new ArrayList<>();
+                for (Train train : trains) {
+                    Optional<TrainStopTime> trainStopTime =
+                            this.findByTrainIdAndTrainRouteStopId(
+                                    train.getId(), trainRouteStop.getId()
+                            );
+
+                    times.add(
+                            trainStopTime.map(
+                                    t -> t.getTrainStopTime().toString().substring(0, 5)
+                            ).orElse("-")
+                    );
+                }
+                stationDtos.add(new StationDto(stationName, times));
+            }
+            result.add(new TimetableDto(
+                    routeName,
+                    trains.stream().map(Train::getName).collect(Collectors.toList()),
+                    stationDtos
             ));
         }
 
-        return timetableDtoList;
+        return result;
     }
 
     @Override
@@ -61,5 +102,10 @@ public class TrainStopTimeServiceImpl implements TrainStopTimeService {
         this.trainStopTimeRepository.save(trainStopTime);
 
         return Optional.of(trainStopTime);
+    }
+
+    @Override
+    public Optional<TrainStopTime> findByTrainIdAndTrainRouteStopId(Long trainId, Long trainRouteStopId) {
+        return this.trainStopTimeRepository.findByTrain_IdAndTrainRouteStop_Id(trainId, trainRouteStopId);
     }
 }

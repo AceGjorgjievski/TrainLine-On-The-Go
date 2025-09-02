@@ -6,6 +6,7 @@ import mk.ukim.finki.trainbackend.model.TrainRoute;
 import mk.ukim.finki.trainbackend.model.dtos.TrainRouteDTO;
 import mk.ukim.finki.trainbackend.service.inter.TrainRouteService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -17,6 +18,7 @@ public class TrainRouteRestController {
     private final TrainRouteService trainRouteService;
 
     @GetMapping("/{name}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TrainRouteDTO> findByName(@PathVariable String name) {
         TrainRoute trainRoute = this.trainRouteService.findByName(name);
         if(trainRoute == null) {

@@ -9,9 +9,11 @@ import java.util.Optional;
 
 public interface TrainStopTimeService {
     List<TrainStopTime> findByTrainOrderByTrainStopTimeAsc(Long trainId);
-    List<TimetableDto> getTimetableByRouteName(String routeName);
+    List<TimetableDto> getTimetableByMode(String mode);
 
     Optional<TrainStopTime> findById(Long id);
 
     Optional<TrainStopTime> edit(Long id, LocalTime localTime);
+
+    Optional<TrainStopTime> findByTrainIdAndTrainRouteStopId(Long trainId, Long trainRouteStopId);
 }

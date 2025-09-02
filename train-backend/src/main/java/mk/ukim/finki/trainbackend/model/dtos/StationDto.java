@@ -9,8 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class TimetableDto {
-    private String routeName;
-    private List<String> trains;
-    private List<StationDto> stations;
+public class StationDto {
+    private String stationName;
+    private List<String> times;
 }

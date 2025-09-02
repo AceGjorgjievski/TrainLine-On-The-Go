@@ -26,9 +26,9 @@ public class TrainStopServiceImpl implements TrainStopService {
     }
 
     @Override
-    public List<TrainStop> getTrainStopsForRoute(Long routeId) {
+    public List<TrainStop> getTrainStopsForRoute(String routeName) {
 
-        TrainRoute trainRoute = this.trainRouteService.findById(routeId);
+        TrainRoute trainRoute = this.trainRouteService.findByName(routeName);
 
         return trainRoute.getStationStops().stream()
                 .map(TrainRouteStop::getTrainStop)
