@@ -13,5 +13,5 @@ public interface TrainService {
     List<ActiveTrainDto> getActiveTrainsForRoute(String routeName);
 
     List<Train> findAllByRouteNameStartingWith(String routeNamePrefix);
-    List<Train> findAllByRouteNameEndinggWith(String routeNameSuffix);
+    List<Train> findAllByRouteNameEndingWith(String routeNameSuffix);
 }
