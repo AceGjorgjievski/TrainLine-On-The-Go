@@ -2,6 +2,7 @@ package mk.ukim.finki.trainbackend.service.impl;
 
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.trainbackend.model.Train;
+import mk.ukim.finki.trainbackend.model.TrainRoute;
 import mk.ukim.finki.trainbackend.model.TrainStopTime;
 import mk.ukim.finki.trainbackend.model.dtos.*;
 import mk.ukim.finki.trainbackend.repository.TrainRepository;
@@ -56,6 +57,8 @@ public class TrainServiceImpl implements TrainService {
         for (Train t : trainsList) {
             List<TrainStopTime> trainOrderByTrainStopTimeAsc =
                     this.trainStopTimeRepository.findByTrainOrderByTrainStopTimeAsc(t.getId());
+
+            if(trainOrderByTrainStopTimeAsc.size() == 0) break;
 
             LocalTime startTime = trainOrderByTrainStopTimeAsc.get(0).getTrainStopTime();
             LocalTime endTime = trainOrderByTrainStopTimeAsc.get(trainOrderByTrainStopTimeAsc.size() - 1).getTrainStopTime();
@@ -124,5 +127,19 @@ public class TrainServiceImpl implements TrainService {
     @Override
     public List<Train> findAllByRouteNameEndingWith(String routeNameSuffix) {
         return this.trainRepository.findAllByRouteNameEndingWith(routeNameSuffix);
+    }
+
+    @Override
+    public List<ActiveTrainDto> findAllActiveTrains() {
+        List<TrainRoute> routes = this.trainRouteService.findAll();
+        List<ActiveTrainDto> activeTrains = new ArrayList<>();
+
+        for(TrainRoute tr : routes) {
+            String routeName = tr.getName();
+            List<ActiveTrainDto> activeTrainsForRoute = this.getActiveTrainsForRoute(routeName);
+            activeTrains.addAll(activeTrainsForRoute);
+        }
+
+        return activeTrains;
     }
 }

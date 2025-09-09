@@ -37,4 +37,11 @@ public class TrainRestController {
 
         return ResponseEntity.ok(activeTrainDtoList);
     }
+
+    @GetMapping("/active/all")
+    public ResponseEntity<List<ActiveTrainDto>> getAllActiveTrains() {
+        List<ActiveTrainDto> allActiveTrains = this.trainService.findAllActiveTrains();
+
+        return ResponseEntity.ok(allActiveTrains);
+    }
 }
