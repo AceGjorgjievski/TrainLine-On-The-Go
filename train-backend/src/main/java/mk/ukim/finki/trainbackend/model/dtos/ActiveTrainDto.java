@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -12,4 +13,7 @@ public class ActiveTrainDto {
     private String name;
     private Double speed;
     private LocalTime currentStopTime;
+    private List<TrainStopTimeDto> trainStopTimeList;
+    private String currentPassedStationName;
+    private Integer currentPassedStationNumber;
 }
