@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -33,13 +35,20 @@ public class TrainServiceImpl implements TrainService {
     @Override
     public List<TrainDto> convertToDto(List<Train> trainList) {
         List<TrainDto> trainDtoList = new ArrayList<>();
+        List<ActiveTrainDto> activeTrainDtoList = this.findAllActiveTrains();
+
+        Set<Long> trainIds = activeTrainDtoList.stream().map(ActiveTrainDto::getId)
+                .collect(Collectors.toSet());
 
         for (Train t : trainList) {
-            trainDtoList.add(new TrainDto(
+            boolean isActive = trainIds.contains(t.getId());
+            trainDtoList.add(
+                    new TrainDto(
                             t.getId(),
                             t.getName(),
                             t.getSpeed(),
-                            t.getRoute().getName()
+                            t.getRoute().getName(),
+                            isActive
                     )
             );
         }
