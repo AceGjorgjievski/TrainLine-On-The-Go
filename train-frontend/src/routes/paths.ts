@@ -3,5 +3,9 @@ export const paths = {
   home: () => `/`,
   timetable: () => `/timetable`,
   live: () => `/live`,
-  admin: () => `/admin`
+  admin: {
+    root: () => `/admin`,
+    trainStops: () => `/admin/train-stops`,
+    trains: () => `/admin/trains`,
+  }
 };
