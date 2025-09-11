@@ -1,4 +1,4 @@
-import { TrainRouteStop } from "@/types/trainRouteStop";
+import { TrainRouteStop } from "@/types";
 import axiosInstance from "@/utils/axios";
 
 

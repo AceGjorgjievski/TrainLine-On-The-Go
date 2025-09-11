@@ -1,4 +1,4 @@
-import { StationDTO } from "./stationDTO";
+import { StationDTO } from "@/types";
 
 export type TimetableDTO = {
     routeName: string;

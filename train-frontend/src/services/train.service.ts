@@ -1,5 +1,4 @@
-import { ActiveTrainDTO } from "@/types/ActiveTrainDTO";
-import { TrainDTO } from "@/types/TrainDTO";
+import { ActiveTrainDTO, TrainDTO } from "@/types";
 import axiosInstance from "@/utils/axios";
 
 

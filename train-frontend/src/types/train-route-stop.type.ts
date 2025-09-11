@@ -1,4 +1,4 @@
-import { TrainStop } from "./trainStop";
+import { TrainStop } from "@/types";
 
 export type TrainRouteStop = {
   id: number;

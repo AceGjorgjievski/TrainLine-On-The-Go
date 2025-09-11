@@ -1,4 +1,4 @@
-import { TimetableDTO } from "@/types/TimetableDTO";
+import { TimetableDTO } from "@/types";
 import axiosInstance from "@/utils/axios";
 
 

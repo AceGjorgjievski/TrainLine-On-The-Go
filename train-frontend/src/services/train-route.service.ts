@@ -1,4 +1,4 @@
-import { TrainRouteDTO } from "@/types/TrainRouteDTO";
+import { TrainRouteDTO } from "@/types";
 import { apiGet } from "./api";
 import axiosInstance from "@/utils/axios";
 
