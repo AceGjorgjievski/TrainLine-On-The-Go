@@ -1,122 +1,62 @@
 "use client";
 
 import {
+  Direction,
+  FormData,
+  RouteKey,
+  ViewOptions,
+} from "@/types";
+import {
   Button,
   Drawer,
   Box,
   Typography,
-  FormControl,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Select,
-  MenuItem,
   SelectChangeEvent,
-  InputLabel,
 } from "@mui/material";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import RouteDirection from "./routeDirectionFormControl";
+import DepartureArrival from "./departureArrivalFormControl";
+import StationLiveTypeFormControl from "./stationLiveTypeFormControl";
 
 type Props = {
   drawerOpen: boolean;
   toggleDrawer: (action: boolean) => void;
-  direction: string;
-  setDirection: (value: string) => void;
-  route: string;
-  setRoute: (value: string) => void;
-  onSubmit: (data: { direction: string; route: string; viewOption: string }) => void;
+  onSubmit: (data: FormData) => void;
 };
 
 export default function SideDrawer({
   drawerOpen,
   toggleDrawer,
-  direction,
-  setDirection,
-  route,
-  setRoute,
-  onSubmit
+  onSubmit,
 }: Props) {
-  const [viewOption, setViewOption] = useState("");
+  const [viewOption, setViewOption] = useState<ViewOptions | "">("");
+  const [route, setRoute] = useState<RouteKey | "">("");
+  const [direction, setDirection] = useState<Direction | "">("");
 
   const handleRouteChange = (event: SelectChangeEvent) => {
-    setRoute(event.target.value);
+    setRoute(event.target.value as RouteKey);
   };
 
-  const handleDirectionChange = (
+  const handleStationLiveTypeChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setDirection(event.target.value);
-    setRoute("");
-    setViewOption("");
+    setViewOption(event.target.value as ViewOptions);
   };
 
+  const handleDirectionChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedDirection = event.target.value as Direction;
+      setDirection(selectedDirection);
+      setRoute("");
+      setViewOption("");
+    },
+    []
+  );
+
   const handleSubmit = () => {
-    onSubmit({direction, route, viewOption})
+    onSubmit({ direction, route, viewOption } as FormData);
     toggleDrawer(false);
-  }
-
-  const renderDirectionField = () => (
-    <FormControl fullWidth sx={{ mb: 3 }}>
-      <InputLabel id="route-select-label">Choose Train Route</InputLabel>
-      <Select
-        labelId="route-select-label"
-        id="route-select"
-        value={route}
-        label="Choose Train Route"
-        onChange={handleRouteChange}
-      >
-        <MenuItem value="tabanovce">Skopje – Tabanovce</MenuItem>
-        <MenuItem value="veles">Skopje – Veles</MenuItem>
-        <MenuItem value="gevgelija">Skopje – Gevgelija</MenuItem>
-        <MenuItem value="bitola">Skopje – Bitola</MenuItem>
-        <MenuItem value="kochani">Skopje – Kochani</MenuItem>
-        <MenuItem value="kichevo">Skopje – Kichevo</MenuItem>
-        <MenuItem value="prishtina">Skopje – Prishtina</MenuItem>
-      </Select>
-    </FormControl>
-  );
-
-  const renderRouteField = () => (
-    <FormControl fullWidth sx={{ mb: 3 }}>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-        What would you like to view?
-      </Typography>
-      <RadioGroup
-        value={viewOption}
-        onChange={(e) => setViewOption(e.target.value)}
-      >
-        <FormControlLabel
-          value="stations"
-          control={<Radio />}
-          label="Station Map Points"
-        />
-        <FormControlLabel
-          value="live"
-          control={<Radio />}
-          label="Train Live Tracking"
-        />
-      </RadioGroup>
-    </FormControl>
-  );
-
-  const renderDepartureArrivalField = () => (
-    <FormControl fullWidth sx={{ mb: 3 }}>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-        Are you departing from or arriving in Skopje?
-      </Typography>
-      <RadioGroup value={direction} onChange={handleDirectionChange}>
-        <FormControlLabel
-          value="departure"
-          control={<Radio />}
-          label="Departure from Skopje"
-        />
-        <FormControlLabel
-          value="arrival"
-          control={<Radio />}
-          label="Arrival in Skopje"
-        />
-      </RadioGroup>
-    </FormControl>
-  );
+  };
 
   return (
     <Drawer
@@ -135,16 +75,33 @@ export default function SideDrawer({
           Choose Options
         </Typography>
 
-        {renderDepartureArrivalField()}
+        {
+          <DepartureArrival
+            direction={direction}
+            handleDirectionChange={handleDirectionChange}
+          />
+        }
 
-        {direction && renderDirectionField() }
+        {direction && (
+          <RouteDirection 
+            route={route} 
+            direction={direction} 
+            handleRouteChange={handleRouteChange} 
+          />
+        )}
 
-        {route && renderRouteField() }
+        {route && (
+          <StationLiveTypeFormControl
+            viewOption={viewOption}
+            handleStationLiveTypeChange={handleStationLiveTypeChange}
+          />
+        )}
 
-        <Button
-          variant="outlined"
-          fullWidth
+        <Button 
+          variant="outlined" 
+          fullWidth 
           onClick={handleSubmit}
+          disabled={!direction || !route || !viewOption}
         >
           Submit
         </Button>
