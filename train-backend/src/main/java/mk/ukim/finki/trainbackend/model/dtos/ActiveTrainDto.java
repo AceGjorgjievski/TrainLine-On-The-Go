@@ -16,4 +16,7 @@ public class ActiveTrainDto {
     private List<TrainStopTimeDto> trainStopTimeList;
     private String currentPassedStationName;
     private Integer currentPassedStationNumber;
+    private Double centerLatitude;
+    private Double centerLongitude;
+    private Integer zoomLevel;
 }

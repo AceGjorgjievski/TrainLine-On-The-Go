@@ -106,11 +106,14 @@ public class TrainServiceImpl implements TrainService {
                                 now,
                                 trainStopTimeDtoArrayList,
                                 lastPassed != null ?
-                                        lastPassed.getTrainRouteStopDTOList().getTrainStop().getName() :
+                                        lastPassed.getTrainRouteStopDTO().getTrainStop().getName() :
                                         null,
                                 lastPassed != null ?
-                                        lastPassed.getTrainRouteStopDTOList().getStationSequenceNumber() :
-                                        null
+                                        lastPassed.getTrainRouteStopDTO().getStationSequenceNumber() :
+                                        null,
+                                t.getRoute().getCenterLatitude(),
+                                t.getRoute().getCenterLongitude(),
+                                t.getRoute().getZoomLevel()
                         )
                 );
             }

@@ -10,5 +10,5 @@ import java.time.LocalTime;
 public class TrainStopTimeDto {
     private String trainName;
     private LocalTime trainStopTime;
-    private TrainRouteStopDTO trainRouteStopDTOList;
+    private TrainRouteStopDTO trainRouteStopDTO;
 }
