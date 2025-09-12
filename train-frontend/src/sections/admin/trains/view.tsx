@@ -5,8 +5,13 @@ import {
   fromSkopjeRouteNameMap,
   toSkopjeRouteNameMap,
 } from "@/constants/routes";
-import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
-import { TrainDTO } from "@/types/TrainDTO";
+import {
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  TablePagination,
+} from "@mui/material";
+import { TrainDTO } from "@/types/train.dto";
 import { getAllTrainsByRouteName } from "@/services/train.service";
 
 import {
@@ -28,6 +33,9 @@ export default function TrainsAdminView() {
   const setSelectedDirection = (mode: "departure" | "arrival") => {
     setDirection(mode);
   };
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     const fetchTrains = async () => {
@@ -67,6 +75,11 @@ export default function TrainsAdminView() {
     return false;
   });
 
+  const paginatedTrains = filteredTrains.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
   const renderRadioButtons = () => (
     <RadioGroup
       row
@@ -89,7 +102,7 @@ export default function TrainsAdminView() {
     <>
       {renderRadioButtons()}
       {direction ? (
-        filteredTrains.length > 0 ? (
+        paginatedTrains.length > 0 ? (
           <>
             <Typography variant="h6" gutterBottom>
               {direction === "departure"
@@ -118,7 +131,7 @@ export default function TrainsAdminView() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredTrains.map((train) => (
+                  {paginatedTrains.map((train) => (
                     <TableRow key={train.id}>
                       <TableCell>{train.id}</TableCell>
                       <TableCell>{train.name}</TableCell>
@@ -132,6 +145,18 @@ export default function TrainsAdminView() {
                 </TableBody>
               </Table>
             </TableContainer>
+            <TablePagination
+              component="div"
+              count={filteredTrains.length}
+              page={page}
+              onPageChange={(_, newPage) => setPage(newPage)}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={(e) => {
+                setRowsPerPage(parseInt(e.target.value, 10));
+                setPage(0); // reset to first page
+              }}
+              rowsPerPageOptions={[5, 10, 25]}
+            />
           </>
         ) : (
           <Typography variant="body1">No trains found.</Typography>
