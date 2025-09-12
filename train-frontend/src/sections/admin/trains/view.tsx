@@ -11,7 +11,7 @@ import {
   RadioGroup,
   TablePagination,
 } from "@mui/material";
-import { TrainDTO } from "@/types/train.dto";
+import { TrainDTO, TrainStatus } from "@/types/train.dto";
 import { getAllTrainsByRouteName } from "@/services/train.service";
 
 import {
@@ -98,6 +98,17 @@ export default function TrainsAdminView() {
     </RadioGroup>
   );
 
+  const getStatusColor = (trainStatus: TrainStatus): string => {
+    switch(trainStatus) {
+      case "ACTIVE":
+        return "green";
+      case "INACTIVE":
+        return "red";
+      default:
+        return "orange";
+    }
+  }
+
   return (
     <>
       {renderRadioButtons()}
@@ -137,8 +148,10 @@ export default function TrainsAdminView() {
                       <TableCell>{train.name}</TableCell>
                       <TableCell>{train.speed}</TableCell>
                       <TableCell>{train.trainRouteName}</TableCell>
-                      <TableCell sx={{ color: train.active ? "green" : "red" }}>
-                        {train.active ? "Active" : "Inactive"}
+                      <TableCell sx={{ color: getStatusColor(train.trainStatus) }}>
+                        {train.trainStatus === "ACTIVE" ? "Active" 
+                        : train.trainStatus === "INACTIVE" ? "Inactive" 
+                        : "Upcomming"}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -153,7 +166,7 @@ export default function TrainsAdminView() {
               rowsPerPage={rowsPerPage}
               onRowsPerPageChange={(e) => {
                 setRowsPerPage(parseInt(e.target.value, 10));
-                setPage(0); // reset to first page
+                setPage(0);
               }}
               rowsPerPageOptions={[5, 10, 25]}
             />

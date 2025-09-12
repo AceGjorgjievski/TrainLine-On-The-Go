@@ -5,15 +5,18 @@ import mk.ukim.finki.trainbackend.model.Train;
 import mk.ukim.finki.trainbackend.model.TrainRoute;
 import mk.ukim.finki.trainbackend.model.TrainStopTime;
 import mk.ukim.finki.trainbackend.model.dtos.*;
+import mk.ukim.finki.trainbackend.model.enums.TrainStatus;
 import mk.ukim.finki.trainbackend.repository.TrainRepository;
 import mk.ukim.finki.trainbackend.repository.TrainStopTimeRepository;
 import mk.ukim.finki.trainbackend.service.inter.TrainRouteService;
 import mk.ukim.finki.trainbackend.service.inter.TrainService;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,14 +44,31 @@ public class TrainServiceImpl implements TrainService {
                 .collect(Collectors.toSet());
 
         for (Train t : trainList) {
-            boolean isActive = trainIds.contains(t.getId());
+            TrainStatus trainStatus = trainIds.contains(t.getId()) ? TrainStatus.ACTIVE : TrainStatus.INACTIVE;
+
+            if(trainStatus.equals(TrainStatus.INACTIVE)) {
+                Optional<TrainStopTime> firstTrainStopTime =
+                        this.trainStopTimeRepository.findAllByTrainOrderByTrainStopTimeAsc(t.getId())
+                        .stream().findFirst();
+
+                if(firstTrainStopTime.isPresent()) {
+                    LocalTime now = LocalTime.now();
+                    LocalTime firstStopTime = firstTrainStopTime.get().getTrainStopTime();
+
+                    Duration difference = Duration.between(now, firstStopTime);
+                    if(!difference.isNegative() && difference.toMinutes() < 10) {
+                        trainStatus = TrainStatus.UPCOMING;
+                    }
+                }
+            }
+
             trainDtoList.add(
                     new TrainDto(
                             t.getId(),
                             t.getName(),
                             t.getSpeed(),
                             t.getRoute().getName(),
-                            isActive
+                            trainStatus
                     )
             );
         }
@@ -65,7 +85,7 @@ public class TrainServiceImpl implements TrainService {
 
         for (Train t : trainsList) {
             List<TrainStopTime> trainOrderByTrainStopTimeAsc =
-                    this.trainStopTimeRepository.findByTrainOrderByTrainStopTimeAsc(t.getId());
+                    this.trainStopTimeRepository.findAllByTrainOrderByTrainStopTimeAsc(t.getId());
 
             if(trainOrderByTrainStopTimeAsc.size() == 0) break;
 

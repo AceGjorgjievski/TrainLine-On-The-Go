@@ -33,7 +33,7 @@ public class TrainStopTimeServiceImpl implements TrainStopTimeService {
 
     @Override
     public List<TrainStopTime> findByTrainOrderByTrainStopTimeAsc(Long trainId) {
-        return this.trainStopTimeRepository.findByTrainOrderByTrainStopTimeAsc(trainId);
+        return this.trainStopTimeRepository.findAllByTrainOrderByTrainStopTimeAsc(trainId);
     }
 
 

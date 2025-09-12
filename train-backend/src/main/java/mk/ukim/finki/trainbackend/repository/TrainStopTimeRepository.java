@@ -15,7 +15,7 @@ public interface TrainStopTimeRepository extends JpaRepository<TrainStopTime, Lo
     @Query("select ts from TrainStopTime ts " +
             "where ts.train.id = :trainId " +
             "order by ts.trainStopTime asc")
-    List<TrainStopTime> findByTrainOrderByTrainStopTimeAsc(@Param("trainId") Long trainId);
+    List<TrainStopTime> findAllByTrainOrderByTrainStopTimeAsc(@Param("trainId") Long trainId);
 
     @Query("select ts from TrainStopTime ts " +
             "where ts.trainRouteStop.trainRoute.name = :routeName " +
