@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,6 +58,15 @@ public class TrainStopTimeServiceImpl implements TrainStopTimeService {
         for (String routeName : routeNameList) {
             List<Train> trains = this.trainService.findAllByRouteName(routeName);
             List<TrainRouteStop> stops = this.trainRouteStopService.findStopsByRouteName(routeName);
+
+            TrainRouteStop firstStop = stops.get(0);
+
+            trains.sort(Comparator.comparing(train -> {
+                Optional<TrainStopTime> stopTimeOpt = findByTrainIdAndTrainRouteStopId(train.getId(), firstStop.getId());
+                return stopTimeOpt
+                        .map(TrainStopTime::getTrainStopTime)
+                        .orElse(LocalTime.MAX);
+            }));
 
             List<StationDto> stationDtos = new ArrayList<>();
             for (TrainRouteStop trainRouteStop : stops) {
