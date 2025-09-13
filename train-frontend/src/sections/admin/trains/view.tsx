@@ -8,9 +8,6 @@ import {
 import {
   Container,
   Divider,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
   TablePagination,
   colors,
 } from "@mui/material";
@@ -27,6 +24,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import { DirectionSelector } from "@/shared/components";
 
 type SortKey = "name" | "trainRouteName" | "trainStatus";
 type SortOrder = "asc" | "desc" | "";
@@ -36,8 +34,8 @@ export default function TrainsAdminView() {
 
   const [trains, setTrains] = useState<TrainDTO[]>([]);
 
-  const setSelectedDirection = (mode: "departure" | "arrival") => {
-    setDirection(mode);
+  const handleDirectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDirection(e.target.value as "departure" | "arrival");
   };
 
   const [page, setPage] = useState(0);
@@ -131,36 +129,10 @@ export default function TrainsAdminView() {
     return sortOrder === "asc" ? "▲" : "▼";
   };
 
-  const renderRadioButtons = () => (
-    <RadioGroup
-      row
-      aria-labelledby="demo-row-radio-buttons-group-label"
-      name="row-radio-buttons-group"
-      onChange={(e) =>
-        setSelectedDirection(e.target.value as "departure" | "arrival")
-      }
-    >
-      <Container
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          gap: 15,
-        }}
-      >
-        <FormControlLabel
-          value="departure"
-          control={<Radio />}
-          label="Departure"
-        />
-        <FormControlLabel value="arrival" control={<Radio />} label="Arrival" />
-      </Container>
-    </RadioGroup>
-  );
-
   return (
     <>
-      {renderRadioButtons()}
-      {direction ? (
+      <DirectionSelector direction={direction} handleDirectionChange={handleDirectionChange} />
+      {direction && (
         paginatedTrains.length > 0 ? (
           <>
             <Container
@@ -250,12 +222,7 @@ export default function TrainsAdminView() {
           </>
         ) : (
           <Typography variant="body1">No trains found.</Typography>
-        )
-      ) : (
-        <Typography variant="body1">
-          Please select a direction to view trains.
-        </Typography>
-      )}
+        ))}
     </>
   );
 }
