@@ -1,1 +1,1 @@
-export { default as Drawer } from './side-drawer'
+export { default as SideDrawer } from './side-drawer'
