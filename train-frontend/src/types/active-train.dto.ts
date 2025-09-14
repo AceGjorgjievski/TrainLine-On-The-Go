@@ -7,6 +7,7 @@ export type ActiveTrainDTO = {
     speed: number;
     currentStopTime: string;
     trainStopTimeList: TrainStopTime[];
+    routeName: string;
     currentPassedStationName: string;
     currentPassedStationNumber: number;
     centerLatitude: number;
