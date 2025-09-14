@@ -1,45 +1,36 @@
 import { useEffect, useState } from "react";
 
 import "leaflet/dist/leaflet.css";
-import L, { Icon, LatLngExpression } from "leaflet";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  CircleMarker,
-} from "react-leaflet";
+import L, { LatLngExpression } from "leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
+import TrainStopMarker from "./TrainStopMarker";
+import TrainLiveMarker from "./TrainLiveMarker";
+import RecenterMap from "./recenter-map";
 
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-import {
-  Container,
-  Button,
-  CircularProgress,
-  Box,
-  Typography,
-} from "@mui/material";
-
-import RecenterMap from "./recenter-map";
+import { Container, Button, CircularProgress, Box } from "@mui/material";
+import { SideDrawer } from "@/components/sideDrawer";
 
 import { getTrainRoutesByName, getActiveTrainsByRouteName } from "@/services";
 import {
   Coord,
   LiveTrainProgress,
   TrainRouteDTO,
-  TrainRouteStop,
-  TrainStop,
   ActiveTrainDTO,
   FormData,
   Direction,
   RouteKey,
 } from "@/types";
-import { SideDrawer } from "@/components/sideDrawer";
-import { getJsonFilePath, getFullRouteName } from "@/shared/utils/routeUtils";
-import TrainStopMarker from "./TrainStopMarker";
-import TrainLiveMarker from "./TrainLiveMarker";
+
+import {
+  getFullRouteName,
+  getJsonFilePath,
+  findStationsBetween,
+  getTimeDiffInSeconds,
+} from "@/shared/utils";
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
@@ -72,15 +63,12 @@ export default function MapContainerView() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // console.log("Component mounted");
     setIsMounted(true);
 
     const defaultRoute: RouteKey = "veles";
     const defaultDirection: Direction = "departure";
 
     const getFileName = getJsonFilePath(defaultRoute, defaultDirection);
-
-    // console.log("Fetching default JSON file:", getFileName);
 
     fetch(getFileName)
       .then((res) => {
@@ -221,7 +209,6 @@ export default function MapContainerView() {
 
     getTrainRoutesByName(fullName)
       .then((data) => {
-        // console.log("routes: ", data);
         setRouteData(data);
       })
       .catch((err) => {
@@ -232,37 +219,38 @@ export default function MapContainerView() {
       });
   };
 
-  // console.log("full path:", getJsonFilePath("tabanovce", "departure"));
-
   const fetchLiveTrains = (route: RouteKey, direction: Direction) => {
-    const fullName = getFullRouteName(route, direction);
-    // console.log("full", fullName);
-    const fullJsonFileName = getJsonFilePath(route, direction);
-    // console.log("Fetching JSON from:", fullJsonFileName);
+    setLoading(true);
 
-    getActiveTrainsByRouteName(fullName)
-      .then((data: ActiveTrainDTO[]) => {
-        // console.log("live trains: ", data);
-        setActiveTrains(data);
-        if (data.length > 0) {
-          const firstTrain = data[0];
+    const fullName = getFullRouteName(route, direction);
+    const fullJsonFileName = getJsonFilePath(route, direction);
+
+    Promise.all([
+      getActiveTrainsByRouteName(fullName),
+      fetch(fullJsonFileName).then((res) => {
+        if (!res.ok)
+          throw new Error("Failed to fetch data for the coordinates.");
+        return res.json();
+      }),
+    ])
+      .then(([activeTrainData, routeJsonCoordData]) => {
+        setActiveTrains(activeTrainData);
+        if (activeTrainData.length > 0) {
+          const firstTrain = activeTrainData[0];
           setLiveMapCenter({
             lat: firstTrain.centerLatitude,
             lng: firstTrain.centerLongitude,
             zoom: firstTrain.zoomLevel,
           });
         }
+        setCoord(routeJsonCoordData);
       })
       .catch((err) => {
-        console.error(err);
+        console.error("Error fetching...", err);
       })
       .finally(() => {
         setLoading(false);
       });
-
-    fetch(fullJsonFileName)
-      .then((data) => data.json())
-      .then((data) => setCoord(data));
   };
 
   const centerPosition: LatLngExpression | undefined = routeData
@@ -274,46 +262,6 @@ export default function MapContainerView() {
   if (!isMounted || loading) {
     return <p>Loading train data...</p>;
   }
-
-  const findStationsBetween = (coord: Coord[], lastStationNumber: string) => {
-    const currentIdx = coord.findIndex(
-      (c) => c.stationNumber === lastStationNumber
-    );
-    if (currentIdx === -1) {
-      return { lastStation: null, nextStation: null, segment: [] };
-    }
-
-    const lastStationNum = parseInt(lastStationNumber);
-    const nextStationNum = lastStationNum + 1;
-    const nextStationNumber = nextStationNum.toString();
-
-    const nextIdx = coord.findIndex(
-      (c) => c.stationNumber === nextStationNumber
-    );
-
-    if (nextIdx === -1) {
-      return { lastStation: coord[currentIdx], nextStation: null, segment: [] };
-    }
-
-    const segment = coord.slice(currentIdx, nextIdx + 1);
-
-    return {
-      lastStation: coord[currentIdx],
-      nextStation: coord[nextIdx],
-      segment,
-    };
-  };
-
-  const getTimeDiffInSeconds = (time1: string, time2: string): number => {
-    const [h1, m1, s1] = time1.split(":").map(Number);
-    const [h2, m2, s2] = time2.split(":").map(Number);
-
-    //without seconds - dont add
-    const totalSeconds1 = h1 * 3600 + m1 * 60;
-    const totalSeconds2 = h2 * 3600 + m2 * 60;
-
-    return totalSeconds2 - totalSeconds1;
-  };
 
   return (
     <Container
@@ -351,7 +299,7 @@ export default function MapContainerView() {
           attribution='&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
 
-        <TrainLiveMarker liveTrainProgress={liveTrainProgress}/>
+        <TrainLiveMarker liveTrainProgress={liveTrainProgress} />
 
         {routeData ? (
           <RecenterMap
