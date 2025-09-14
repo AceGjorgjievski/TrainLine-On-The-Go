@@ -14,4 +14,5 @@ public class TrainDto {
     private Double speed;
     private String trainRouteName;
     private TrainStatus trainStatus;
+    private String routeName;
 }

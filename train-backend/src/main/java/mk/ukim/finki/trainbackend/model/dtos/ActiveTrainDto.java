@@ -14,6 +14,7 @@ public class ActiveTrainDto {
     private Double speed;
     private LocalTime currentStopTime;
     private List<TrainStopTimeDto> trainStopTimeList;
+    private String routeName;
     private String currentPassedStationName;
     private Integer currentPassedStationNumber;
     private Double centerLatitude;

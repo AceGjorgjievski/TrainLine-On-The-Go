@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import "leaflet/dist/leaflet.css";
-import L, { LatLngExpression } from "leaflet";
+import L, { Icon, LatLngExpression } from "leaflet";
 import {
   MapContainer,
   TileLayer,
   Marker,
   Popup,
-  Polyline,
   CircleMarker,
 } from "react-leaflet";
 
@@ -23,23 +22,24 @@ import {
   Typography,
 } from "@mui/material";
 
-import SideDrawer from "@/components/sideDrawer/side-drawer";
 import RecenterMap from "./recenter-map";
 
-import { getTrainRoutesByName } from "@/services/train-route.services";
-
-import { TrainRouteDTO } from "@/types/TrainRouteDTO";
-import { TrainRouteStop } from "@/types/trainRouteStop";
-import { TrainStop } from "@/types/trainStop";
-import { getActiveTrainsByRouteName } from "@/services/train.service";
-import { ActiveTrainDTO } from "@/types/ActiveTrainDTO";
-import { FormData, Direction, RouteKey } from "@/types/submit.types";
+import { getTrainRoutesByName, getActiveTrainsByRouteName } from "@/services";
 import {
-  fromSkopjeRouteNameMap,
-  toSkopjeRouteNameMap,
-} from "@/constants/routes";
-import { Coord } from "@/types/coordinates";
-import { TrainStopTime } from "@/types/trainStopTime";
+  Coord,
+  LiveTrainProgress,
+  TrainRouteDTO,
+  TrainRouteStop,
+  TrainStop,
+  ActiveTrainDTO,
+  FormData,
+  Direction,
+  RouteKey,
+} from "@/types";
+import { SideDrawer } from "@/components/sideDrawer";
+import { getJsonFilePath, getFullRouteName } from "@/shared/utils/routeUtils";
+import TrainStopMarker from "./TrainStopMarker";
+import TrainLiveMarker from "./TrainLiveMarker";
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
@@ -47,53 +47,22 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow.src,
 });
 
-const getJsonFilePath = (route: RouteKey, direction: Direction) => {
-  const fullName = getFullRouteName(route, direction);
-  const fileName = fullName.toLowerCase().replace(/\s+/g, "");
-  return `/routes/${direction}/${fileName}.json`;
-};
-
-const getFullRouteName = (route: RouteKey, direction: Direction): string => {
-  return direction === "departure"
-    ? fromSkopjeRouteNameMap[route]
-    : toSkopjeRouteNameMap[route];
-};
-
-type LiveTrainProgress = {
-  trainId: number;
-  lastStationName: string | undefined;
-  nextStationName: string | undefined;
-  lastStationNumber: number;
-  nextStationNumber: number;
-  trainStopTimeList: TrainStopTime[];
-  segment: Coord[];
-  centerLatitude: number;
-  centerLongitude: number;
-  zoomLevel: number;
-  currentIndex: number;
-  interval: number; // in ms
-};
-
 export default function MapContainerView() {
   const [liveTrainProgress, setLiveTrainProgress] = useState<
     LiveTrainProgress[]
   >([]);
   const [liveMapCenter, setLiveMapCenter] = useState<{
-  lat: number;
-  lng: number;
-  zoom: number;
-} | null>(null);
-
+    lat: number;
+    lng: number;
+    zoom: number;
+  } | null>(null);
 
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [routeData, setRouteData] = useState<TrainRouteDTO | null>(null);
 
   const [activeTrains, setActiveTrains] = useState<ActiveTrainDTO[]>([]);
-  const [formData, setFormData] = useState<FormData | null>(null);
 
   const [coord, setCoord] = useState<Coord[]>([]);
-  const [index, setIndex] = useState<number>(0);
-
   const [loading, setLoading] = useState<boolean>(false);
 
   const toggleDrawer = (open: boolean) => {
@@ -103,7 +72,7 @@ export default function MapContainerView() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    console.log("Component mounted");
+    // console.log("Component mounted");
     setIsMounted(true);
 
     const defaultRoute: RouteKey = "veles";
@@ -111,7 +80,7 @@ export default function MapContainerView() {
 
     const getFileName = getJsonFilePath(defaultRoute, defaultDirection);
 
-    console.log("Fetching default JSON file:", getFileName);
+    // console.log("Fetching default JSON file:", getFileName);
 
     fetch(getFileName)
       .then((res) => {
@@ -156,11 +125,13 @@ export default function MapContainerView() {
 
         return {
           trainId: train.id,
+          trainName: train.name,
           lastStationName: lastStation?.stationName,
           nextStationName: nextStation?.stationName,
           lastStationNumber: Number(lastStation?.stationNumber),
           nextStationNumber: Number(nextStation?.stationNumber),
           trainStopTimeList: train.trainStopTimeList,
+          routeName: train.routeName,
           segment,
           centerLatitude: train.centerLatitude,
           centerLongitude: train.centerLongitude,
@@ -225,17 +196,11 @@ export default function MapContainerView() {
     };
   }, [liveTrainProgress]);
 
-
-
   const handleFormSubmit = (data: FormData) => {
-    setFormData(data);
-
-    if (data.viewOption === "stations") {
-      setActiveTrains([]);
-    } else {
-      //live
-      setRouteData(null);
-    }
+    setRouteData(null);
+    setLiveTrainProgress([]);
+    setActiveTrains([]);
+    setLoading(true);
 
     const strategy = {
       departure: {
@@ -256,7 +221,7 @@ export default function MapContainerView() {
 
     getTrainRoutesByName(fullName)
       .then((data) => {
-        console.log("routes: ", data);
+        // console.log("routes: ", data);
         setRouteData(data);
       })
       .catch((err) => {
@@ -267,24 +232,24 @@ export default function MapContainerView() {
       });
   };
 
-  console.log("full path:", getJsonFilePath("tabanovce", "departure"));
+  // console.log("full path:", getJsonFilePath("tabanovce", "departure"));
 
   const fetchLiveTrains = (route: RouteKey, direction: Direction) => {
     const fullName = getFullRouteName(route, direction);
-    console.log("full", fullName);
+    // console.log("full", fullName);
     const fullJsonFileName = getJsonFilePath(route, direction);
-    console.log("Fetching JSON from:", fullJsonFileName);
+    // console.log("Fetching JSON from:", fullJsonFileName);
 
     getActiveTrainsByRouteName(fullName)
       .then((data: ActiveTrainDTO[]) => {
-        console.log("live trains: ", data);
+        // console.log("live trains: ", data);
         setActiveTrains(data);
-        if(data.length > 0) {
+        if (data.length > 0) {
           const firstTrain = data[0];
           setLiveMapCenter({
-            lat: firstTrain.centerLatitude, 
-            lng: firstTrain.centerLongitude, 
-            zoom: firstTrain.zoomLevel
+            lat: firstTrain.centerLatitude,
+            lng: firstTrain.centerLongitude,
+            zoom: firstTrain.zoomLevel,
           });
         }
       })
@@ -300,19 +265,13 @@ export default function MapContainerView() {
       .then((data) => setCoord(data));
   };
 
-  useEffect(() => {
-    if (routeData?.stationStops) {
-      console.log("Station Stops:", routeData.stationStops);
-    }
-  }, [routeData]);
-
   const centerPosition: LatLngExpression | undefined = routeData
     ? [routeData.centerLatitude, routeData.centerLongitude]
-    : liveMapCenter ? [liveMapCenter.lat, liveMapCenter.lng]
+    : liveMapCenter
+    ? [liveMapCenter.lat, liveMapCenter.lng]
     : [41.9981, 21.4254];
 
-  if (!isMounted || coord.length === 0) {
-    console.log(isMounted, coord);
+  if (!isMounted || loading) {
     return <p>Loading train data...</p>;
   }
 
@@ -384,11 +343,7 @@ export default function MapContainerView() {
 
       <MapContainer
         center={centerPosition}
-          zoom={
-          routeData?.zoomLevel ??
-          liveMapCenter?.zoom ??
-          13
-        }
+        zoom={routeData?.zoomLevel ?? liveMapCenter?.zoom ?? 13}
         style={{ height: "100%", width: "100%" }}
       >
         <TileLayer
@@ -396,29 +351,7 @@ export default function MapContainerView() {
           attribution='&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
 
-        {liveTrainProgress.map((train) => {
-          const coord = train.segment[train.currentIndex];
-          if (!coord) return null;
-
-          return (
-            <CircleMarker
-              key={train.trainId}
-              center={[coord.lat, coord.lng]}
-              radius={10}
-              pathOptions={{ color: "blue" }}
-            >
-              <Popup>
-                <Typography>Train ID: {train.trainId}</Typography>
-                <Typography>Segment Index: {train.currentIndex}</Typography>
-                <Typography>
-                  Previous Station: {train.lastStationName}
-                </Typography>
-                <Typography>Next Station: {train.nextStationName}</Typography>
-              </Popup>
-            </CircleMarker>
-          );
-        })}
-
+        <TrainLiveMarker liveTrainProgress={liveTrainProgress}/>
 
         {routeData ? (
           <RecenterMap
@@ -432,28 +365,7 @@ export default function MapContainerView() {
           />
         ) : null}
 
-        {routeData?.stationStops?.map(
-          (stopWrapper: TrainRouteStop, idx: number) => {
-            const stop: TrainStop = stopWrapper.trainStop;
-            return (
-              <Marker key={idx} position={[stop.latitude, stop.longitude]}>
-                <Popup>
-                  <div>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      {stop.name}
-                    </Typography>
-                    <Typography variant="body2">
-                      Station number: {stopWrapper.stationSequenceNumber}
-                    </Typography>
-                    <Typography variant="body2">
-                      Lat: {stop.latitude}, Lng: {stop.longitude}
-                    </Typography>
-                  </div>
-                </Popup>
-              </Marker>
-            );
-          }
-        )}
+        <TrainStopMarker routeData={routeData} />
 
         {loading && (
           <Box

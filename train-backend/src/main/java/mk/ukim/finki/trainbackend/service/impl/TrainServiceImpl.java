@@ -68,7 +68,8 @@ public class TrainServiceImpl implements TrainService {
                             t.getName(),
                             t.getSpeed(),
                             t.getRoute().getName(),
-                            trainStatus
+                            trainStatus,
+                            t.getRoute().getName()
                     )
             );
         }
@@ -134,6 +135,7 @@ public class TrainServiceImpl implements TrainService {
                                 t.getSpeed(),
                                 now,
                                 trainStopTimeDtoArrayList,
+                                t.getRoute().getName(),
                                 lastPassed != null ?
                                         lastPassed.getTrainRouteStopDTO().getTrainStop().getName() :
                                         null,
