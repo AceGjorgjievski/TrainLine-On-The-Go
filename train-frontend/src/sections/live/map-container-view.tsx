@@ -56,6 +56,9 @@ export default function MapContainerView() {
   const [coord, setCoord] = useState<Coord[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [shouldRecenter, setShouldRecenter] = useState(false);
+
+
   const toggleDrawer = (open: boolean) => {
     setDrawerOpen(open);
   };
@@ -242,6 +245,7 @@ export default function MapContainerView() {
             lng: firstTrain.centerLongitude,
             zoom: firstTrain.zoomLevel,
           });
+          setShouldRecenter(true);
         }
         setCoord(routeJsonCoordData);
       })
@@ -305,11 +309,13 @@ export default function MapContainerView() {
           <RecenterMap
             center={[routeData.centerLatitude, routeData.centerLongitude]}
             zoom={routeData.zoomLevel}
+            onComplete={() => setShouldRecenter(false)}
           />
-        ) : liveMapCenter ? (
+        ) : shouldRecenter && liveMapCenter ? (
           <RecenterMap
             center={[liveMapCenter.lat, liveMapCenter.lng]}
             zoom={liveMapCenter.zoom}
+            onComplete={() => setShouldRecenter(false)}
           />
         ) : null}
 
