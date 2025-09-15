@@ -3,31 +3,55 @@
 import { Header } from "@/components/header";
 import {
   Box,
+  colors,
   CssBaseline,
   Divider,
   Drawer,
   List,
   ListItem,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
   Toolbar,
 } from "@mui/material";
-import { useRouter } from "../../../i18n/routing";
+import HomeIcon from "@mui/icons-material/Home";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import LiveTvIcon from "@mui/icons-material/LiveTv";
+
+import { usePathname, useRouter } from "../../../i18n/routing";
 import { paths } from "@/routes/paths";
-import { useState } from "react";
 
 type Props = {
   children: React.ReactNode;
 };
+
 const drawerWidth = 240;
+const drawerItems = [
+  {
+    label: "Home",
+    path: "/",
+    icon: <HomeIcon />,
+  },
+  {
+    label: "Timetable",
+    path: "/timetable",
+    icon: <ScheduleIcon />,
+  },
+  {
+    label: "Live",
+    path: "/live",
+    icon: <LiveTvIcon />,
+  },
+];
 
 export default function DashBoardLayout({ children }: Props) {
   const router = useRouter();
-  const [selectedNavBar, setselectedNavBar] = useState<number>(0);
+  const pathName = usePathname();
 
-  const handleNavigate = (path: string, index: number) => {
+  const handleNavigate = (path: string) => {
     const validPath = path as keyof typeof paths;
-    setselectedNavBar(index);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     router.push(paths[validPath]());
   };
 
@@ -46,18 +70,50 @@ export default function DashBoardLayout({ children }: Props) {
             },
           }}
         >
-          <Toolbar>
-            Logo
-          </Toolbar>
-          <Divider/>
+          <Toolbar>Logo</Toolbar>
+          <Divider />
           <Box sx={{ overflow: "auto" }}>
             <List>
-              {["Home", "Timetable", "Live"].map((text, index) => {
-                const path = text.toLowerCase();
+              {drawerItems.map(({ label, path, icon }, index) => {
+                const selected = pathName === path;
                 return (
                   <ListItem key={index} disablePadding>
-                    <ListItemButton selected={selectedNavBar === index} onClick={() => handleNavigate(path, index)}>
-                      <ListItemText primary={text} />
+                    <ListItemButton
+                      selected={selected}
+                      onClick={() =>
+                        handleNavigate(path === "/" ? "home" : path.slice(1))
+                      }
+                      sx={{
+                        marginTop: "1rem",
+                        bgcolor: selected ? colors.purple[500] : "",
+                        color: selected ? "#d93232ff" : "#000",
+                        "& .MuiListItemText-primary": {
+                          fontWeight: "bold",
+                          color: selected ? "#fff" : "#000",
+                        },
+                        "&:hover": {
+                          bgcolor: colors.purple[300],
+                        },
+                        "&:hover .MuiListItemText-primary": {
+                          color: "#fff",
+                        },
+                        "&.Mui-selected": {
+                          bgcolor: colors.purple[500],
+                          color: "#fff",
+                        },
+
+                        "&.Mui-selected:hover": {
+                          bgcolor: colors.purple[600],
+                          color: "#fff",
+                        },
+                        "& .MuiListItemIcon-root": {
+                          color: selected ? "#fff" : "#000",
+                        },
+                      }}
+                    >
+                      <ListItemIcon sx={{ minWidth: 40 }}>{icon}</ListItemIcon>
+
+                      <ListItemText primary={label} />
                     </ListItemButton>
                   </ListItem>
                 );
@@ -76,7 +132,7 @@ export default function DashBoardLayout({ children }: Props) {
         >
           <Header />
 
-          <Box sx={{ flexGrow: 1, p: 3 }}>{children}</Box>
+          <Box sx={{ flexGrow: 1, p: 0 }}>{children}</Box>
         </Box>
       </Box>
     </>
