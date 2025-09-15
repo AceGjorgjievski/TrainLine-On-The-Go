@@ -6,7 +6,6 @@ import TrainsAdminView from "./trains/view";
 import TrainStopsAdminView from "./train-stops/view";
 import TrainRoutesAdminView from "./train-routes/view";
 
-// Placeholder views (replace with your real components)
 const TrainsView = () => <TrainsAdminView/>
 const TrainStopsView = () => <TrainStopsAdminView/>
 const TrainRoutesView = () => <TrainRoutesAdminView/>
@@ -69,6 +68,7 @@ export default function AdminDashboardView() {
               transition: "transform .3s, box-shadow .3s, background-color .3s",
               borderRadius: 2,
               boxShadow: 5,
+              border: '2px solid',
               "&:hover": {
                 transform: "scale(1.05)",
                 boxShadow: 12,

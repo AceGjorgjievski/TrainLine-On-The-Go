@@ -18,6 +18,8 @@ import {
   Container,
   Divider,
   colors,
+  Box,
+  Typography,
 } from "@mui/material";
 import {
   fromSkopjeRouteNameMap,
@@ -150,7 +152,10 @@ export default function TrainStopsAdminView() {
 
   return (
     <>
-      <DirectionSelector direction={direction} handleDirectionChange={handleDirectionChange} />
+      <DirectionSelector
+        direction={direction}
+        handleDirectionChange={handleDirectionChange}
+      />
       {direction && renderRoutesDropDownMenu()}
       {direction && trainRoute && (
         <Divider
@@ -164,55 +169,103 @@ export default function TrainStopsAdminView() {
       )}
       {trainRoute && (
         <Container>
-          <Paper>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell
-                      onClick={() => handleRequestSort("trainStop.name")}
-                      sx={{
-                        cursor: "pointer",
-                        textDecoration: "underline",
-                        width: 200,
-                        whiteSpace: "nowrap",
-                      }}
+          <TableContainer
+            component={Paper}
+            sx={{
+              mt: 2,
+              borderRadius: 4,
+              boxShadow: 10,
+              border: "2px solid",
+            }}
+          >
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    onClick={() => handleRequestSort("trainStop.name")}
+                    sx={{
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      width: 200,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <Typography
+                      sx={{ fontWeight: "bold", textAlign: "center" }}
                     >
                       Station Name {renderSortIcon("trainStop.name")}
-                    </TableCell>
-                    <TableCell
-                      onClick={() => handleRequestSort("stationSequenceNumber")}
-                      sx={{
-                        cursor: "pointer",
-                        textDecoration: "underline",
-                        width: 200,
-                        whiteSpace: "nowrap",
-                      }}
+                    </Typography>
+                  </TableCell>
+                  <TableCell
+                    onClick={() => handleRequestSort("stationSequenceNumber")}
+                    sx={{
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      width: 200,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <Typography
+                      sx={{ fontWeight: "bold", textAlign: "center" }}
                     >
                       Sequence {renderSortIcon("stationSequenceNumber")}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedStops.map((stop, index) => (
+                  <TableRow
+                    key={stop.id}
+                    sx={{
+                      bgcolor: index % 2 === 0 ? colors.blue[50] : "white",
+                    }}
+                  >
+                    <TableCell>
+                      <Typography sx={{ textAlign: "center" }}>
+                        {stop.trainStop.name}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography sx={{ textAlign: "center" }}>
+                        {stop.stationSequenceNumber}
+                      </Typography>
                     </TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {paginatedStops.map((stop) => (
-                    <TableRow key={stop.id}>
-                      <TableCell>{stop.trainStop.name}</TableCell>
-                      <TableCell>{stop.stationSequenceNumber}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              component="div"
-              count={sortedStops.length}
-              page={page}
-              onPageChange={handleChangePage}
-              rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              rowsPerPageOptions={[5, 10, 25]}
-            />
-          </Paper>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              mt: 2,
+              mb: 2,
+            }}
+          >
+            <Box
+              sx={{
+                bgcolor: "#fffdfd",
+                borderRadius: 2,
+                boxShadow: 10,
+                border: "2px solid",
+              }}
+            >
+              <TablePagination
+                component="div"
+                count={sortedStops.length}
+                page={page}
+                onPageChange={(_, newPage) => setPage(newPage)}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={(e) => {
+                  setRowsPerPage(parseInt(e.target.value, 10));
+                  setPage(0);
+                }}
+                rowsPerPageOptions={[5, 10, 25]}
+              />
+            </Box>
+          </Box>
         </Container>
       )}
     </>

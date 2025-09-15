@@ -144,9 +144,21 @@ export default function TrainsAdminView() {
                 display: "flex",
                 justifyContent: "center",
                 marginTop: "2rem",
+                bgcolor: "#ffffff",
+                borderRadius: 2,
+                p: 3,
+                boxShadow: 10,
+                width: "fit-content",
+                height: "5rem",
+                marginBottom: "2rem",
+                border: "2px solid",
               }}
             >
-              <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
+              <Typography
+                variant="h5"
+                gutterBottom
+                sx={{ fontWeight: "bold", textAlign: "center" }}
+              >
                 {direction === "departure"
                   ? "Departures from Skopje"
                   : "Arrivals in Skopje"}
@@ -157,45 +169,90 @@ export default function TrainsAdminView() {
               sx={{ borderBottomWidth: 5, borderColor: colors.purple[500] }}
             />
             <Container>
-              <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 4 }}>
+              <TableContainer
+                component={Paper}
+                sx={{
+                  mt: 2,
+                  borderRadius: 4,
+                  boxShadow: 10,
+                  border: "2px solid",
+                }}
+              >
                 <Table>
                   <TableHead>
                     <TableRow>
                       <TableCell>
-                        <strong>ID</strong>
+                        <Typography
+                          sx={{ fontWeight: "bold", textAlign: "center" }}
+                        >
+                          ID
+                        </Typography>
                       </TableCell>
                       <TableCell
                         onClick={() => handleSort("name")}
                         sx={{ cursor: "pointer", textDecoration: "underline" }}
                       >
-                        <strong>Name {renderSortIcon("name")}</strong>
+                        <Typography
+                          sx={{ fontWeight: "bold", textAlign: "center" }}
+                        >
+                          Name {renderSortIcon("name")}
+                        </Typography>
                       </TableCell>
                       <TableCell>
-                        <strong>Speed (km/h)</strong>
+                        <Typography
+                          sx={{ fontWeight: "bold", textAlign: "center" }}
+                        >
+                          Speed (km/h)
+                        </Typography>
                       </TableCell>
                       <TableCell
                         onClick={() => handleSort("trainRouteName")}
                         sx={{ cursor: "pointer", textDecoration: "underline" }}
                       >
-                        <strong>
+                        <Typography
+                          sx={{ fontWeight: "bold", textAlign: "center" }}
+                        >
                           Route Name {renderSortIcon("trainRouteName")}
-                        </strong>
+                        </Typography>
                       </TableCell>
                       <TableCell
                         onClick={() => handleSort("trainStatus")}
                         sx={{ cursor: "pointer", textDecoration: "underline" }}
                       >
-                        <strong>Status {renderSortIcon("trainStatus")}</strong>
+                        <Typography sx={{ fontWeight: "bold" }}>
+                          Status {renderSortIcon("trainStatus")}
+                        </Typography>
                       </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {paginatedTrains.map((train) => (
-                      <TableRow key={train.id}>
-                        <TableCell>{train.id}</TableCell>
-                        <TableCell>{train.name}</TableCell>
-                        <TableCell>{train.speed}</TableCell>
-                        <TableCell>{train.trainRouteName}</TableCell>
+                    {paginatedTrains.map((train, index) => (
+                      <TableRow
+                        key={train.id}
+                        sx={{
+                          bgcolor: index % 2 === 0 ? colors.blue[50] : "white",
+                        }}
+                      >
+                        <TableCell>
+                          <Typography sx={{ textAlign: "center" }}>
+                            {train.id}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ textAlign: "center" }}>
+                            {train.name}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ textAlign: "center" }}>
+                            {train.speed}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ textAlign: "center" }}>
+                            {train.trainRouteName}
+                          </Typography>
+                        </TableCell>
                         <TableCell>
                           <Typography
                             sx={{
@@ -237,6 +294,7 @@ export default function TrainsAdminView() {
                     bgcolor: "#fffdfd",
                     borderRadius: 2,
                     boxShadow: 10,
+                    border: "2px solid",
                   }}
                 >
                   <TablePagination
@@ -256,7 +314,7 @@ export default function TrainsAdminView() {
             </Container>
           </>
         ) : (
-          <Typography variant="body1">No trains found.</Typography>
+          <Typography variant="body1">Loading train data...</Typography>
         ))}
     </>
   );
