@@ -6,6 +6,7 @@ import {
   toSkopjeRouteNameMap,
 } from "@/constants/routes";
 import {
+  Box,
   Container,
   Divider,
   TablePagination,
@@ -131,9 +132,12 @@ export default function TrainsAdminView() {
 
   return (
     <>
-      <DirectionSelector direction={direction} handleDirectionChange={handleDirectionChange} />
-      {direction && (
-        paginatedTrains.length > 0 ? (
+      <DirectionSelector
+        direction={direction}
+        handleDirectionChange={handleDirectionChange}
+      />
+      {direction &&
+        (paginatedTrains.length > 0 ? (
           <>
             <Container
               sx={{
@@ -153,7 +157,7 @@ export default function TrainsAdminView() {
               sx={{ borderBottomWidth: 5, borderColor: colors.purple[500] }}
             />
             <Container>
-              <TableContainer component={Paper} sx={{ mt: 2 }}>
+              <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 4 }}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -192,32 +196,63 @@ export default function TrainsAdminView() {
                         <TableCell>{train.name}</TableCell>
                         <TableCell>{train.speed}</TableCell>
                         <TableCell>{train.trainRouteName}</TableCell>
-                        <TableCell
-                          sx={{ color: getStatusColor(train.trainStatus) }}
-                        >
-                          {train.trainStatus === "ACTIVE"
-                            ? "Active"
-                            : train.trainStatus === "INACTIVE"
-                            ? "Inactive"
-                            : "Upcomming"}
+                        <TableCell>
+                          <Typography
+                            sx={{
+                              backgroundColor: getStatusColor(
+                                train.trainStatus
+                              ),
+                              color: "#fff",
+                              px: 1.5,
+                              py: 0.5,
+                              borderRadius: 1,
+                              fontWeight: "bold",
+                              display: "inline-block",
+                              textAlign: "center",
+                              minWidth: "80px",
+                            }}
+                          >
+                            {train.trainStatus === "ACTIVE"
+                              ? "Active"
+                              : train.trainStatus === "INACTIVE"
+                              ? "Inactive"
+                              : "Upcoming"}
+                          </Typography>
                         </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </TableContainer>
-              <TablePagination
-                component="div"
-                count={filteredTrains.length}
-                page={page}
-                onPageChange={(_, newPage) => setPage(newPage)}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={(e) => {
-                  setRowsPerPage(parseInt(e.target.value, 10));
-                  setPage(0);
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  mt: 2,
+                  mb: 2,
                 }}
-                rowsPerPageOptions={[5, 10, 25]}
-              />
+              >
+                <Box
+                  sx={{
+                    bgcolor: "#fffdfd",
+                    borderRadius: 2,
+                    boxShadow: 10,
+                  }}
+                >
+                  <TablePagination
+                    component="div"
+                    count={filteredTrains.length}
+                    page={page}
+                    onPageChange={(_, newPage) => setPage(newPage)}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={(e) => {
+                      setRowsPerPage(parseInt(e.target.value, 10));
+                      setPage(0);
+                    }}
+                    rowsPerPageOptions={[5, 10, 25]}
+                  />
+                </Box>
+              </Box>
             </Container>
           </>
         ) : (
