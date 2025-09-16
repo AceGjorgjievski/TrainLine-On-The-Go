@@ -1,5 +1,4 @@
 import {
-    colors,
   Container,
   FormControlLabel,
   Radio,
