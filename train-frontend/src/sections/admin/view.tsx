@@ -45,10 +45,10 @@ export default function AdminDashboardView() {
         sx={{
           display: "flex",
           flexWrap: "wrap",
-          gap: 5,
+          gap: 6,
           justifyContent: 'center',
           "& > :not(style)": {
-            m: 2,
+            mt: 4,
             width: 220,
             height: 120,
           },
@@ -69,8 +69,9 @@ export default function AdminDashboardView() {
               borderRadius: 2,
               boxShadow: 5,
               border: '2px solid',
+              transform: selectedKey === card.key ? "scale(1.2)" : "scale(1)",
               "&:hover": {
-                transform: "scale(1.05)",
+                transform: "scale(1.2)",
                 boxShadow: 12,
                 bgcolor: card.hoverColor,
               },
