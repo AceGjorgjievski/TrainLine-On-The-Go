@@ -20,7 +20,6 @@ import { useAuthContext } from "@/auth/hooks";
 import { paths } from "@/routes/paths";
 import { routing, usePathname, useRouter } from "../../../i18n/routing";
 
-
 export default function Header() {
   const { locales } = routing;
   const { authenticated, logout } = useAuthContext();
@@ -55,9 +54,7 @@ export default function Header() {
 
   const handleClose = (localeParam: string | null = null) => {
     setAnchorEl(null);
-    console.log("header: ", localeParam, pathname);
     if (localeParam) {
-      console.log("navigates")
       router.push(pathname, { locale: localeParam });
     }
   };
@@ -66,9 +63,14 @@ export default function Header() {
     <Box
       component="header"
       sx={{
+        position: "sticky",
+        top: 0,
+        zIndex: (theme) => theme.zIndex.appBar + 1,
+        bgcolor: "background.paper",
         borderBottom: "1px solid black",
         py: 2,
         paddingBottom: "0.5rem",
+        boxShadow: 5,
       }}
     >
       <Container
