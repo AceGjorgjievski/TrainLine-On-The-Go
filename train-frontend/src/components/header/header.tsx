@@ -1,8 +1,8 @@
 "use client";
 
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import {
+  Box,
+  Typography,
   Button,
   Container,
   IconButton,
@@ -10,41 +10,55 @@ import {
   MenuItem,
   Stack,
 } from "@mui/material";
-import { Link, routing, usePathname, useRouter } from "../../../i18n/routing";
-import LanguageIcon from "@mui/icons-material/Language";
-import { useState } from "react";
-import { useTranslations } from "next-intl";
 import Image from "next/image";
+
+import LanguageIcon from "@mui/icons-material/Language";
+import { useLocale, useTranslations } from "next-intl";
+
+import { useState } from "react";
 import { useAuthContext } from "@/auth/hooks";
 import { paths } from "@/routes/paths";
+import { routing, usePathname, useRouter } from "../../../i18n/routing";
+
 
 export default function Header() {
   const { locales } = routing;
   const { authenticated, logout } = useAuthContext();
+  console.log("auth", authenticated);
   const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations("Locale");
   const tHeader = useTranslations("Header");
+  const locale = useLocale();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const logoutUser = async () => {
-    if (pathname.split("/")[1] === "admin") {
-      console.log("enters");
-      router.replace(paths.home);
-    }
     await logout();
+    if (pathname === "/admin") {
+      router.replace(paths.home());
+    }
+  };
+
+  const loginUser = () => {
+    const loginPath = paths.login();
+
+    if (pathname !== loginPath) {
+      router.push(paths.login());
+    }
   };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (locale: string | null = null) => {
+  const handleClose = (localeParam: string | null = null) => {
     setAnchorEl(null);
-    if (locale) {
-      router.push(pathname, { locale });
+    console.log("header: ", localeParam, pathname);
+    if (localeParam) {
+      console.log("navigates")
+      router.push(pathname, { locale: localeParam });
     }
   };
 
@@ -54,7 +68,7 @@ export default function Header() {
       sx={{
         borderBottom: "1px solid black",
         py: 2,
-        backgroundColor: "cyan",
+        paddingBottom: "0.5rem",
       }}
     >
       <Container
@@ -64,33 +78,23 @@ export default function Header() {
           justifyContent: "space-between",
         }}
       >
-        <Typography>
-          <Link href="/">{tHeader("home")}</Link>
-        </Typography>
-        <Stack direction="row" spacing={4}>
-          <Link href="/timetable" color="text.primary">
-            {tHeader("timetable")}
-          </Link>
-          <Link href="/live" color="text.primary">
-            {tHeader("live")}
-          </Link>
-
+        <Typography>{tHeader("title")}</Typography>
+        <Stack direction="row" spacing={2}>
           {!authenticated && (
-            <Link href="/login" color="text.primary">
+            <Button variant="contained" onClick={loginUser} size="small">
               Login
-            </Link>
+            </Button>
           )}
 
           {authenticated && (
             <>
-              <Link href="/admin" color="text.primary">
-                Admin
-              </Link>
-              <Button onClick={logoutUser}>Log out</Button>
+              <Button variant="contained" onClick={logoutUser} size="small">
+                Log out
+              </Button>
             </>
           )}
 
-          <IconButton onClick={handleClick} color="inherit">
+          <IconButton onClick={handleClick} color="primary">
             <LanguageIcon />
           </IconButton>
           <Menu anchorEl={anchorEl} open={open} onClose={() => handleClose()}>

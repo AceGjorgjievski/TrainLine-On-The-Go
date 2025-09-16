@@ -17,6 +17,7 @@ import {
 import HomeIcon from "@mui/icons-material/Home";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import LiveTvIcon from "@mui/icons-material/LiveTv";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 import { usePathname, useRouter } from "../../../i18n/routing";
 import { paths } from "@/routes/paths";
@@ -29,18 +30,23 @@ const drawerWidth = 240;
 const drawerItems = [
   {
     label: "Home",
-    path: "/",
+    path: paths.home(),
     icon: <HomeIcon />,
   },
   {
     label: "Timetable",
-    path: "/timetable",
+    path: paths.timetable(),
     icon: <ScheduleIcon />,
   },
   {
     label: "Live",
-    path: "/live",
+    path: paths.live(),
     icon: <LiveTvIcon />,
+  },
+  {
+    label: "Admin",
+    path: paths.admin.root(),
+    icon: <AdminPanelSettingsIcon />,
   },
 ];
 
@@ -49,10 +55,7 @@ export default function DashBoardLayout({ children }: Props) {
   const pathName = usePathname();
 
   const handleNavigate = (path: string) => {
-    const validPath = path as keyof typeof paths;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    router.push(paths[validPath]());
+    router.push(path);
   };
 
   return (
@@ -80,9 +83,7 @@ export default function DashBoardLayout({ children }: Props) {
                   <ListItem key={index} disablePadding>
                     <ListItemButton
                       selected={selected}
-                      onClick={() =>
-                        handleNavigate(path === "/" ? "home" : path.slice(1))
-                      }
+                      onClick={() => handleNavigate(path)}
                       sx={{
                         marginTop: "1rem",
                         bgcolor: selected ? colors.purple[500] : "",
@@ -101,7 +102,6 @@ export default function DashBoardLayout({ children }: Props) {
                           bgcolor: colors.purple[500],
                           color: "#fff",
                         },
-
                         "&.Mui-selected:hover": {
                           bgcolor: colors.purple[600],
                           color: "#fff",
