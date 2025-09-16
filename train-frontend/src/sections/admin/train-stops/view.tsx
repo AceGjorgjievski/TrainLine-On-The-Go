@@ -75,17 +75,6 @@ export default function TrainStopsAdminView() {
     }
   };
 
-  const handleChangePage = (_: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const sortedStops = trainRoute
     ? [...trainRoute.stationStops].sort((a, b) => {
         let aVal: string | number = "";
@@ -124,6 +113,13 @@ export default function TrainStopsAdminView() {
         display: "flex",
         justifyContent: "center",
         marginTop: "1rem",
+        bgcolor: "#fffdfdff",
+        borderRadius: 2,
+        padding: 3,
+        boxShadow: 10,
+        width: "fit-content",
+        height: "6.5rem",
+        border: "2px solid",
       }}
     >
       <FormControl sx={{ mb: 3, width: "200px" }}>
