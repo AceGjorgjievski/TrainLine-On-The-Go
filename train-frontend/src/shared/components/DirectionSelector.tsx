@@ -1,4 +1,5 @@
 import {
+    colors,
   Container,
   FormControlLabel,
   Radio,
@@ -22,6 +23,12 @@ export default function DirectionSelector({
         flexDirection: "column",
         alignItems: "center",
         mt: 2,
+        bgcolor: "#fffdfdff",
+        borderRadius: 2,
+        padding: 3,
+        boxShadow: 10,
+        width: "fit-content",
+        border: '2px solid'
       }}
     >
       <Typography sx={{ fontWeight: "bold", mb: 1 }}>

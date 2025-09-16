@@ -17,3 +17,9 @@ export const getActiveTrainsByRouteName = async (routeName: string) => {
     return (await res).data;
 }
 
+export const getAllActiveTrains = async () => {
+    const res = axiosInstance.get<ActiveTrainDTO[]>(`${API_URL}/active/all`);
+
+    return (await res).data;
+}
+
