@@ -107,7 +107,7 @@ export default function SideDrawer({
           />
         )}
 
-        {direction && (
+        {!checked && direction && (
           <RouteDirection
             route={route}
             direction={direction}
@@ -115,7 +115,7 @@ export default function SideDrawer({
           />
         )}
 
-        {route && (
+        {!checked && route && (
           <StationLiveTypeFormControl
             viewOption={viewOption}
             handleStationLiveTypeChange={handleStationLiveTypeChange}
