@@ -14,6 +14,7 @@ import {
   TableRow,
   Table,
   Container,
+  colors,
 } from "@mui/material";
 import { TimetableDTO, StationDTO } from "@/types";
 import { DirectionSelector } from "@/shared/components";
@@ -72,14 +73,30 @@ export default function TimeTableView() {
             pb: 1,
             mt: 5,
             mb: 2,
-            border: '2px solid'
+            border: "2px solid",
           }}
         >
           {timetables[direction]?.map((route, index) => (
             <Accordion
               key={index}
-              sx={{ width: "100%", mt: 2, mb: 2 }}
               expanded={expanded === `panel${index}`}
+              sx={{
+                ...(expanded === `panel${index}` && {
+                  borderColor: colors.purple[500],
+                  bgcolor: colors.purple[50],
+                }),
+                width: "100%",
+                mt: 2,
+                mb: 2,
+                border: "2px solid",
+                borderRadius: 2,
+                boxShadow: 4,
+                bgcolor: "background.paper",
+                "&:hover": {
+                  boxShadow: 8,
+                  borderColor: colors.purple[400],
+                },
+              }}
               onChange={handleChange(`panel${index}`)}
               TransitionProps={{ unmountOnExit: true }}
             >
@@ -88,16 +105,32 @@ export default function TimeTableView() {
                 aria-controls={`panel${index}bh-content`}
                 id={`panel${index}bh-header`}
               >
-                <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                <Typography
+                  sx={{
+                    width: "33%",
+                    flexShrink: 0,
+                    fontWeight: "bold",
+                    fontSize: "1.1rem",
+                    color: colors.purple[700],
+                  }}
+                >
                   {route.routeName}
                 </Typography>
-                <Typography sx={{ color: "text.secondary" }}>
-                  Train timetable
-                </Typography>
               </AccordionSummary>
-              <AccordionDetails>
+              <AccordionDetails
+                sx={{
+                  transition: "all 0.3s ease-in-out",
+                  bgcolor: colors.grey[50],
+                  borderTop: "1px solid",
+                  borderColor: colors.grey[300],
+                }}
+              >
                 <Table>
-                  <TableHead>
+                  <TableHead
+                    sx={{
+                      bgcolor: colors.blue[400],
+                    }}
+                  >
                     <TableRow>
                       <TableCell>СТАНИЦА</TableCell>
                       {route.trains.map((train: string, tIdx: number) => (
@@ -107,7 +140,12 @@ export default function TimeTableView() {
                   </TableHead>
                   <TableBody>
                     {route.stations.map((station: StationDTO, sIdx: number) => (
-                      <TableRow key={sIdx}>
+                      <TableRow
+                        key={sIdx}
+                        sx={{
+                          bgcolor: sIdx % 2 === 0 ? colors.blue[50] : "white",
+                        }}
+                      >
                         <TableCell>{station.stationName}</TableCell>
                         {station.times.map((time, timeIdx) => (
                           <TableCell key={timeIdx}>{time}</TableCell>
