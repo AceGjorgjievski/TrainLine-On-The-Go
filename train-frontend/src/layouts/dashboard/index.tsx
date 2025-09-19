@@ -80,7 +80,6 @@ export default function DashBoardLayout({ children }: Props) {
             zIndex: 1,
           }}
         >
-          {/* <Divider /> */}
           <Box sx={{ overflow: "auto" }}>
             <List>
               {drawerItems.map(({ label, path, icon }, index) => {
