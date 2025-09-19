@@ -1,14 +1,14 @@
 "use client";
 
 import { Paper, Box, Typography, colors } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TrainsAdminView from "./trains/view";
 import TrainStopsAdminView from "./train-stops/view";
 import TrainRoutesAdminView from "./train-routes/view";
 
-const TrainsView = () => <TrainsAdminView/>
-const TrainStopsView = () => <TrainStopsAdminView/>
-const TrainRoutesView = () => <TrainRoutesAdminView/>
+const TrainsView = () => <TrainsAdminView />;
+const TrainStopsView = () => <TrainStopsAdminView />;
+const TrainRoutesView = () => <TrainRoutesAdminView />;
 
 const adminCards = [
   {
@@ -30,12 +30,16 @@ const adminCards = [
     key: "trainRoutes",
     color: colors.purple[700],
     hoverColor: colors.purple[500],
-    component: <TrainRoutesView />
-  }
+    component: <TrainRoutesView />,
+  },
 ];
 
 export default function AdminDashboardView() {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   const selectedCard = adminCards.find((card) => card.key === selectedKey);
 
@@ -46,7 +50,7 @@ export default function AdminDashboardView() {
           display: "flex",
           flexWrap: "wrap",
           gap: 6,
-          justifyContent: 'center',
+          justifyContent: "center",
           "& > :not(style)": {
             mt: 4,
             width: 220,
@@ -68,7 +72,7 @@ export default function AdminDashboardView() {
               transition: "transform .3s, box-shadow .3s, background-color .3s",
               borderRadius: 2,
               boxShadow: 5,
-              border: '2px solid',
+              border: "2px solid",
               transform: selectedKey === card.key ? "scale(1.2)" : "scale(1)",
               "&:hover": {
                 transform: "scale(1.2)",
@@ -84,9 +88,7 @@ export default function AdminDashboardView() {
         ))}
       </Box>
 
-      <Box mt={4}>
-        {selectedCard?.component}
-      </Box>
+      <Box mt={4}>{selectedCard?.component}</Box>
     </>
   );
 }

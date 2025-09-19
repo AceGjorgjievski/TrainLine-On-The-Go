@@ -1,9 +1,9 @@
-import AdminView from "@/sections/admin/view";
+import { AdminDashboardView } from "@/sections/admin";
 
 
 export default function AdminPage() {
     return (
-        <AdminView/>
+        <AdminDashboardView/>
     );
 }
 

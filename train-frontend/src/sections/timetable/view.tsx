@@ -26,6 +26,10 @@ export default function TimeTableView() {
   }>({});
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
     const directions: Array<"departure" | "arrival"> = ["departure", "arrival"];
 
     Promise.all(
@@ -64,7 +68,7 @@ export default function TimeTableView() {
         direction={direction}
         handleDirectionChange={handleDirectionChange}
       />
-      {direction && (
+      {direction && timetables[direction]?.length > 0 && (
         <Container
           sx={{
             borderRadius: 4,
@@ -126,15 +130,23 @@ export default function TimeTableView() {
                 }}
               >
                 <Table>
-                  <TableHead
-                    sx={{
-                      bgcolor: colors.blue[400],
-                    }}
-                  >
+                  <TableHead>
                     <TableRow>
-                      <TableCell>СТАНИЦА</TableCell>
+                      <TableCell>
+                        <Typography
+                          sx={{ fontWeight: "bold", textAlign: "center" }}
+                        >
+                          СТАНИЦА
+                        </Typography>
+                      </TableCell>
                       {route.trains.map((train: string, tIdx: number) => (
-                        <TableCell key={tIdx}>ВОЗ - {train}</TableCell>
+                        <TableCell key={tIdx}>
+                          <Typography
+                            sx={{ fontWeight: "bold", textAlign: "center" }}
+                          >
+                            ВОЗ - {train}
+                          </Typography>
+                        </TableCell>
                       ))}
                     </TableRow>
                   </TableHead>
@@ -146,9 +158,17 @@ export default function TimeTableView() {
                           bgcolor: sIdx % 2 === 0 ? colors.blue[50] : "white",
                         }}
                       >
-                        <TableCell>{station.stationName}</TableCell>
+                        <TableCell>
+                          <Typography sx={{ textAlign: "center" }}>
+                            {station.stationName}
+                          </Typography>
+                        </TableCell>
                         {station.times.map((time, timeIdx) => (
-                          <TableCell key={timeIdx}>{time}</TableCell>
+                          <TableCell key={timeIdx}>
+                            <Typography sx={{ textAlign: "center" }}>
+                              {time}
+                            </Typography>
+                          </TableCell>
                         ))}
                       </TableRow>
                     ))}
