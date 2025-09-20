@@ -22,39 +22,43 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import { usePathname, useRouter } from "../../../i18n/routing";
 import { paths } from "@/routes/paths";
 import { useState } from "react";
+import { useAuthContext } from "@/auth/hooks";
+
+  const drawerItems = [
+    {
+      label: "Home",
+      path: paths.home(),
+      icon: <HomeIcon />,
+    },
+    {
+      label: "Timetable",
+      path: paths.timetable(),
+      icon: <ScheduleIcon />,
+    },
+    {
+      label: "Live",
+      path: paths.live(),
+      icon: <LiveTvIcon />,
+    },
+    {
+      label: "Admin",
+      path: paths.admin.root(),
+      icon: <AdminPanelSettingsIcon />,
+    },
+  ];
 
 type Props = {
   children: React.ReactNode;
 };
-
-const drawerItems = [
-  {
-    label: "Home",
-    path: paths.home(),
-    icon: <HomeIcon />,
-  },
-  {
-    label: "Timetable",
-    path: paths.timetable(),
-    icon: <ScheduleIcon />,
-  },
-  {
-    label: "Live",
-    path: paths.live(),
-    icon: <LiveTvIcon />,
-  },
-  {
-    label: "Admin",
-    path: paths.admin.root(),
-    icon: <AdminPanelSettingsIcon />,
-  },
-];
 
 export default function DashBoardLayout({ children }: Props) {
   const router = useRouter();
   const pathName = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const drawerWidth = isCollapsed ? 82 : 240;
+
+  const { authenticated } = useAuthContext();
+
   const handleNavigate = (path: string) => {
     router.push(path);
   };
@@ -82,56 +86,60 @@ export default function DashBoardLayout({ children }: Props) {
         >
           <Box sx={{ overflow: "auto" }}>
             <List>
-              {drawerItems.map(({ label, path, icon }, index) => {
-                const selected = pathName === path;
-                return (
-                  <Tooltip
-                    title={isCollapsed ? label : ""}
-                    placement="right"
-                    key={index}
-                    arrow
-                  >
-                    <ListItem
-                      disablePadding
-                      sx={{
-                        justifyContent: isCollapsed ? "center" : "flex-start",
-                      }}
+              {drawerItems
+                .filter((item) => item.label !== 'Admin' || authenticated)
+                .map(({ label, path, icon }, index) => {
+                  const selected = pathName === path;
+                  return (
+                    <Tooltip
+                      title={isCollapsed ? label : ""}
+                      placement="right"
+                      key={index}
+                      arrow
                     >
-                      <ListItemButton
-                        selected={selected}
-                        onClick={() => handleNavigate(path)}
+                      <ListItem
+                        disablePadding
                         sx={{
-                          marginTop: "1rem",
                           justifyContent: isCollapsed ? "center" : "flex-start",
-                          bgcolor: selected ? colors.purple[500] : "",
-                          color: selected ? "#fff" : "#000",
-                          "&:hover": {
-                            bgcolor: colors.purple[300],
-                            color: "#fff",
-                          },
-                          "&.Mui-selected": {
-                            bgcolor: colors.purple[500],
-                            color: "#fff",
-                          },
-                          "&.Mui-selected:hover": {
-                            bgcolor: colors.purple[600],
-                            color: "#fff",
-                          },
-                          "& .MuiListItemIcon-root": {
-                            color: selected ? "#fff" : "#000",
-                            minWidth: 0,
-                            mr: isCollapsed ? 0 : 2,
-                            justifyContent: "center",
-                          },
                         }}
                       >
-                        <ListItemIcon>{icon}</ListItemIcon>
-                        {!isCollapsed && <ListItemText primary={label} />}
-                      </ListItemButton>
-                    </ListItem>
-                  </Tooltip>
-                );
-              })}
+                        <ListItemButton
+                          selected={selected}
+                          onClick={() => handleNavigate(path)}
+                          sx={{
+                            marginTop: "1rem",
+                            justifyContent: isCollapsed
+                              ? "center"
+                              : "flex-start",
+                            bgcolor: selected ? colors.purple[500] : "",
+                            color: selected ? "#fff" : "#000",
+                            "&:hover": {
+                              bgcolor: colors.purple[300],
+                              color: "#fff",
+                            },
+                            "&.Mui-selected": {
+                              bgcolor: colors.purple[500],
+                              color: "#fff",
+                            },
+                            "&.Mui-selected:hover": {
+                              bgcolor: colors.purple[600],
+                              color: "#fff",
+                            },
+                            "& .MuiListItemIcon-root": {
+                              color: selected ? "#fff" : "#000",
+                              minWidth: 0,
+                              mr: isCollapsed ? 0 : 2,
+                              justifyContent: "center",
+                            },
+                          }}
+                        >
+                          <ListItemIcon>{icon}</ListItemIcon>
+                          {!isCollapsed && <ListItemText primary={label} />}
+                        </ListItemButton>
+                      </ListItem>
+                    </Tooltip>
+                  );
+                })}
             </List>
           </Box>
         </Drawer>
