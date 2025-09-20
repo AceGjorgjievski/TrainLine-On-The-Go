@@ -1,0 +1,274 @@
+"use client";
+
+import {
+  fromSkopjeRouteNameMap,
+  toSkopjeRouteNameMap,
+} from "@/constants/routes";
+import { getTrainRoutesByName } from "@/services";
+import { DirectionSelector } from "@/shared/components";
+import { TrainRouteDTO } from "@/types";
+import {
+  Container,
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Box,
+  Button,
+  Stack,
+  CircularProgress,
+  TablePagination,
+  Typography,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+
+type SortKey = "name";
+type SortOrder = "asc" | "desc" | "";
+
+export default function TrainRoutesAdminView() {
+  const [direction, setDirection] = useState<"departure" | "arrival" | "">("");
+  const [allRoutes, setAllRoutes] = useState<TrainRouteDTO[]>([]);
+
+  const [loading, setLoading] = useState(false);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [sortKey, setSortKey] = useState<SortKey>("name");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+
+  const handleDirectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDirection = e.target.value as "departure" | "arrival";
+    setDirection(selectedDirection);
+  };
+
+  useEffect(() => {
+    const fetchAllRoutes = async () => {
+      try {
+        setLoading(true);
+
+        const fromSkopjePromise = Object.values(fromSkopjeRouteNameMap).map(
+          (routeName) => getTrainRoutesByName(routeName)
+        );
+
+        const toSkopjePromise = Object.values(toSkopjeRouteNameMap).map(
+          (routeName) => getTrainRoutesByName(routeName)
+        );
+
+        const [fromRoutes, toRoutes] = await Promise.all([
+          Promise.all(fromSkopjePromise),
+          Promise.all(toSkopjePromise),
+        ]);
+
+        setAllRoutes([...fromRoutes, ...toRoutes]);
+      } catch (error) {
+        console.error("Failed to fetch routes", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllRoutes();
+  }, []);
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortOrder("asc");
+    }
+  };
+
+  const filteredRoutes = allRoutes.filter((route) =>
+    direction === "departure"
+      ? Object.values(fromSkopjeRouteNameMap).includes(route.name)
+      : Object.values(toSkopjeRouteNameMap).includes(route.name)
+  );
+
+  const sortedRoutes = [...filteredRoutes].sort((a, b) => {
+    const aValue = a[sortKey].toLowerCase();
+    const bValue = b[sortKey].toLowerCase();
+
+    if (sortOrder === "asc") return aValue.localeCompare(bValue);
+    if (sortOrder === "desc") return bValue.localeCompare(aValue);
+    return 0;
+  });
+
+  const paginatedRoutes = sortedRoutes.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  const renderSortIcon = (key: SortKey) => {
+    if (sortKey !== key || sortOrder === "") return null;
+    return sortOrder === "asc" ? "▲" : "▼";
+  };
+
+  return (
+    <>
+      <DirectionSelector
+        direction={direction}
+        handleDirectionChange={handleDirectionChange}
+      />
+      {direction && (
+        <Container>
+          {loading ? (
+            <Box sx={{ textAlign: "center", mt: 5 }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <>
+              <TableContainer
+                component={Paper}
+                sx={{
+                  marginTop: 4,
+                  marginBottom: 2,
+                  borderRadius: 4,
+                  boxShadow: 10,
+                  border: "2px solid",
+                }}
+              >
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        sx={{
+                          width: "70%",
+                          cursor: "pointer",
+                          textDecoration: "underline",
+                        }}
+                        onClick={() => handleSort("name")}
+                      >
+                        <Typography
+                          sx={{ fontWeight: "bold", textAlign: "center" }}
+                        >
+                          Route Name {renderSortIcon("name")}
+                        </Typography>
+                      </TableCell>
+
+                      <TableCell
+                        sx={{
+                          width: "70%",
+                        }}
+                      >
+                        <Typography
+                          sx={{ fontWeight: "bold", textAlign: "center" }}
+                        >
+                          Latitude
+                        </Typography>
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          width: "70%",
+                        }}
+                      >
+                        <Typography
+                          sx={{ fontWeight: "bold", textAlign: "center" }}
+                        >
+                          Longitude
+                        </Typography>
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          width: "70%",
+                        }}
+                      >
+                        <Typography
+                          sx={{ fontWeight: "bold", textAlign: "center" }}
+                        >
+                          Zoom Level
+                        </Typography>
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          width: "30%",
+                        }}
+                      >
+                        <Typography
+                          sx={{ fontWeight: "bold", textAlign: "center" }}
+                        >
+                          Action
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {paginatedRoutes.map((route, index) => (
+                      <TableRow key={route.id || index}>
+                        <TableCell align="center">{route.name}</TableCell>
+                        <TableCell align="center">
+                          {route.centerLatitude}
+                        </TableCell>
+                        <TableCell align="center">
+                          {route.centerLongitude}
+                        </TableCell>
+                        <TableCell align="center">{route.zoomLevel}</TableCell>
+                        <TableCell align="center">
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                            justifyContent="center"
+                          >
+                            <Button
+                              variant="contained"
+                              color="warning"
+                              size="small"
+                              onClick={() => console.log("Edit", route.name)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="error"
+                              size="small"
+                              onClick={() => console.log("Delete", route.name)}
+                            >
+                              Delete
+                            </Button>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  mt: 2,
+                  mb: 2,
+                }}
+              >
+                <Box
+                  sx={{
+                    bgcolor: "#fffdfd",
+                    borderRadius: 2,
+                    boxShadow: 10,
+                    border: "2px solid",
+                  }}
+                >
+                  <TablePagination
+                    component="div"
+                    count={sortedRoutes.length}
+                    page={page}
+                    onPageChange={(_, newPage) => setPage(newPage)}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={(e) => {
+                      setRowsPerPage(parseInt(e.target.value, 10));
+                      setPage(0);
+                    }}
+                    rowsPerPageOptions={[5, 10, 25]}
+                  />
+                </Box>
+              </Box>
+            </>
+          )}
+        </Container>
+      )}
+    </>
+  );
+}
