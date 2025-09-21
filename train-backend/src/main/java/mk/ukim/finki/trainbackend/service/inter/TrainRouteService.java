@@ -1,6 +1,7 @@
 package mk.ukim.finki.trainbackend.service.inter;
 
 import mk.ukim.finki.trainbackend.model.TrainRoute;
+import mk.ukim.finki.trainbackend.model.dtos.CreateTrainRouteDto;
 import mk.ukim.finki.trainbackend.model.dtos.TrainRouteDTO;
 
 import java.util.List;
@@ -15,4 +16,8 @@ public interface TrainRouteService {
 
     List<TrainRouteDTO> findAllByNameStartingWith(String routeNamePrefix);
     List<TrainRouteDTO> findAllByNameEndingWith(String routeNameSuffix);
+
+    TrainRoute edit(Long id);
+
+    void add(CreateTrainRouteDto dto);
 }

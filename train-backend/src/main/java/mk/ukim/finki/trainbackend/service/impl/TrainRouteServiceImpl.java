@@ -1,27 +1,30 @@
 package mk.ukim.finki.trainbackend.service.impl;
 
+import lombok.AllArgsConstructor;
 import mk.ukim.finki.trainbackend.model.TrainRoute;
 import mk.ukim.finki.trainbackend.model.TrainRouteStop;
+import mk.ukim.finki.trainbackend.model.TrainStop;
+import mk.ukim.finki.trainbackend.model.dtos.CreateTrainRouteDto;
 import mk.ukim.finki.trainbackend.model.dtos.TrainRouteDTO;
 import mk.ukim.finki.trainbackend.model.dtos.TrainRouteStopDTO;
 import mk.ukim.finki.trainbackend.model.dtos.TrainStopDTO;
 import mk.ukim.finki.trainbackend.model.exceptions.TrainRouteNotFoundException;
 import mk.ukim.finki.trainbackend.repository.TrainRouteRepository;
+import mk.ukim.finki.trainbackend.repository.TrainStopRepository;
 import mk.ukim.finki.trainbackend.service.inter.TrainRouteService;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class TrainRouteServiceImpl implements TrainRouteService {
 
     private final TrainRouteRepository trainRouteRepository;
-
-    public TrainRouteServiceImpl(TrainRouteRepository trainRouteRepository) {
-        this.trainRouteRepository = trainRouteRepository;
-    }
+    private final TrainStopRepository trainStopRepository;
 
     @Override
     public List<TrainRoute> findAll() {
@@ -81,5 +84,37 @@ public class TrainRouteServiceImpl implements TrainRouteService {
         return trainRoutes.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public TrainRoute edit(Long id) {
+        TrainRoute trainRoute = this.findById(id);
+
+
+        return null;
+    }
+
+    @Override
+    public void add(CreateTrainRouteDto dto) {
+        List<TrainStop> trainStopList = dto.getStationStops().stream()
+                .map(id -> this.trainStopRepository.findById(id.longValue()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
+        TrainRoute newRoute = new TrainRoute();
+        newRoute.setName(dto.getName());
+        newRoute.setCenterLatitude(dto.getCenterLatitude());
+        newRoute.setCenterLongitude(dto.getCenterLongitude());
+        newRoute.setZoomLevel(dto.getZoomLevel());
+        newRoute.setStartStation(trainStopList.get(0));
+        newRoute.setEndStation(trainStopList.get(trainStopList.size() - 1));
+        newRoute.setTotalRouteTime(dto.getTotalRouteTime());
+        newRoute.setRouteDistance(dto.getRouteDistance());
+        newRoute.setWorking(dto.isWorking());
+
+
+        trainRouteRepository.save(newRoute);
+
     }
 }

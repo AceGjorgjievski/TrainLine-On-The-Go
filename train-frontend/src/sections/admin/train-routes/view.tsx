@@ -4,9 +4,9 @@ import {
   fromSkopjeRouteNameMap,
   toSkopjeRouteNameMap,
 } from "@/constants/routes";
-import { getTrainRoutesByName } from "@/services";
+import { getAllTrainStops, getTrainRoutesByName } from "@/services";
 import { DirectionSelector } from "@/shared/components";
-import { TrainRouteDTO } from "@/types";
+import { TrainRouteDTO, TrainStop } from "@/types";
 import {
   Container,
   TableContainer,
@@ -24,6 +24,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { EditTrainRouteModal } from "./edit-train-route-modal";
+import { AddTrainRouteModal } from "./add-train-route-modal";
 
 type SortKey = "name";
 type SortOrder = "asc" | "desc" | "";
@@ -39,10 +41,29 @@ export default function TrainRoutesAdminView() {
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingRoute, setEditingRoute] = useState<TrainRouteDTO | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleDirectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedDirection = e.target.value as "departure" | "arrival";
     setDirection(selectedDirection);
   };
+  const [trainStopData, setTrainStopData] = useState<TrainStop[]>([]);
+
+    useEffect(() => {
+      const fetchAllTrainStops = async () => {
+        getAllTrainStops()
+          .then((data) => {
+            setTrainStopData(data);
+          })
+          .catch((err) => {
+            console.error("Error fetching train stop data: ", err);
+          });
+      };
+  
+      fetchAllTrainStops();
+    }, []);
 
   useEffect(() => {
     const fetchAllRoutes = async () => {
@@ -121,6 +142,24 @@ export default function TrainRoutesAdminView() {
             </Box>
           ) : (
             <>
+            <Box 
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    marginTop: '1rem'
+                }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={() => setIsAddModalOpen(true)}
+              >
+                Add New Route
+              </Button>
+            </Box>
+
+
               <TableContainer
                 component={Paper}
                 sx={{
@@ -216,7 +255,10 @@ export default function TrainRoutesAdminView() {
                               variant="contained"
                               color="warning"
                               size="small"
-                              onClick={() => console.log("Edit", route.name)}
+                              onClick={() => {
+                                setEditingRoute(route);
+                                setIsModalOpen(true);
+                              }}
                             >
                               Edit
                             </Button>
@@ -269,6 +311,28 @@ export default function TrainRoutesAdminView() {
           )}
         </Container>
       )}
+      {editingRoute && (
+        <EditTrainRouteModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          route={editingRoute}
+          onSave={(updatedRoute) => {
+            setAllRoutes((prev) =>
+              prev.map((r) => (r.id === updatedRoute.id ? updatedRoute : r))
+            );
+          }}
+        />
+      )}
+      {
+        <AddTrainRouteModal
+          open={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onSave={(newRoute) => {
+            setAllRoutes((prev) => [...prev, newRoute]);
+          }}
+          trainStops={trainStopData}
+        />
+      }
     </>
   );
 }
