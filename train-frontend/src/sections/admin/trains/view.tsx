@@ -80,8 +80,8 @@ export default function TrainsAdminView() {
     return false;
   });
 
-  const [sortKey, setSortKey] = useState<SortKey | "">("");
-  const [sortOrder, setSortOrder] = useState<SortOrder>("");
+  const [sortKey, setSortKey] = useState<SortKey | "">("trainStatus");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
   const sortedTrains = [...filteredTrains].sort((a, b) => {
     if (!sortKey || sortOrder === "") return 0;
