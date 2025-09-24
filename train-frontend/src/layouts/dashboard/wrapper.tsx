@@ -1,9 +1,8 @@
 "use client";
-
 import dynamic from "next/dynamic";
 
 const DashBoardLayout = dynamic(() => import("./index"), {
-  loading: () => <div>Loading Dashbaord</div>,
+  loading: () => <div>Loading Dashboard...</div>,
   ssr: false,
 });
 

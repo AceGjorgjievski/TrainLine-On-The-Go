@@ -11,6 +11,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Toolbar,
   Tooltip,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
@@ -23,29 +24,30 @@ import { usePathname, useRouter } from "../../../i18n/routing";
 import { paths } from "@/routes/paths";
 import { useState } from "react";
 import { useAuthContext } from "@/auth/hooks";
+import { useSidebarContext } from "@/components/context";
 
-  const drawerItems = [
-    {
-      label: "Home",
-      path: paths.home(),
-      icon: <HomeIcon />,
-    },
-    {
-      label: "Timetable",
-      path: paths.timetable(),
-      icon: <ScheduleIcon />,
-    },
-    {
-      label: "Live",
-      path: paths.live(),
-      icon: <LiveTvIcon />,
-    },
-    {
-      label: "Admin",
-      path: paths.admin.root(),
-      icon: <AdminPanelSettingsIcon />,
-    },
-  ];
+const drawerItems = [
+  {
+    label: "Home",
+    path: paths.home(),
+    icon: <HomeIcon />,
+  },
+  {
+    label: "Timetable",
+    path: paths.timetable(),
+    icon: <ScheduleIcon />,
+  },
+  {
+    label: "Live",
+    path: paths.live(),
+    icon: <LiveTvIcon />,
+  },
+  {
+    label: "Admin",
+    path: paths.admin.root(),
+    icon: <AdminPanelSettingsIcon />,
+  },
+];
 
 type Props = {
   children: React.ReactNode;
@@ -54,8 +56,11 @@ type Props = {
 export default function DashBoardLayout({ children }: Props) {
   const router = useRouter();
   const pathName = usePathname();
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const drawerWidth = isCollapsed ? 82 : 240;
+  // const [isCollapsed, setIsCollapsed] = useState(false);
+  // const drawerWidth = isCollapsed ? 90 : 240;
+
+  const { isCollapsed, toggleCollapse } = useSidebarContext();
+const drawerWidth = isCollapsed ? 90 : 240;
 
   const { authenticated } = useAuthContext();
 
@@ -74,20 +79,38 @@ export default function DashBoardLayout({ children }: Props) {
             flexShrink: 0,
             [`& .MuiDrawer-paper`]: {
               width: drawerWidth,
-              top: "87px",
-              height: "calc(100% - 87px)",
+              // top: "87px",
+              // height: "calc(100% - 87px)",
               overflowX: "hidden",
               transition: "width 0.3s ease",
               boxSizing: "border-box",
               boxShadow: 10,
             },
-            zIndex: 1,
+            zIndex: 3,
           }}
         >
-          <Box sx={{ overflow: "auto" }}>
+          <Toolbar>
+            <Box
+              component="img"
+              src="/train.png"
+              alt="Logo"
+              onClick={() => router.push(paths.home())}
+              sx={{
+                height: 40,
+                position: "relative",
+                top: "7px",
+                ...(isCollapsed ? { right: "16px" } : { left: "60px" }),
+                transition: "all 0.7s ease",
+                "&:hover": {
+                  cursor: "pointer",
+                },
+              }}
+            />
+          </Toolbar>
+          <Box sx={{ overflow: "auto", marginTop: "3rem" }}>
             <List>
               {drawerItems
-                .filter((item) => item.label !== 'Admin' || authenticated)
+                .filter((item) => item.label !== "Admin" || authenticated)
                 .map(({ label, path, icon }, index) => {
                   const selected = pathName === path;
                   return (
@@ -146,14 +169,14 @@ export default function DashBoardLayout({ children }: Props) {
         <Box
           sx={{
             position: "fixed",
-            top: "50%",
-            left: isCollapsed ? 60 : 220,
+            top: "10%",
+            left: isCollapsed ? 68 : 220,
             transition: "left 0.3s ease",
             zIndex: 3,
           }}
         >
           <IconButton
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={() => toggleCollapse()}
             sx={{
               background: "#fff",
               boxShadow: 10,

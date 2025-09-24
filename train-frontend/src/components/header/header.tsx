@@ -19,11 +19,12 @@ import { useState } from "react";
 import { useAuthContext } from "@/auth/hooks";
 import { paths } from "@/routes/paths";
 import { routing, usePathname, useRouter } from "../../../i18n/routing";
+import { useSidebarContext } from "../context";
 
 export default function Header() {
   const { locales } = routing;
   const { authenticated, logout } = useAuthContext();
-  console.log("auth", authenticated);
+  const { isCollapsed } = useSidebarContext();
   const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations("Locale");
@@ -65,9 +66,8 @@ export default function Header() {
       sx={{
         position: "sticky",
         top: 0,
-        zIndex: (theme) => theme.zIndex.appBar + 1,
+        zIndex: 2,
         bgcolor: "background.paper",
-        borderBottom: "1px solid black",
         py: 2,
         paddingBottom: "0.5rem",
         boxShadow: 5,
@@ -80,7 +80,26 @@ export default function Header() {
           justifyContent: "space-between",
         }}
       >
-        <Typography>{tHeader("title")}</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexGrow: 1,
+            marginLeft: isCollapsed ? "75px" : "230px",
+            marginRight: "3rem",
+            transition: "margin-left 0.3s ease",
+          }}
+        >
+          <Typography
+            sx={{
+              fontWeight: "bold",
+              fontSize: "1.5rem",
+            }}
+          >
+            {tHeader("title")}
+          </Typography>
+        </Box>
+
         <Stack direction="row" spacing={2}>
           {!authenticated && (
             <Button variant="contained" onClick={loginUser} size="small">

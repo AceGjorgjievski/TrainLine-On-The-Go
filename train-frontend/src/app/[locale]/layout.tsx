@@ -6,8 +6,9 @@ import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { AuthProvider } from "@/auth/context/jwt/auth-provider";
-import DashBoardLayout from "@/layouts/dashboard";
-
+import DashboardClientWrapper from "@/layouts/dashboard/wrapper";
+import { Header } from "@/components/header";
+import { SidebarProvider } from "@/components/context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +33,6 @@ export default async function RootLayout(props: {
   const locale = params.locale;
   const children = props.children;
 
-
   if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
@@ -44,9 +44,10 @@ export default async function RootLayout(props: {
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>
-            <DashBoardLayout>
-              {children}
-            </DashBoardLayout>
+            <SidebarProvider>
+              <Header />
+              <DashboardClientWrapper>{children}</DashboardClientWrapper>
+            </SidebarProvider>
           </AuthProvider>
         </NextIntlClientProvider>
       </body>
