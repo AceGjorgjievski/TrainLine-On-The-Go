@@ -6,13 +6,6 @@ type Props = {
   routeData: TrainRouteDTO | null;
 };
 
-/**
- 1. refactor na live vo nova komponenta
- 2. renceter map da se sredi
- 3. servicite refaktor
- 4. admin view na live da ima opcija da gi vidi site live vozovi
- */
-
 export default function TrainStopMarker({ routeData }: Props) {
   return (
     <>

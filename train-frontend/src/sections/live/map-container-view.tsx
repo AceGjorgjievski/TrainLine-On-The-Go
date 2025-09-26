@@ -14,7 +14,11 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { Container, Button, CircularProgress, Box } from "@mui/material";
 import { SideDrawer } from "@/components/sideDrawer";
 
-import { getTrainRoutesByName, getActiveTrainsByRouteName } from "@/services";
+import {
+  getTrainRoutesByName,
+  getActiveTrainsByRouteName,
+  getAllActiveTrains,
+} from "@/services";
 import {
   Coord,
   LiveTrainProgress,
@@ -30,6 +34,7 @@ import {
   getJsonFilePath,
   findStationsBetween,
   getTimeDiffInSeconds,
+  parseRouteName,
 } from "@/shared/utils";
 
 L.Icon.Default.mergeOptions({
@@ -54,6 +59,9 @@ export default function MapContainerView() {
   const [activeTrains, setActiveTrains] = useState<ActiveTrainDTO[]>([]);
 
   const [coord, setCoord] = useState<Coord[]>([]);
+  const [allCoordMap, setAllCoordMap] = useState<Map<string, Coord[]>>(
+    new Map()
+  );
   const [loading, setLoading] = useState<boolean>(false);
 
   const [shouldRecenter, setShouldRecenter] = useState(false);
@@ -87,54 +95,60 @@ export default function MapContainerView() {
   }, []);
 
   useEffect(() => {
-    if (!coord.length || !activeTrains.length) return;
+    if (!allCoordMap.size || !activeTrains.length) return;
 
-    const updatedProgress = activeTrains
-      .map((train) => {
-        const lastStationNumber = train.currentPassedStationNumber.toString();
-        const { lastStation, nextStation, segment } = findStationsBetween(
-          coord,
-          lastStationNumber
-        );
+    const updatedProgress: LiveTrainProgress[] = [];
+    for (const train of activeTrains) {
+      const parsed = parseRouteName(train.routeName);
+      if (!parsed) continue;
 
-        const stopIdx = train.trainStopTimeList.findIndex(
-          (t) =>
-            t.trainRouteStopDTO.stationSequenceNumber ===
-            Number(lastStationNumber)
-        );
+      const key = `${parsed.route}-${parsed.direction}`;
+      const coordList = allCoordMap.get(key);
+      if (!coordList) continue;
 
-        const lastStop = train.trainStopTimeList[stopIdx];
-        const nextStop = train.trainStopTimeList[stopIdx + 1];
+      const lastStationNumber = train.currentPassedStationNumber.toString();
+      const { lastStation, nextStation, segment } = findStationsBetween(
+        coordList,
+        lastStationNumber
+      );
 
-        if (!lastStop || !nextStop || segment.length === 0) return null;
+      const stopIdx = train.trainStopTimeList.findIndex(
+        (t) =>
+          t.trainRouteStopDTO.stationSequenceNumber ===
+          Number(lastStationNumber)
+      );
 
-        const totalTime = getTimeDiffInSeconds(
-          lastStop.trainStopTime,
-          nextStop.trainStopTime
-        );
-        const intervalPerStep = totalTime / segment.length;
+      const lastStop = train.trainStopTimeList[stopIdx];
+      const nextStop = train.trainStopTimeList[stopIdx + 1];
 
-        return {
-          trainId: train.id,
-          trainName: train.name,
-          lastStationName: lastStation?.stationName,
-          nextStationName: nextStation?.stationName,
-          lastStationNumber: Number(lastStation?.stationNumber),
-          nextStationNumber: Number(nextStation?.stationNumber),
-          trainStopTimeList: train.trainStopTimeList,
-          routeName: train.routeName,
-          segment,
-          centerLatitude: train.centerLatitude,
-          centerLongitude: train.centerLongitude,
-          zoomLevel: train.zoomLevel,
-          currentIndex: 0,
-          interval: intervalPerStep * 1000, // to ms
-        };
-      })
-      .filter(Boolean) as LiveTrainProgress[];
+      if (!lastStop || !nextStop || segment.length === 0) continue;
+
+      const totalTime = getTimeDiffInSeconds(
+        lastStop.trainStopTime,
+        nextStop.trainStopTime
+      );
+      const intervalPerStep = totalTime / segment.length;
+
+      updatedProgress.push({
+        trainId: train.id,
+        trainName: train.name,
+        lastStationName: lastStation?.stationName,
+        nextStationName: nextStation?.stationName,
+        lastStationNumber: Number(lastStation?.stationNumber),
+        nextStationNumber: Number(nextStation?.stationNumber),
+        trainStopTimeList: train.trainStopTimeList,
+        routeName: train.routeName,
+        segment,
+        centerLatitude: train.centerLatitude,
+        centerLongitude: train.centerLongitude,
+        zoomLevel: train.zoomLevel,
+        currentIndex: 0,
+        interval: intervalPerStep * 1000,
+      });
+    }
 
     setLiveTrainProgress(updatedProgress);
-  }, [activeTrains, coord]);
+  }, [activeTrains, allCoordMap]);
 
   useEffect(() => {
     if (!liveTrainProgress.length) return;
@@ -148,8 +162,13 @@ export default function MapContainerView() {
           if (current.currentIndex < current.segment.length - 1) {
             current.currentIndex += 1;
           } else if (current.nextStationName) {
+            const parsed = parseRouteName(current.routeName);
+            const key = `${parsed.route}-${parsed.direction}`;
+            const routeCoords = allCoordMap.get(key);
+            if (!routeCoords) return prev;
+
             const nextSegment = findStationsBetween(
-              coord,
+              routeCoords,
               `${current.nextStationNumber}`
             );
 
@@ -185,13 +204,18 @@ export default function MapContainerView() {
     return () => {
       intervalIds.forEach(clearInterval);
     };
-  }, [liveTrainProgress]);
+  }, [liveTrainProgress, allCoordMap]);
 
   const handleFormSubmit = (data: FormData) => {
     setRouteData(null);
     setLiveTrainProgress([]);
     setActiveTrains([]);
     setLoading(true);
+
+    if (data.showAllLiveTrains) {
+      fetchAllActiveTrains();
+      return;
+    }
 
     const strategy = {
       departure: {
@@ -257,6 +281,59 @@ export default function MapContainerView() {
       });
   };
 
+  const fetchAllActiveTrains = () => {
+    setLoading(true);
+
+    getAllActiveTrains()
+      .then(async (data) => {
+        setActiveTrains(data);
+
+        const routeJsonsToFetch = new Map<
+          string,
+          { route: RouteKey; direction: Direction }
+        >();
+
+        for (const train of data) {
+          const { route, direction } = parseRouteName(train.routeName);
+
+          if (!route || !direction) continue;
+
+          const key = `${route}-${direction}`;
+
+          if (!routeJsonsToFetch.has(key)) {
+            routeJsonsToFetch.set(key, { route, direction });
+          }
+        }
+
+        const coordFetchPromises = Array.from(routeJsonsToFetch.entries()).map(
+          async ([key, { route, direction }]) => {
+            const jsonPath = getJsonFilePath(route, direction);
+            const res = await fetch(jsonPath);
+            if (!res.ok) throw new Error(`Failed to load ${key}`);
+            const data = await res.json();
+            return [key, data] as [string, Coord[]];
+          }
+        );
+
+        const entries = await Promise.all(coordFetchPromises);
+        const newMap = new Map(entries);
+
+        setAllCoordMap(newMap);
+        setLiveMapCenter({
+          lat: 41.6,
+          lng: 21.7,
+          zoom: 8,
+        });
+        setShouldRecenter(true);
+      })
+      .catch((err) => {
+        console.error("Error fetching active trains or route JSONs:", err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   const centerPosition: LatLngExpression | undefined = routeData
     ? [routeData.centerLatitude, routeData.centerLongitude]
     : liveMapCenter
@@ -277,6 +354,7 @@ export default function MapContainerView() {
         padding: 0,
         margin: 0,
         position: "relative",
+        zIndex: 0,
       }}
     >
       <Button
