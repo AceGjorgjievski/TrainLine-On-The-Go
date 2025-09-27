@@ -153,53 +153,70 @@ export default function MapContainerView() {
   useEffect(() => {
     if (!liveTrainProgress.length) return;
 
-    const intervalIds = liveTrainProgress.map((train, i) => {
-      return setInterval(() => {
+    const intervalIds: any[] = [];
+
+    for (let i = 0; i < liveTrainProgress.length; i++) {
+      const train = liveTrainProgress[i];
+
+      const intervalId = setInterval(() => {
         setLiveTrainProgress((prev) => {
-          const copy = [...prev];
-          const current = copy[i];
 
-          if (current.currentIndex < current.segment.length - 1) {
-            current.currentIndex += 1;
-          } else if (current.nextStationName) {
-            const parsed = parseRouteName(current.routeName);
-            const key = `${parsed.route}-${parsed.direction}`;
-            const routeCoords = allCoordMap.get(key);
-            if (!routeCoords) return prev;
+          const updatedTrainProgress = prev.map((trainProgress, index) => {
+            const currentTrain = { ...trainProgress };
 
-            const nextSegment = findStationsBetween(
-              routeCoords,
-              `${current.nextStationNumber}`
-            );
+            if (currentTrain.currentIndex < currentTrain.segment.length - 1) {
+              currentTrain.currentIndex += 1;
+            } else if (currentTrain.nextStationName) {
+              const parsed = parseRouteName(currentTrain.routeName);
+              const key = `${parsed.route}-${parsed.direction}`;
+              const routeCoords = allCoordMap.get(key);
 
-            if (nextSegment.segment.length > 0) {
-              current.segment = nextSegment.segment;
-              current.currentIndex = 0;
-              current.lastStationName = nextSegment.lastStation?.stationName;
-              current.nextStationName = nextSegment.nextStation?.stationName;
+              if (!routeCoords) return trainProgress;
 
-              const lastStop = train.trainStopTimeList.find(
-                (t) =>
-                  t.trainRouteStopDTO.trainStop.name === current.lastStationName
+              const nextSegment = findStationsBetween(
+                routeCoords,
+                `${currentTrain.nextStationNumber}`
               );
-              const nextStop = train.trainStopTimeList.find(
-                (t) =>
-                  t.trainRouteStopDTO.trainStop.name === current.nextStationName
-              );
-              if (lastStop && nextStop) {
-                const totalTime = getTimeDiffInSeconds(
-                  lastStop.trainStopTime,
-                  nextStop.trainStopTime
+
+              if (nextSegment.segment.length > 0) {
+                currentTrain.segment = nextSegment.segment;
+                currentTrain.currentIndex = 0;
+                currentTrain.lastStationName =
+                  nextSegment.lastStation?.stationName;
+                currentTrain.nextStationName =
+                  nextSegment.nextStation?.stationName;
+
+                const lastStop = train.trainStopTimeList.find(
+                  (t) =>
+                    t.trainRouteStopDTO.trainStop.name ===
+                    currentTrain.lastStationName
                 );
-                current.interval = (totalTime / current.segment.length) * 1000;
+                const nextStop = train.trainStopTimeList.find(
+                  (t) =>
+                    t.trainRouteStopDTO.trainStop.name ===
+                    currentTrain.nextStationName
+                );
+
+                if (lastStop && nextStop) {
+                  const totalTime = getTimeDiffInSeconds(
+                    lastStop.trainStopTime,
+                    nextStop.trainStopTime
+                  );
+                  currentTrain.interval =
+                    (totalTime / currentTrain.segment.length) * 1000;
+                }
               }
             }
-          }
 
-          return copy;
+            return currentTrain;
+          });
+
+          return updatedTrainProgress;
         });
       }, train.interval);
-    });
+
+      intervalIds.push(intervalId);
+    }
 
     return () => {
       intervalIds.forEach(clearInterval);
@@ -262,6 +279,12 @@ export default function MapContainerView() {
     ])
       .then(([activeTrainData, routeJsonCoordData]) => {
         setActiveTrains(activeTrainData);
+          setAllCoordMap((prev) => {
+            const newMap = new Map(prev);
+            const key = `${route}-${direction}`;
+            newMap.set(key, routeJsonCoordData);
+            return newMap;
+          });
         if (activeTrainData.length > 0) {
           const firstTrain = activeTrainData[0];
           setLiveMapCenter({
