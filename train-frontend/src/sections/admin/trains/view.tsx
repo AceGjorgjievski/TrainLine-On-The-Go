@@ -27,6 +27,12 @@ import {
 } from "@mui/material";
 import { DirectionSelector } from "@/shared/components";
 
+const statusOrder = {
+  ACTIVE: 0,
+  UPCOMING: 1,
+  INACTIVE: 2,
+};
+
 type SortKey = "name" | "trainRouteName" | "trainStatus";
 type SortOrder = "asc" | "desc" | "";
 
@@ -85,6 +91,13 @@ export default function TrainsAdminView() {
 
   const sortedTrains = [...filteredTrains].sort((a, b) => {
     if (!sortKey || sortOrder === "") return 0;
+
+    if (sortKey === "trainStatus") {
+      const orderA = statusOrder[a.trainStatus];
+      const orderB = statusOrder[b.trainStatus];
+
+      return sortOrder === "asc" ? orderA - orderB : orderB - orderA;
+    }
 
     const valA = a[sortKey];
     const valB = b[sortKey];
