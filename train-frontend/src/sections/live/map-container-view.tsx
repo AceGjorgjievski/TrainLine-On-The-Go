@@ -153,7 +153,7 @@ export default function MapContainerView() {
   useEffect(() => {
     if (!liveTrainProgress.length) return;
 
-    const intervalIds: any[] = [];
+    const intervalIds: NodeJS.Timeout[] = [];
 
     for (let i = 0; i < liveTrainProgress.length; i++) {
       const train = liveTrainProgress[i];
