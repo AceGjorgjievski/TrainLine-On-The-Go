@@ -17,7 +17,11 @@ public interface TrainRouteService {
     List<TrainRouteDTO> findAllByNameStartingWith(String routeNamePrefix);
     List<TrainRouteDTO> findAllByNameEndingWith(String routeNameSuffix);
 
-    TrainRoute edit(Long id);
+    List<TrainRouteDTO> findAllDepartureTrainRoutes();
+    List<TrainRouteDTO> findAllArrivalTrainRoutes();
+
+    TrainRoute edit(Long id, TrainRouteDTO dto);
 
     void add(CreateTrainRouteDto dto);
+    void delete(Long routeId);
 }

@@ -7,4 +7,18 @@ export type TrainRouteDTO = {
   centerLatitude: number;
   centerLongitude: number;
   zoomLevel: number;
+  totalRouteTime: number;
+  routeDistance: number;
+  working: boolean;
 }
+
+export type EditTrainRoutePayload = {
+  name: string;
+  centerLatitude: number;
+  centerLongitude: number;
+  zoomLevel: number;
+  totalRouteTime: number;
+  routeDistance: number;
+  isWorking: boolean;
+  stationStops: { trainStopId: number; order: number }[];
+};

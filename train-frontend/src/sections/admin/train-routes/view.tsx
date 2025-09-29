@@ -1,10 +1,11 @@
 "use client";
 
 import {
-  fromSkopjeRouteNameMap,
-  toSkopjeRouteNameMap,
-} from "@/constants/routes";
-import { getAllTrainStops, getTrainRoutesByName } from "@/services";
+  getAllTrainStops,
+  getDepartureTrainRoutes,
+  deleteTrainRoute,
+  getArrivalTrainRoutes,
+} from "@/services";
 import { DirectionSelector } from "@/shared/components";
 import { TrainRouteDTO, TrainStop } from "@/types";
 import {
@@ -22,6 +23,10 @@ import {
   CircularProgress,
   TablePagination,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { EditTrainRouteModal } from "./edit-train-route-modal";
@@ -51,36 +56,33 @@ export default function TrainRoutesAdminView() {
   };
   const [trainStopData, setTrainStopData] = useState<TrainStop[]>([]);
 
-    useEffect(() => {
-      const fetchAllTrainStops = async () => {
-        getAllTrainStops()
-          .then((data) => {
-            setTrainStopData(data);
-          })
-          .catch((err) => {
-            console.error("Error fetching train stop data: ", err);
-          });
-      };
-  
-      fetchAllTrainStops();
-    }, []);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [routeToDelete, setRouteToDelete] = useState<TrainRouteDTO | null>(
+    null
+  );
+
+  useEffect(() => {
+    const fetchAllTrainStops = async () => {
+      getAllTrainStops()
+        .then((data) => {
+          setTrainStopData(data);
+        })
+        .catch((err) => {
+          console.error("Error fetching train stop data: ", err);
+        });
+    };
+
+    fetchAllTrainStops();
+  }, []);
 
   useEffect(() => {
     const fetchAllRoutes = async () => {
       try {
         setLoading(true);
 
-        const fromSkopjePromise = Object.values(fromSkopjeRouteNameMap).map(
-          (routeName) => getTrainRoutesByName(routeName)
-        );
-
-        const toSkopjePromise = Object.values(toSkopjeRouteNameMap).map(
-          (routeName) => getTrainRoutesByName(routeName)
-        );
-
         const [fromRoutes, toRoutes] = await Promise.all([
-          Promise.all(fromSkopjePromise),
-          Promise.all(toSkopjePromise),
+          getDepartureTrainRoutes(),
+          getArrivalTrainRoutes(),
         ]);
 
         setAllRoutes([...fromRoutes, ...toRoutes]);
@@ -105,8 +107,8 @@ export default function TrainRoutesAdminView() {
 
   const filteredRoutes = allRoutes.filter((route) =>
     direction === "departure"
-      ? Object.values(fromSkopjeRouteNameMap).includes(route.name)
-      : Object.values(toSkopjeRouteNameMap).includes(route.name)
+      ? route?.name.startsWith("Skopje")
+      : route?.name.endsWith("Skopje")
   );
 
   const sortedRoutes = [...filteredRoutes].sort((a, b) => {
@@ -118,7 +120,7 @@ export default function TrainRoutesAdminView() {
     return 0;
   });
 
-  const paginatedRoutes = sortedRoutes.slice(
+  const paginatedRoutes: TrainRouteDTO[] = sortedRoutes.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
@@ -126,6 +128,15 @@ export default function TrainRoutesAdminView() {
   const renderSortIcon = (key: SortKey) => {
     if (sortKey !== key || sortOrder === "") return null;
     return sortOrder === "asc" ? "▲" : "▼";
+  };
+
+  const confirmDelete = async () => {
+    if (!routeToDelete) return;
+
+    await deleteTrainRoute(routeToDelete.id);
+    setAllRoutes((prev) => prev.filter((r) => r.id !== routeToDelete.id));
+    setRouteToDelete(null);
+    setConfirmDeleteOpen(false);
   };
 
   return (
@@ -142,23 +153,22 @@ export default function TrainRoutesAdminView() {
             </Box>
           ) : (
             <>
-            <Box 
+              <Box
                 sx={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    marginTop: '1rem'
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginTop: "1rem",
                 }}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                onClick={() => setIsAddModalOpen(true)}
               >
-                Add New Route
-              </Button>
-            </Box>
-
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={() => setIsAddModalOpen(true)}
+                >
+                  Add New Route
+                </Button>
+              </Box>
 
               <TableContainer
                 component={Paper}
@@ -266,7 +276,10 @@ export default function TrainRoutesAdminView() {
                               variant="contained"
                               color="error"
                               size="small"
-                              onClick={() => console.log("Delete", route.name)}
+                              onClick={() => {
+                                setRouteToDelete(route);
+                                setConfirmDeleteOpen(true);
+                              }}
                             >
                               Delete
                             </Button>
@@ -307,6 +320,28 @@ export default function TrainRoutesAdminView() {
                   />
                 </Box>
               </Box>
+              <Dialog
+                open={confirmDeleteOpen}
+                onClose={() => setConfirmDeleteOpen(false)}
+              >
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogContent>
+                  Are you sure you want to delete route{" "}
+                  <strong>{routeToDelete?.name}</strong>?
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setConfirmDeleteOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={confirmDelete}
+                    variant="contained"
+                    color="error"
+                  >
+                    Delete
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </>
           )}
         </Container>
@@ -321,6 +356,7 @@ export default function TrainRoutesAdminView() {
               prev.map((r) => (r.id === updatedRoute.id ? updatedRoute : r))
             );
           }}
+          trainStops={editingRoute.stationStops}
         />
       )}
       {

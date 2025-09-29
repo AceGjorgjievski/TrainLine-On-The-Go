@@ -12,8 +12,10 @@ import mk.ukim.finki.trainbackend.model.exceptions.TrainRouteNotFoundException;
 import mk.ukim.finki.trainbackend.repository.TrainRouteRepository;
 import mk.ukim.finki.trainbackend.repository.TrainStopRepository;
 import mk.ukim.finki.trainbackend.service.inter.TrainRouteService;
+import mk.ukim.finki.trainbackend.service.inter.TrainRouteStopService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,7 @@ public class TrainRouteServiceImpl implements TrainRouteService {
 
     private final TrainRouteRepository trainRouteRepository;
     private final TrainStopRepository trainStopRepository;
+    private final TrainRouteStopService trainRouteStopService;
 
     @Override
     public List<TrainRoute> findAll() {
@@ -64,7 +67,10 @@ public class TrainRouteServiceImpl implements TrainRouteService {
                 trainRouteStopDTOList,
                 trainRoute.getCenterLatitude(),
                 trainRoute.getCenterLongitude(),
-                trainRoute.getZoomLevel()
+                trainRoute.getZoomLevel(),
+                trainRoute.getTotalRouteTime(),
+                trainRoute.getRouteDistance(),
+                trainRoute.isWorking()
         );
     }
 
@@ -87,7 +93,17 @@ public class TrainRouteServiceImpl implements TrainRouteService {
     }
 
     @Override
-    public TrainRoute edit(Long id) {
+    public List<TrainRouteDTO> findAllDepartureTrainRoutes() {
+        return this.findAllByNameStartingWith("Skopje");
+    }
+
+    @Override
+    public List<TrainRouteDTO> findAllArrivalTrainRoutes() {
+        return this.findAllByNameEndingWith("Skopje");
+    }
+
+    @Override
+    public TrainRoute edit(Long id, TrainRouteDTO dto) {
         TrainRoute trainRoute = this.findById(id);
 
 
@@ -112,9 +128,28 @@ public class TrainRouteServiceImpl implements TrainRouteService {
         newRoute.setTotalRouteTime(dto.getTotalRouteTime());
         newRoute.setRouteDistance(dto.getRouteDistance());
         newRoute.setWorking(dto.isWorking());
+        newRoute.setStationStops(new ArrayList<>());
 
+        for (int i = 0; i < trainStopList.size(); i++) {
+            TrainStop stop = trainStopList.get(i);
+            TrainRouteStop trainRouteStop = new TrainRouteStop(
+                    newRoute,
+                    stop,
+                    i + 1
+            );
 
+            newRoute.getStationStops().add(trainRouteStop);
+        }
         trainRouteRepository.save(newRoute);
+    }
 
+    @Override
+    public void delete(Long routeId) {
+        TrainRoute trainRoute = this.findById(routeId);
+        List<TrainRouteStop> stationStops = trainRoute.getStationStops();
+        for(TrainRouteStop trainRouteStop : stationStops) {
+            this.trainRouteStopService.delete(trainRouteStop.getId());
+        }
+        this.trainRouteRepository.delete(trainRoute);
     }
 }

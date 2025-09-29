@@ -9,6 +9,8 @@ import mk.ukim.finki.trainbackend.service.inter.TrainRouteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @AllArgsConstructor
@@ -28,15 +30,33 @@ public class TrainRouteRestController {
         return ResponseEntity.ok(trainRouteDTO);
     }
 
+    @GetMapping("/departure")
+    public ResponseEntity<List<TrainRouteDTO>> findAllDepartureTrainRoutes() {
+        List<TrainRouteDTO> departureTrainRoutes = this.trainRouteService.findAllDepartureTrainRoutes();
+        return ResponseEntity.ok(departureTrainRoutes);
+    }
+
+    @GetMapping("/arrival")
+    public ResponseEntity<List<TrainRouteDTO>> findAllArrivalTrainRoutes() {
+        List<TrainRouteDTO> arrivalTrainRoutes = this.trainRouteService.findAllArrivalTrainRoutes();
+        return ResponseEntity.ok(arrivalTrainRoutes);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<CreateTrainRouteDto> add(@RequestBody CreateTrainRouteDto dto) {
-        System.out.println(dto.getName());
-        System.out.println(dto.getCenterLatitude());
-        System.out.println(dto.getCenterLongitude());
-        dto.getStationStops().stream().forEach(System.out::println);
-
         this.trainRouteService.add(dto);
-
         return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping("/{id}/edit")
+    public ResponseEntity<String> edit(@PathVariable Long id, @RequestBody TrainRouteDTO dto) {
+        this.trainRouteService.edit(id, dto);
+        return ResponseEntity.ok("");
+    }
+
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        this.trainRouteService.delete(id);
+        return ResponseEntity.ok(String.format("Train Route: %d delete", id));
     }
 }
