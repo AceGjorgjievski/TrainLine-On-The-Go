@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TrainStopRepository extends JpaRepository<TrainStop, Long> {
+    TrainStop findByName(String trainStopName);
 }

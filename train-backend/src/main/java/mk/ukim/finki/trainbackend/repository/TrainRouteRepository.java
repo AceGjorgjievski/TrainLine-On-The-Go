@@ -12,4 +12,6 @@ public interface TrainRouteRepository extends JpaRepository<TrainRoute, Long> {
 
     List<TrainRoute> findAllByNameStartingWith(String routeNamePrefix);
     List<TrainRoute> findAllByNameEndingWith(String routeNameSuffix);
+
+    void deleteAllById(Long id);
 }
