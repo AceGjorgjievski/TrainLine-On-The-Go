@@ -5,6 +5,7 @@ import mk.ukim.finki.trainbackend.model.dtos.ActiveTrainDto;
 import mk.ukim.finki.trainbackend.model.dtos.TrainDto;
 import mk.ukim.finki.trainbackend.service.inter.TrainService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +40,7 @@ public class TrainRestController {
     }
 
     @GetMapping("/active/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ActiveTrainDto>> getAllActiveTrains() {
         List<ActiveTrainDto> allActiveTrains = this.trainService.findAllActiveTrains();
 

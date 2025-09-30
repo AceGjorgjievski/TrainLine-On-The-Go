@@ -18,6 +18,12 @@ public class TrainStopRestController {
 
     private final TrainStopService trainStopService;
 
+    @GetMapping
+    public ResponseEntity<List<TrainStop>> getAll() {
+        List<TrainStop> trainStops = this.trainStopService.findAll();
+        return ResponseEntity.ok(trainStops);
+    }
+
     @GetMapping("/{routeId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TrainStop>> getTrainStopsById(@PathVariable String routeId) {

@@ -46,7 +46,9 @@ public class JWTWebSecurityConfig {
                                 "/api/login",
                                 "/api/login/refresh",
                                 "/api/train/**",
-                                "/api/train-stop-time/**"
+                                "/api/train-route/**",
+                                "/api/train-stop-time/**",
+                                "/api/train-route-stop/**"
                         ).permitAll()
                         .requestMatchers("/api/train-route/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
