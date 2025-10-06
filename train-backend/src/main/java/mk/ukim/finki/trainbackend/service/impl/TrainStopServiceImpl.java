@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import mk.ukim.finki.trainbackend.model.TrainRoute;
 import mk.ukim.finki.trainbackend.model.TrainRouteStop;
 import mk.ukim.finki.trainbackend.model.TrainStop;
+import mk.ukim.finki.trainbackend.model.dtos.TrainStopDTO;
+import mk.ukim.finki.trainbackend.model.exceptions.TrainStopNotFoundException;
 import mk.ukim.finki.trainbackend.repository.TrainStopRepository;
 import mk.ukim.finki.trainbackend.service.inter.TrainRouteService;
 import mk.ukim.finki.trainbackend.service.inter.TrainStopService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +29,12 @@ public class TrainStopServiceImpl implements TrainStopService {
     }
 
     @Override
+    public TrainStop findById(Long id) {
+        return this.trainStopRepository.findById(id)
+                .orElseThrow(() -> new TrainStopNotFoundException(id));
+    }
+
+    @Override
     public List<TrainStop> getTrainStopsForRoute(String routeName) {
 
         TrainRoute trainRoute = this.trainRouteService.findByName(routeName);
@@ -33,5 +42,29 @@ public class TrainStopServiceImpl implements TrainStopService {
         return trainRoute.getStationStops().stream()
                 .map(TrainRouteStop::getTrainStop)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public TrainStop add(TrainStopDTO dto) {
+        TrainStop trainStop = new TrainStop(dto.getName(), dto.getLatitude(), dto.getLongitude());
+        return this.trainStopRepository.save(trainStop);
+    }
+
+    @Override
+    public TrainStopDTO edit(Long id, TrainStopDTO dto) {
+        TrainStop found = this.findById(id);
+
+        found.setName(dto.getName());
+        found.setLatitude(dto.getLatitude());
+        found.setLongitude(dto.getLongitude());
+
+        this.trainStopRepository.save(found);
+        return dto;
+    }
+
+    @Override
+    public void delete(Long id) {
+        TrainStop found = this.findById(id);
+        this.trainStopRepository.delete(found);
     }
 }
