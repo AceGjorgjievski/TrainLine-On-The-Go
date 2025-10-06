@@ -217,6 +217,7 @@ export default function TrainStopsAdminView() {
       <DirectionSelector
         direction={direction}
         handleDirectionChange={handleDirectionChange}
+        includeAllOption={true}
       />
       {direction === "all" && (
         <Container
@@ -355,7 +356,7 @@ export default function TrainStopsAdminView() {
           </Box>
         </Container>
       )}
-      
+
       {editingTrainStop && (
         <EditTrainStopModal
           open={editModalOpen}

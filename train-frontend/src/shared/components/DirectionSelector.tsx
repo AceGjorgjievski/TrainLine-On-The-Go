@@ -7,13 +7,15 @@ import {
 } from "@mui/material";
 
 type Props = {
-  direction: "departure" | "arrival" | "";
+  direction: "departure" | "arrival" | "all" | "";
   handleDirectionChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  includeAllOption?: boolean;
 };
 
 export default function DirectionSelector({
   direction,
   handleDirectionChange,
+  includeAllOption = false
 }: Props) {
   return (
     <Container
@@ -50,6 +52,13 @@ export default function DirectionSelector({
           control={<Radio />}
           label="Arrival to Skopje"
         />
+        {includeAllOption && (
+          <FormControlLabel
+            value="all"
+            control={<Radio />}
+            label="All Station Stops"
+          />
+        )}
       </RadioGroup>
     </Container>
   );
