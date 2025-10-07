@@ -18,6 +18,7 @@ import {
   getTrainRoutesByName,
   getActiveTrainsByRouteName,
   getAllActiveTrains,
+  addTrainStop,
 } from "@/services";
 import {
   Coord,
@@ -27,6 +28,7 @@ import {
   FormData,
   Direction,
   RouteKey,
+  TrainStop,
 } from "@/types";
 
 import {
@@ -36,6 +38,7 @@ import {
   getTimeDiffInSeconds,
   parseRouteName,
 } from "@/shared/utils";
+import AddStationClickHandler from "./AddStationClickHandler";
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
@@ -65,6 +68,8 @@ export default function MapContainerView() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [shouldRecenter, setShouldRecenter] = useState(false);
+
+  const [addingStationMode, setAddingStationMode] = useState(false);
 
 
   const toggleDrawer = (open: boolean) => {
@@ -231,6 +236,12 @@ export default function MapContainerView() {
 
     if (data.showAllLiveTrains) {
       fetchAllActiveTrains();
+      return;
+    }
+
+    if(data.addNewTrainStation) {
+      setAddingStationMode(true);
+      setLoading(false);
       return;
     }
 
@@ -439,6 +450,27 @@ export default function MapContainerView() {
           >
             <CircularProgress size={60} sx={{ color: "white" }} />
           </Box>
+        )}
+
+        {addingStationMode && (
+          <AddStationClickHandler
+            onSave={async ({ name, position }) => {
+              const [latRaw, lngRaw] = position as [number, number];
+              const latitude = parseFloat(latRaw.toFixed(6));
+              const longitude = parseFloat(lngRaw.toFixed(6));
+
+              const newTrainStop = {
+                name,
+                latitude,
+                longitude,
+              };
+              await addTrainStop(newTrainStop);
+              setAddingStationMode(false);
+            }}
+            onCancel={() => {
+              setAddingStationMode(false);
+            }}
+          />
         )}
       </MapContainer>
 

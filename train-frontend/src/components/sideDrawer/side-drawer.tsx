@@ -7,7 +7,9 @@ import {
   Box,
   Typography,
   SelectChangeEvent,
-  Checkbox,
+  FormControl,
+  Radio,
+  RadioGroup,
   FormControlLabel,
 } from "@mui/material";
 import { useCallback, useState } from "react";
@@ -22,6 +24,12 @@ type Props = {
   onSubmit: (data: FormData) => void;
 };
 
+type AdminMode =
+  | "View All Trains"
+  | "Add New Train Station"
+  | "Regular Search"
+  | "";
+
 export default function SideDrawer({
   drawerOpen,
   toggleDrawer,
@@ -32,11 +40,7 @@ export default function SideDrawer({
   const [direction, setDirection] = useState<Direction | "">("");
 
   const { authenticated } = useAuthContext();
-  const [checked, setChecked] = useState<boolean>(false);
-
-  const handleCheckedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked);
-  };
+  const [adminMode, setAdminMode] = useState<AdminMode>("");
 
   const handleRouteChange = (event: SelectChangeEvent) => {
     setRoute(event.target.value as RouteKey);
@@ -59,10 +63,17 @@ export default function SideDrawer({
   );
 
   const handleSubmit = () => {
-    if (checked) {
+    if (adminMode === "View All Trains") {
       onSubmit({ showAllLiveTrains: true } as FormData);
+    } else if (adminMode === "Add New Train Station") {
+      onSubmit({ addNewTrainStation: true } as FormData);
     } else {
-      onSubmit({ direction, route, viewOption } as FormData);
+      onSubmit({
+        regularSearch: true,
+        direction,
+        route,
+        viewOption,
+      } as FormData);
     }
     toggleDrawer(false);
   };
@@ -85,29 +96,38 @@ export default function SideDrawer({
         </Typography>
 
         {authenticated && (
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={checked}
-                onChange={handleCheckedChange}
-                inputProps={{ "aria-label": "controlled" }}
+          <FormControl component="fieldset" sx={{ mb: 3 }}>
+            <RadioGroup
+              value={adminMode}
+              onChange={(e) => setAdminMode(e.target.value as AdminMode)}
+            >
+              <FormControlLabel
+                value="View All Trains"
+                control={<Radio />}
+                label="View All Active Trains"
               />
-            }
-            label="View All Active Trains"
-            sx={{
-              marginBottom: "1rem",
-            }}
-          />
+              <FormControlLabel
+                value="Add New Train Station"
+                control={<Radio />}
+                label="Add Station"
+              />
+              <FormControlLabel
+                value="Regular Search"
+                control={<Radio />}
+                label="Regular Search"
+              />
+            </RadioGroup>
+          </FormControl>
         )}
 
-        {!checked && (
+        {adminMode === "Regular Search" && (
           <DepartureArrival
             direction={direction}
             handleDirectionChange={handleDirectionChange}
           />
         )}
 
-        {!checked && direction && (
+        {adminMode === "Regular Search" && direction && (
           <RouteDirection
             route={route}
             direction={direction}
@@ -115,7 +135,7 @@ export default function SideDrawer({
           />
         )}
 
-        {!checked && route && (
+        {adminMode === "Regular Search" && route && (
           <StationLiveTypeFormControl
             viewOption={viewOption}
             handleStationLiveTypeChange={handleStationLiveTypeChange}
@@ -126,7 +146,11 @@ export default function SideDrawer({
           variant="outlined"
           fullWidth
           onClick={handleSubmit}
-          disabled={checked ? false : !direction || !route || !viewOption}
+          disabled={
+            !adminMode ||
+            (adminMode === "Regular Search" &&
+              (!direction || !route || !viewOption))
+          }
         >
           Submit
         </Button>
