@@ -25,7 +25,7 @@ export const editTrainRoute = async (
   id: number,
   data: EditTrainRoutePayload
 ) => {
-  const res = await axiosInstance.put<TrainRouteDTO>(`${API_URL}/${id}`, data);
+  const res = await axiosInstance.put<TrainRouteDTO>(`${API_URL}/${id}/edit`, data);
   return res.data;
 };
 
