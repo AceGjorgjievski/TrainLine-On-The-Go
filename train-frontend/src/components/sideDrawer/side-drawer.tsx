@@ -17,6 +17,7 @@ import RouteDirection from "./routeDirectionFormControl";
 import DepartureArrival from "./departureArrivalFormControl";
 import StationLiveTypeFormControl from "./stationLiveTypeFormControl";
 import { useAuthContext } from "@/auth/hooks";
+import toast from "react-hot-toast";
 
 type Props = {
   drawerOpen: boolean;
@@ -66,6 +67,7 @@ export default function SideDrawer({
     if (adminMode === "View All Trains") {
       onSubmit({ showAllLiveTrains: true } as FormData);
     } else if (adminMode === "Add New Train Station") {
+      toast(() => (<span><b>Click Anywhere on the map to add new station</b></span>), {duration: 3700})
       onSubmit({ addNewTrainStation: true } as FormData);
     } else {
       onSubmit({

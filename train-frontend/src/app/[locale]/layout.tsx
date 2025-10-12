@@ -9,6 +9,7 @@ import { AuthProvider } from "@/auth/context/jwt/auth-provider";
 import DashboardClientWrapper from "@/layouts/dashboard/wrapper";
 import { Header } from "@/components/header";
 import { SidebarProvider } from "@/components/context";
+import ToastProvider from "@/auth/context/toast/toast-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,7 +47,9 @@ export default async function RootLayout(props: {
           <AuthProvider>
             <SidebarProvider>
               <Header />
-              <DashboardClientWrapper>{children}</DashboardClientWrapper>
+              <DashboardClientWrapper>
+                <ToastProvider>{children}</ToastProvider>
+              </DashboardClientWrapper>
             </SidebarProvider>
           </AuthProvider>
         </NextIntlClientProvider>
