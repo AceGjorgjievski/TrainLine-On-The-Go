@@ -12,6 +12,7 @@ import {
 import { useState, useEffect } from "react";
 
 import { editTrainStop } from "@/services";
+import toast from "react-hot-toast";
 
 interface Props {
   open: boolean;
@@ -53,6 +54,7 @@ export default function EditTrainStopModal({
     try {
       const updatedTrainStop = await editTrainStop(formData);
 
+      toast.success("Updated successfully!");
       onSave(updatedTrainStop);
       onClose();
     } catch (error) {

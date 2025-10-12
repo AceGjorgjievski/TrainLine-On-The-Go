@@ -17,6 +17,7 @@ import {
   Container,
 } from "@mui/material";
 import { useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 interface Props {
   open: boolean;
@@ -46,6 +47,7 @@ export function AddTrainRouteModal({
   const handleSubmit = async () => {
     try {
       const newRoute = await addTrainRoute(formDataRef.current);
+      toast.success("Added successfully!")
       onSave(newRoute);
       onClose();
     } catch (err) {

@@ -11,6 +11,7 @@ import mk.ukim.finki.trainbackend.service.inter.TrainRouteStopService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -39,5 +40,15 @@ public class TrainRouteStopServiceImpl implements TrainRouteStopService {
     @Override
     public void delete(Long id) {
         this.trainRouteStopRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<TrainRouteStop> findById(Long id) {
+        return this.trainRouteStopRepository.findById(id);
+    }
+
+    @Override
+    public List<TrainRouteStop> findAllByTrainRoute_IdOrderByStationSequenceNumberAsc(Long trainRouteId) {
+        return this.trainRouteStopRepository.findAllByTrainRoute_IdOrderByStationSequenceNumberAsc(trainRouteId);
     }
 }

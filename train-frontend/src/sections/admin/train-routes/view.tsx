@@ -31,6 +31,7 @@ import {
 import { useEffect, useState } from "react";
 import { EditTrainRouteModal } from "./edit-train-route-modal";
 import { AddTrainRouteModal } from "./add-train-route-modal";
+import { DeleteTrainRouteModal } from "./delete-train-route-modal";
 
 type SortKey = "name";
 type SortOrder = "asc" | "desc" | "";
@@ -320,7 +321,7 @@ export default function TrainRoutesAdminView() {
                   />
                 </Box>
               </Box>
-              <Dialog
+              {/* <Dialog
                 open={confirmDeleteOpen}
                 onClose={() => setConfirmDeleteOpen(false)}
               >
@@ -341,7 +342,17 @@ export default function TrainRoutesAdminView() {
                     Delete
                   </Button>
                 </DialogActions>
-              </Dialog>
+              </Dialog> */}
+              <DeleteTrainRouteModal
+                open={confirmDeleteOpen}
+                onClose={() => setConfirmDeleteOpen(false)}
+                onConfirm={(id: number) => {
+                  setAllRoutes((prev) => 
+                    prev.filter((route) => route.id !== id)
+                  );
+                }}
+                trainRoute={routeToDelete}
+              />
             </>
           )}
         </Container>
@@ -356,7 +367,7 @@ export default function TrainRoutesAdminView() {
               prev.map((r) => (r.id === updatedRoute.id ? updatedRoute : r))
             );
           }}
-          trainStops={editingRoute.stationStops}
+          trainStops={trainStopData}
         />
       )}
       {

@@ -11,6 +11,7 @@ import {
   Button,
 } from "@mui/material";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface Props {
   open: boolean;
@@ -28,6 +29,7 @@ export function AddTrainStopModal({ open, onClose, onSave }: Props) {
   const handleSubmit = async () => {
     try {
       const newTrainStop = await addTrainStop(formData);
+      toast.success("Added successfully!");
       onSave(newTrainStop);
       onClose();
     } catch (err) {

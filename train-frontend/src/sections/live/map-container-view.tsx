@@ -28,7 +28,6 @@ import {
   FormData,
   Direction,
   RouteKey,
-  TrainStop,
 } from "@/types";
 
 import {
@@ -39,6 +38,7 @@ import {
   parseRouteName,
 } from "@/shared/utils";
 import AddStationClickHandler from "./AddStationClickHandler";
+import toast from "react-hot-toast";
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
@@ -466,6 +466,7 @@ export default function MapContainerView() {
               };
               await addTrainStop(newTrainStop);
               setAddingStationMode(false);
+              toast.success("Successfully added new Train Stop !")
             }}
             onCancel={() => {
               setAddingStationMode(false);

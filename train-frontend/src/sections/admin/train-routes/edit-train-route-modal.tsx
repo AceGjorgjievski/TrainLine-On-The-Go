@@ -1,5 +1,5 @@
 import { editTrainRoute } from "@/services";
-import { TrainRouteDTO, EditTrainRoutePayload, TrainRouteStop } from "@/types";
+import { TrainRouteDTO, EditTrainRoutePayload, TrainStop } from "@/types";
 import {
   Modal,
   Box,
@@ -17,13 +17,14 @@ import {
   Container,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 interface Props {
   open: boolean;
   onClose: () => void;
   route: TrainRouteDTO;
   onSave: (updated: TrainRouteDTO) => void;
-  trainStops: TrainRouteStop[];
+  trainStops: TrainStop[];
 }
 
 export function EditTrainRouteModal({
@@ -55,7 +56,7 @@ export function EditTrainRouteModal({
         totalRouteTime: route.totalRouteTime,
         routeDistance: route.routeDistance,
         isWorking: route.working,
-        stationStops: route.stationStops.map((stop) => stop.id),
+        stationStops: route.stationStops.map((stop) => stop.trainStop.id),
       };
       forceUpdate((n) => n + 1);
     }
@@ -64,14 +65,11 @@ export function EditTrainRouteModal({
   const handleSubmit = async () => {
     try {
       const payload: EditTrainRoutePayload = {
-        ...formDataRef.current,
-        stationStops: formDataRef.current.stationStops.map((id, index) => ({
-          trainStopId: id,
-          order: index + 1,
-        })),
+        ...formDataRef.current
       };
 
       const updatedRoute = await editTrainRoute(route.id, payload);
+      toast.success("Updated successfully!");
       onSave(updatedRoute);
       onClose();
     } catch (err) {
@@ -199,7 +197,7 @@ export function EditTrainRouteModal({
                       {selected.map((id) => {
                         const stop = trainStops.find((s) => s.id === id);
                         return (
-                          <Chip key={id} label={stop?.trainStop?.name || id} />
+                          <Chip key={id} label={stop?.name || id} />
                         );
                       })}
                     </Box>
@@ -227,7 +225,7 @@ export function EditTrainRouteModal({
                           alignItems: "center",
                         }}
                       >
-                        {stop?.trainStop?.name}
+                        {stop?.name}
                         {formDataRef.current.stationStops.includes(stop.id) && (
                           <Chip
                             label={

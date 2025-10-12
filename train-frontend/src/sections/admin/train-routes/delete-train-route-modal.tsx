@@ -1,41 +1,37 @@
-"use client";
-
+import { deleteTrainRoute } from "@/services";
+import { TrainRouteDTO } from "@/types";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
-  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
-import { TrainStop } from "@/types";
-import { deleteTrainStop } from "@/services";
 import toast from "react-hot-toast";
 
 interface Props {
   open: boolean;
   onClose: () => void;
   onConfirm: (id: number) => void;
-  stop: TrainStop | null;
+  trainRoute: TrainRouteDTO | null;
 }
 
-export default function DeleteTrainStopDialog({
+export function DeleteTrainRouteModal({
   open,
   onClose,
   onConfirm,
-  stop,
+  trainRoute,
 }: Props) {
-  const name = stop?.name;
-  const id = stop?.id;
+  const id = trainRoute?.id;
 
   const onDelete = async () => {
     try {
-      await deleteTrainStop(id!);
+      await deleteTrainRoute(id!);
       toast.success("Deleted successfully!");
       onConfirm(id!);
       onClose();
     } catch (error) {
-      console.error("Delete train stop failed", error);
+      console.error("Delete train route failed", error);
     }
   };
 
@@ -43,11 +39,8 @@ export default function DeleteTrainStopDialog({
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Confirm Deletion</DialogTitle>
       <DialogContent>
-        Are you sure you want to delete{" "}
-        <Typography component="span" fontWeight="bold">
-          {name}
-        </Typography>
-        ?
+        Are you sure you want to delete route{" "}
+        <strong>{trainRoute?.name}</strong>?
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

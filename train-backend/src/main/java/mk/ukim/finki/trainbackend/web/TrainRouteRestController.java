@@ -4,6 +4,7 @@ package mk.ukim.finki.trainbackend.web;
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.trainbackend.model.TrainRoute;
 import mk.ukim.finki.trainbackend.model.dtos.CreateTrainRouteDto;
+import mk.ukim.finki.trainbackend.model.dtos.EditTrainRouteDto;
 import mk.ukim.finki.trainbackend.model.dtos.TrainRouteDTO;
 import mk.ukim.finki.trainbackend.service.inter.TrainRouteService;
 import org.springframework.http.ResponseEntity;
@@ -49,9 +50,11 @@ public class TrainRouteRestController {
     }
 
     @PutMapping("/{id}/edit")
-    public ResponseEntity<String> edit(@PathVariable Long id, @RequestBody TrainRouteDTO dto) {
-        this.trainRouteService.edit(id, dto);
-        return ResponseEntity.ok("");
+    public ResponseEntity<TrainRouteDTO> edit(@PathVariable Long id, @RequestBody EditTrainRouteDto dto) {
+        return trainRouteService.edit(id, dto)
+                .map(trainRouteService::convertToDTO)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @DeleteMapping("/{id}/delete")

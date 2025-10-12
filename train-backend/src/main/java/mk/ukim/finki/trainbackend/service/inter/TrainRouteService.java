@@ -2,9 +2,11 @@ package mk.ukim.finki.trainbackend.service.inter;
 
 import mk.ukim.finki.trainbackend.model.TrainRoute;
 import mk.ukim.finki.trainbackend.model.dtos.CreateTrainRouteDto;
+import mk.ukim.finki.trainbackend.model.dtos.EditTrainRouteDto;
 import mk.ukim.finki.trainbackend.model.dtos.TrainRouteDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TrainRouteService {
 
@@ -20,7 +22,7 @@ public interface TrainRouteService {
     List<TrainRouteDTO> findAllDepartureTrainRoutes();
     List<TrainRouteDTO> findAllArrivalTrainRoutes();
 
-    TrainRoute edit(Long id, TrainRouteDTO dto);
+    Optional<TrainRoute> edit(Long id, EditTrainRouteDto dto);
 
     void add(CreateTrainRouteDto dto);
     void delete(Long routeId);

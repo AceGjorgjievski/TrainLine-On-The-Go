@@ -15,4 +15,6 @@ public interface TrainRouteStopRepository extends JpaRepository<TrainRouteStop, 
             "where trs.trainRoute.name = :routeName " +
             "order by trs.stationSequenceNumber")
     List<TrainRouteStop> findStopsByRouteName(@Param("routeName") String routeName);
+
+    List<TrainRouteStop> findAllByTrainRoute_IdOrderByStationSequenceNumberAsc(Long trainRouteId);
 }
