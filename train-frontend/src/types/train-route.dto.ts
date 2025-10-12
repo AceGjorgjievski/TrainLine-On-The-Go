@@ -20,5 +20,5 @@ export type EditTrainRoutePayload = {
   totalRouteTime: number;
   routeDistance: number;
   isWorking: boolean;
-  stationStops: { trainStopId: number; order: number }[];
+  stationStops: number[];
 };

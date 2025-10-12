@@ -14,5 +14,7 @@ export type FormData = {
   direction: Direction;
   route: RouteKey;
   viewOption: ViewOptions;
-  showAllLiveTrains?: boolean
+  showAllLiveTrains?: boolean;
+  addNewTrainStation?: boolean;
+  regularSearch?: boolean;
 }
