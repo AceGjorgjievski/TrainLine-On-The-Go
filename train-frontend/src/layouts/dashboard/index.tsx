@@ -82,14 +82,14 @@ export default function DashBoardLayout({ children }: Props) {
               overflowX: "hidden",
               transition: "width 0.3s ease",
               boxSizing: "border-box",
-              boxShadow: 10,
+              boxShadow: 22,
             },
             zIndex: 3,
           }}
         >
           <Toolbar>
             <Image
-              src="/train.png"
+              src="/images/train.png"
               alt="Logo"
               width={100}
               height={40}

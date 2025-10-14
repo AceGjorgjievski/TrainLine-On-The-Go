@@ -1,16 +1,29 @@
 "use client";
 import SplashScreen from "@/components/loading-screen/loading-screen";
 import dynamic from "next/dynamic";
+import { usePathname } from "../../../i18n/routing";
 
-const DashBoardLayout = dynamic(() => import("./index"), {
-  loading: () => <SplashScreen/>,
+const DashboardLayout = dynamic(() => import("./index"), {
+  loading: () => <SplashScreen />,
   ssr: false,
 });
+
+const publicRoutes = ["/login"];
 
 export default function DashboardClientWrapper({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <DashBoardLayout>{children}</DashBoardLayout>;
+  const pathname = usePathname();
+
+  const isPublicRoute = publicRoutes.some((route) =>
+    pathname?.startsWith(route)
+  );
+
+  if (isPublicRoute) {
+    return <>{children}</>;
+  }
+
+  return <DashboardLayout>{children}</DashboardLayout>;
 }
