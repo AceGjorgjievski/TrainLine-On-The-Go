@@ -22,9 +22,9 @@ import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrow
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import { usePathname, useRouter } from "../../../i18n/routing";
 import { paths } from "@/routes/paths";
-import { useState } from "react";
 import { useAuthContext } from "@/auth/hooks";
 import { useSidebarContext } from "@/components/context";
+import Image from "next/image";
 
 const drawerItems = [
   {
@@ -56,11 +56,9 @@ type Props = {
 export default function DashBoardLayout({ children }: Props) {
   const router = useRouter();
   const pathName = usePathname();
-  // const [isCollapsed, setIsCollapsed] = useState(false);
-  // const drawerWidth = isCollapsed ? 90 : 240;
 
   const { isCollapsed, toggleCollapse } = useSidebarContext();
-const drawerWidth = isCollapsed ? 90 : 240;
+  const drawerWidth = isCollapsed ? 90 : 240;
 
   const { authenticated } = useAuthContext();
 
@@ -90,20 +88,18 @@ const drawerWidth = isCollapsed ? 90 : 240;
           }}
         >
           <Toolbar>
-            <Box
-              component="img"
+            <Image
               src="/train.png"
               alt="Logo"
+              width={100}
+              height={40}
               onClick={() => router.push(paths.home())}
-              sx={{
-                height: 40,
+              style={{
                 position: "relative",
                 top: "7px",
-                ...(isCollapsed ? { right: "16px" } : { left: "60px" }),
+                cursor: "pointer",
+                ...(isCollapsed ? { right: "17px" } : { left: "45px" }),
                 transition: "all 0.7s ease",
-                "&:hover": {
-                  cursor: "pointer",
-                },
               }}
             />
           </Toolbar>

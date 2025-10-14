@@ -1,8 +1,9 @@
 "use client";
+import SplashScreen from "@/components/loading-screen/loading-screen";
 import dynamic from "next/dynamic";
 
 const DashBoardLayout = dynamic(() => import("./index"), {
-  loading: () => <div>Loading Dashboard...</div>,
+  loading: () => <SplashScreen/>,
   ssr: false,
 });
 

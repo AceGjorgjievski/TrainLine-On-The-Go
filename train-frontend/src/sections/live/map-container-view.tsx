@@ -383,7 +383,7 @@ export default function MapContainerView() {
       maxWidth={false}
       disableGutters
       style={{
-        height: "87.7vh",
+        height: "100vh",
         width: "100%",
         padding: 0,
         margin: 0,
