@@ -41,7 +41,9 @@ export default function SideDrawer({
   const [direction, setDirection] = useState<Direction | "">("");
 
   const { authenticated } = useAuthContext();
-  const [adminMode, setAdminMode] = useState<AdminMode>("");
+  const [mode, setMode] = useState<AdminMode>(
+    authenticated ? "" : "Regular Search"
+  );
 
   const handleRouteChange = (event: SelectChangeEvent) => {
     setRoute(event.target.value as RouteKey);
@@ -64,10 +66,17 @@ export default function SideDrawer({
   );
 
   const handleSubmit = () => {
-    if (adminMode === "View All Trains") {
+    if (mode === "View All Trains") {
       onSubmit({ showAllLiveTrains: true } as FormData);
-    } else if (adminMode === "Add New Train Station") {
-      toast(() => (<span><b>Click Anywhere on the map to add new station</b></span>), {duration: 3700})
+    } else if (mode === "Add New Train Station") {
+      toast(
+        () => (
+          <span>
+            <b>Click Anywhere on the map to add new station</b>
+          </span>
+        ),
+        { duration: 3700 }
+      );
       onSubmit({ addNewTrainStation: true } as FormData);
     } else {
       onSubmit({
@@ -97,39 +106,41 @@ export default function SideDrawer({
           Choose Options
         </Typography>
 
-        {authenticated && (
-          <FormControl component="fieldset" sx={{ mb: 3 }}>
-            <RadioGroup
-              value={adminMode}
-              onChange={(e) => setAdminMode(e.target.value as AdminMode)}
-            >
-              <FormControlLabel
-                value="View All Trains"
-                control={<Radio />}
-                label="View All Active Trains"
-              />
-              <FormControlLabel
-                value="Add New Train Station"
-                control={<Radio />}
-                label="Add Station"
-              />
-              <FormControlLabel
-                value="Regular Search"
-                control={<Radio />}
-                label="Regular Search"
-              />
-            </RadioGroup>
-          </FormControl>
-        )}
+        <FormControl component="fieldset" sx={{ mb: 3 }}>
+          <RadioGroup
+            value={mode}
+            onChange={(e) => setMode(e.target.value as AdminMode)}
+          >
+            {authenticated && (
+              <>
+                <FormControlLabel
+                  value="View All Trains"
+                  control={<Radio />}
+                  label="View All Active Trains"
+                />
+                <FormControlLabel
+                  value="Add New Train Station"
+                  control={<Radio />}
+                  label="Add Station"
+                />
+                <FormControlLabel
+                  value="Regular Search"
+                  control={<Radio />}
+                  label="Regular Search"
+                />
+              </>
+            )}
+          </RadioGroup>
+        </FormControl>
 
-        {adminMode === "Regular Search" && (
+        {mode === "Regular Search" && (
           <DepartureArrival
             direction={direction}
             handleDirectionChange={handleDirectionChange}
           />
         )}
 
-        {adminMode === "Regular Search" && direction && (
+        {mode === "Regular Search" && direction && (
           <RouteDirection
             route={route}
             direction={direction}
@@ -137,7 +148,7 @@ export default function SideDrawer({
           />
         )}
 
-        {adminMode === "Regular Search" && route && (
+        {mode === "Regular Search" && route && (
           <StationLiveTypeFormControl
             viewOption={viewOption}
             handleStationLiveTypeChange={handleStationLiveTypeChange}
@@ -149,9 +160,8 @@ export default function SideDrawer({
           fullWidth
           onClick={handleSubmit}
           disabled={
-            !adminMode ||
-            (adminMode === "Regular Search" &&
-              (!direction || !route || !viewOption))
+            !mode ||
+            (mode === "Regular Search" && (!direction || !route || !viewOption))
           }
         >
           Submit
