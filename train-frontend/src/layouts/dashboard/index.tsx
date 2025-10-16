@@ -25,6 +25,7 @@ import { paths } from "@/routes/paths";
 import { useAuthContext } from "@/auth/hooks";
 import { useSidebarContext } from "@/components/context";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 const drawerItems = [
   {
@@ -56,6 +57,7 @@ type Props = {
 export default function DashBoardLayout({ children }: Props) {
   const router = useRouter();
   const pathName = usePathname();
+  const tDashboard = useTranslations("Dashboard");
 
   const { isCollapsed, toggleCollapse } = useSidebarContext();
   const drawerWidth = isCollapsed ? 90 : 240;
@@ -87,12 +89,12 @@ export default function DashBoardLayout({ children }: Props) {
             zIndex: 3,
           }}
         >
-          <Toolbar>
+          <Toolbar sx={{ mt: 2}}>
             <Image
               src="/images/train.png"
               alt="Logo"
-              width={100}
-              height={40}
+              width={isCollapsed ? 70 : 100}
+              height={isCollapsed ? 50 : 60}
               onClick={() => router.push(paths.home())}
               style={{
                 position: "relative",
@@ -153,7 +155,7 @@ export default function DashBoardLayout({ children }: Props) {
                           }}
                         >
                           <ListItemIcon>{icon}</ListItemIcon>
-                          {!isCollapsed && <ListItemText primary={label} />}
+                          {!isCollapsed && <ListItemText primary={tDashboard(label.toLocaleLowerCase())} />}
                         </ListItemButton>
                       </ListItem>
                     </Tooltip>
@@ -198,9 +200,13 @@ export default function DashBoardLayout({ children }: Props) {
             flexDirection: "column",
             minHeight: "100vh",
             transition: "padding-left 0.5s ease",
+            height: "100vh",
+            overflowY: "auto",
+            px: 0,
+            mx: 0
           }}
         >
-          <Box sx={{ flexGrow: 1, p: 0 }}>{children}</Box>
+          <Box sx={{ flexGrow: 1, px: 0, mx: 0 }}>{children}</Box>
         </Box>
       </Box>
     </>

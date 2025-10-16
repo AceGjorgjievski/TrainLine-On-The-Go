@@ -13,7 +13,7 @@ import {
 import Image from "next/image";
 
 import LanguageIcon from "@mui/icons-material/Language";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 
 import { useState } from "react";
 import { useAuthContext } from "@/auth/hooks";
@@ -29,7 +29,6 @@ export default function Header() {
   const router = useRouter();
   const t = useTranslations("Locale");
   const tHeader = useTranslations("Header");
-  const locale = useLocale();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -71,53 +70,63 @@ export default function Header() {
         py: 2,
         paddingBottom: "0.5rem",
         boxShadow: 5,
+        margin: 0,
       }}
     >
       <Container
         sx={{
           display: "flex",
-          alignItems: "center",
           justifyContent: "space-between",
+          alignItems: "center",
+          px: 0,
+          width: "2000px",
+          marginRight: "2rem",
         }}
       >
         <Box
           sx={{
+            marginLeft: isCollapsed ? "-520px" : "-380px",
+            transition: "margin-left 0.3s ease",
             display: "flex",
             alignItems: "center",
-            flexGrow: 1,
-            marginLeft: isCollapsed ? "75px" : "230px",
-            marginRight: "3rem",
-            transition: "margin-left 0.3s ease",
           }}
         >
           <Typography
             sx={{
               fontWeight: "bold",
               fontSize: "1.5rem",
+              textDecoration: "none",
+              color: "text.primary",
+              cursor: "pointer",
             }}
+            onClick={() => router.push(paths.home())}
           >
             {tHeader("title")}
           </Typography>
         </Box>
 
-        <Stack direction="row" spacing={2}>
-          {!authenticated && (
+        <Stack
+          direction="row"
+          spacing={4}
+          alignItems="center"
+          sx={{
+            marginLeft: "-2rem",
+          }}
+        >
+          {!authenticated ? (
             <Button variant="contained" onClick={loginUser} size="small">
-              Login
+              {tHeader("login-button")}
             </Button>
-          )}
-
-          {authenticated && (
-            <>
-              <Button variant="contained" onClick={logoutUser} size="small">
-                Log out
-              </Button>
-            </>
+          ) : (
+            <Button variant="contained" onClick={logoutUser} size="small">
+              {tHeader("logout-button")}
+            </Button>
           )}
 
           <IconButton onClick={handleClick} color="primary">
             <LanguageIcon />
           </IconButton>
+
           <Menu anchorEl={anchorEl} open={open} onClose={() => handleClose()}>
             {locales.map((loc) => (
               <MenuItem key={loc} onClick={() => handleClose(loc)}>
@@ -128,7 +137,7 @@ export default function Header() {
                   alt={t(`${loc}.name`)}
                   width={24}
                   height={16}
-                  style={{ marginRight: 8 }}
+                  style={{ marginRight: 3 }}
                 />
                 {t(`${loc}.name`)}
               </MenuItem>

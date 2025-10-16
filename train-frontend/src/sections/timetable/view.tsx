@@ -18,12 +18,16 @@ import {
 } from "@mui/material";
 import { TimetableDTO, StationDTO } from "@/types";
 import { DirectionSelector } from "@/shared/components";
+import { useTranslations } from "next-intl";
 
 export default function TimeTableView() {
   const [direction, setDirection] = useState<"departure" | "arrival" | "">("");
   const [timetables, setTimetables] = useState<{
     [key: string]: TimetableDTO[];
   }>({});
+  const tTimetable = useTranslations("Timetable");
+  const tRoutes = useTranslations("Timetable.routes");
+  const tStations = useTranslations("Timetable.stations")
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -118,7 +122,7 @@ export default function TimeTableView() {
                     color: colors.purple[700],
                   }}
                 >
-                  {route.routeName}
+                  {tRoutes(route.routeName.toLowerCase().replace(/\s+/g, "").replace("-", "-"))}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails
@@ -136,7 +140,7 @@ export default function TimeTableView() {
                         <Typography
                           sx={{ fontWeight: "bold", textAlign: "center" }}
                         >
-                          СТАНИЦА
+                          {tTimetable("station")}
                         </Typography>
                       </TableCell>
                       {route.trains.map((train: string, tIdx: number) => (
@@ -144,7 +148,7 @@ export default function TimeTableView() {
                           <Typography
                             sx={{ fontWeight: "bold", textAlign: "center" }}
                           >
-                            ВОЗ - {train}
+                            {tTimetable(train.split(" ")[0].toLocaleLowerCase()) + " " + train.split(" ")[1]}
                           </Typography>
                         </TableCell>
                       ))}
@@ -160,7 +164,7 @@ export default function TimeTableView() {
                       >
                         <TableCell>
                           <Typography sx={{ textAlign: "center" }}>
-                            {station.stationName}
+                            {tStations(station.stationName)}
                           </Typography>
                         </TableCell>
                         {station.times.map((time, timeIdx) => (

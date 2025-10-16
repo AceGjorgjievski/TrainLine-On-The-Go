@@ -1,5 +1,5 @@
 "use client";
-import SplashScreen from "@/components/loading-screen/loading-screen";
+import { SplashScreen } from "@/components/loading-screen";
 import dynamic from "next/dynamic";
 import { usePathname } from "../../../i18n/routing";
 
