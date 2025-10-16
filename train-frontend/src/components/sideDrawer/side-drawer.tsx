@@ -18,6 +18,7 @@ import DepartureArrival from "./departureArrivalFormControl";
 import StationLiveTypeFormControl from "./stationLiveTypeFormControl";
 import { useAuthContext } from "@/auth/hooks";
 import toast from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 type Props = {
   drawerOpen: boolean;
@@ -44,6 +45,8 @@ export default function SideDrawer({
   const [mode, setMode] = useState<AdminMode>(
     authenticated ? "" : "Regular Search"
   );
+  const tSideDrawer = useTranslations("Side-Drawer");
+  const tSideDrawerAdmin = useTranslations("Side-Drawer.question.admin");
 
   const handleRouteChange = (event: SelectChangeEvent) => {
     setRoute(event.target.value as RouteKey);
@@ -101,9 +104,9 @@ export default function SideDrawer({
         },
       }}
     >
-      <Box sx={{ width: 300, p: 3 }}>
+      <Box sx={{ width: 400, p: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Choose Options
+          {tSideDrawer("title")}
         </Typography>
 
         <FormControl component="fieldset" sx={{ mb: 3 }}>
@@ -116,17 +119,17 @@ export default function SideDrawer({
                 <FormControlLabel
                   value="View All Trains"
                   control={<Radio />}
-                  label="View All Active Trains"
+                  label={tSideDrawerAdmin("radio-option-one")}
                 />
                 <FormControlLabel
                   value="Add New Train Station"
                   control={<Radio />}
-                  label="Add Station"
+                  label={tSideDrawerAdmin("radio-option-two")}
                 />
                 <FormControlLabel
                   value="Regular Search"
                   control={<Radio />}
-                  label="Regular Search"
+                  label={tSideDrawerAdmin("radio-option-three")}
                 />
               </>
             )}
@@ -164,7 +167,7 @@ export default function SideDrawer({
             (mode === "Regular Search" && (!direction || !route || !viewOption))
           }
         >
-          Submit
+          {tSideDrawer("submit")}
         </Button>
       </Box>
     </Drawer>

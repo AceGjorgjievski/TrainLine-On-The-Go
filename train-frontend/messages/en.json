@@ -9,8 +9,14 @@
     "video-additional-message": "Your browser does not support the video tag."
   },
   "Locale": {
-    "en": { "flagCode": "GB", "name": "English" },
-    "mk": { "flagCode": "MK", "name": "Macedonian" }
+    "en": {
+      "flagCode": "GB",
+      "name": "English"
+    },
+    "mk": {
+      "flagCode": "MK",
+      "name": "Macedonian"
+    }
   },
   "Header": {
     "home": "Home page",
@@ -152,5 +158,48 @@
       "Blace": "Blace",
       "Orašje": "Orašje"
     }
+  },
+  "Live": {
+    "open-drawer": "Settings"
+  },
+  "Side-Drawer": {
+    "title": "Choose Options",
+    "question": {
+      "direction": {
+        "name": "Are you departing from or arriving in Skopje?",
+        "radio-option-one": "Departure from Skopje",
+        "radio-option-two": "Arrival in Skopje"
+      },
+      "route": {
+        "name": "Choose Train Route",
+        "routes": {
+          "skopje-veles": "Skopje - Veles",
+          "veles-skopje": "Veles - Skopje",
+          "skopje-tabanovce": "Skopje - Tabanovce",
+          "tabanovce-skopje": "Tabanovce - Skopje",
+          "skopje-gevgelija": "Skopje - Gevgelija",
+          "gevgelija-skopje": "Gevgelija - Skopje",
+          "skopje-bitola": "Skopje - Bitola",
+          "bitola-skopje": "Bitola - Skopje",
+          "skopje-kichevo": "Skopje - Kichevo",
+          "kichevo-skopje": "Kichevo - Skopje",
+          "skopje-kochani": "Skopje - Kochani",
+          "kochani-skopje": "Kochani - Skopje",
+          "skopje-prishtina": "Skopje - Prishtina",
+          "prishtina-skopje": "Prishtina - Skopje"
+        }
+      },
+      "mode": {
+        "name": "What would you like to view?",
+        "radio-option-one": "Station Map Points",
+        "radio-option-two": "Train Live Tracking"
+      },
+      "admin": {
+        "radio-option-one": "View All Active Trains",
+        "radio-option-two": "Add New Train Station",
+        "radio-option-three": "TRegular Search"
+      }
+    },
+    "submit": "Submit"
   }
 }

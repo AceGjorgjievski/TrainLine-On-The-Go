@@ -6,6 +6,7 @@ import {
   RadioGroup,
   Typography,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 type Props = {
   direction: Direction | "" | undefined;
@@ -16,21 +17,24 @@ export default function DepartureArrivalFormControl({
   direction,
   handleDirectionChange,
 }: Props) {
+
+  const tSideDrawerDirection = useTranslations("Side-Drawer.question.direction");
+
   return (
     <FormControl fullWidth sx={{ mb: 3 }}>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-        Are you departing from or arriving in Skopje?
+        {tSideDrawerDirection("name")}
       </Typography>
       <RadioGroup value={direction} onChange={handleDirectionChange}>
         <FormControlLabel
           value="departure"
           control={<Radio />}
-          label="Departure from Skopje"
+          label={tSideDrawerDirection("radio-option-one")}
         />
         <FormControlLabel
           value="arrival"
           control={<Radio />}
-          label="Arrival in Skopje"
+          label={tSideDrawerDirection("radio-option-two")}
         />
       </RadioGroup>
     </FormControl>

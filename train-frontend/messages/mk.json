@@ -9,8 +9,14 @@
     "video-additional-message": "Вашиот прелистувач не ја поддржува ознаката за видео."
   },
   "Locale": {
-    "en": { "flagCode": "GB", "name": "Англиски" },
-    "mk": { "flagCode": "MK", "name": "Македонски" }
+    "en": {
+      "flagCode": "GB",
+      "name": "Англиски"
+    },
+    "mk": {
+      "flagCode": "MK",
+      "name": "Македонски"
+    }
   },
   "Header": {
     "home": "Почетна страна",
@@ -27,7 +33,7 @@
     "admin": "Администратор"
   },
   "Direction-Selector": {
-    "title-form": "Одбери насока",
+    "title-form": "Одберете насока",
     "radio-option-one": "Поаѓање од Скопје",
     "radio-option-two": "Пристигање во Скопје",
     "admin-option": "All Station Stops"
@@ -152,6 +158,48 @@
       "Blace": "Блаце",
       "Orašje": "Орашје"
     }
-    
+  },
+  "Live": {
+    "open-drawer": "Поставки"
+  },
+  "Side-Drawer": {
+    "title": "Одберете Опции",
+    "question": {
+      "direction": {
+        "name": "Дали поаѓате од или пристигнувате во Скопје?",
+        "radio-option-one": "Поаѓање од Скопје",
+        "radio-option-two": "Пристигнување во Скопје"
+      },
+      "route": {
+        "name": "Одберете Возна Рута",
+        "routes": {
+          "skopje-veles": "Скопје - Велес",
+          "veles-skopje": "Велес - Скопје",
+          "skopje-tabanovce": "Скопје - Табановце",
+          "tabanovce-skopje": "Табановце - Скопје",
+          "skopje-gevgelija": "Скопје - Гевгелија",
+          "gevgelija-skopje": "Гевгелија - Скопје",
+          "skopje-bitola": "Скопје - Битола",
+          "bitola-skopje": "Битола - Скопје",
+          "skopje-kichevo": "Скопје - Кичево",
+          "kichevo-skopje": "Кичево - Скопје",
+          "skopje-kochani": "Скопје - Кочани",
+          "kochani-skopje": "Кочани - Скопје",
+          "skopje-prishtina": "Скопје - Приштина",
+          "prishtina-skopje": "Приштина - Скопје"
+        }
+      },
+      "mode": {
+        "name": "Што сакате да прикажете?",
+        "radio-option-one": "Мапа со железнички станици",
+        "radio-option-two": "Следење на возови во живо"
+      },
+      "admin": {
+        "radio-option-one": "Преглед на сите активни возови",
+        "radio-option-two": "Додај нова железничка станица",
+        "radio-option-three": "Стандардно пребарување"
+      }
+    },
+    "submit": "Потврди"
   }
 }

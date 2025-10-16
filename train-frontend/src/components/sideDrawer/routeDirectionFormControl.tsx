@@ -1,4 +1,3 @@
-
 import {
   FormControl,
   InputLabel,
@@ -12,6 +11,7 @@ import {
   toSkopjeRouteNameMap,
 } from "@/constants/routes";
 import { Direction, RouteKey } from "@/types";
+import { useTranslations } from "next-intl";
 
 type Props = {
   route: RouteKey | "" | undefined;
@@ -26,21 +26,27 @@ export default function RouteDirectionFormControl({
 }: Props) {
   const renderRoutes =
     direction === "departure" ? fromSkopjeRouteNameMap : toSkopjeRouteNameMap;
+  const tSideDrawerRoute = useTranslations("Side-Drawer.question.route");
 
   return (
     <>
       <FormControl fullWidth sx={{ mb: 3 }}>
-        <InputLabel id="route-select-label">Choose Train Route</InputLabel>
+        <InputLabel id="route-select-label">
+          {tSideDrawerRoute("name")}
+        </InputLabel>
         <Select
           labelId="route-select-label"
           id="route-select"
           value={route}
-          label="Choose Train Route"
+          label={tSideDrawerRoute("name")}
           onChange={handleRouteChange}
         >
           {Object.entries(renderRoutes).map(([key, value]) => (
             <MenuItem key={key} value={key}>
-              {value}
+              {tSideDrawerRoute(
+                "routes." +
+                  value.toLowerCase().replace(/\s+/g, "").replace("-", "-")
+              )}
             </MenuItem>
           ))}
         </Select>
