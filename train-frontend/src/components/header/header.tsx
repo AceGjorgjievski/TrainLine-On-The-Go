@@ -4,11 +4,11 @@ import {
   Box,
   Typography,
   Button,
-  Container,
   IconButton,
   Menu,
   MenuItem,
   Stack,
+  Toolbar,
 } from "@mui/material";
 import Image from "next/image";
 
@@ -73,24 +73,20 @@ export default function Header() {
         margin: 0,
       }}
     >
-      <Container
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          px: 0,
-          width: "2000px",
-          marginRight: "2rem",
-        }}
-      >
-        <Box
-          sx={{
-            marginLeft: isCollapsed ? "-520px" : "-380px",
-            transition: "margin-left 0.3s ease",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box sx={{ display: "flex", alignItems: "center"}}>
+          <Image
+            src="/images/train.png"
+            alt="Logo"
+            width={90}
+            height={50}
+            onClick={() => router.push(paths.home())}
+            style={{
+              position: "relative",
+              cursor: "pointer",
+              marginLeft: '-1.4rem'
+            }}
+          />
           <Typography
             sx={{
               fontWeight: "bold",
@@ -98,6 +94,7 @@ export default function Header() {
               textDecoration: "none",
               color: "text.primary",
               cursor: "pointer",
+              marginLeft: 2,
             }}
             onClick={() => router.push(paths.home())}
           >
@@ -105,14 +102,7 @@ export default function Header() {
           </Typography>
         </Box>
 
-        <Stack
-          direction="row"
-          spacing={4}
-          alignItems="center"
-          sx={{
-            marginLeft: "-2rem",
-          }}
-        >
+        <Stack direction="row" spacing={2} alignItems="center">
           {!authenticated ? (
             <Button variant="contained" onClick={loginUser} size="small">
               {tHeader("login-button")}
@@ -144,7 +134,7 @@ export default function Header() {
             ))}
           </Menu>
         </Stack>
-      </Container>
+      </Toolbar>
     </Box>
   );
 }

@@ -11,7 +11,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Toolbar,
   Tooltip,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
@@ -24,7 +23,6 @@ import { usePathname, useRouter } from "../../../i18n/routing";
 import { paths } from "@/routes/paths";
 import { useAuthContext } from "@/auth/hooks";
 import { useSidebarContext } from "@/components/context";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 const drawerItems = [
@@ -79,33 +77,15 @@ export default function DashBoardLayout({ children }: Props) {
             flexShrink: 0,
             [`& .MuiDrawer-paper`]: {
               width: drawerWidth,
-              // top: "87px",
-              // height: "calc(100% - 87px)",
+              top: "88px",
               overflowX: "hidden",
               transition: "width 0.3s ease",
               boxSizing: "border-box",
-              boxShadow: 22,
             },
             zIndex: 3,
           }}
         >
-          <Toolbar sx={{ mt: 2}}>
-            <Image
-              src="/images/train.png"
-              alt="Logo"
-              width={isCollapsed ? 70 : 100}
-              height={isCollapsed ? 50 : 60}
-              onClick={() => router.push(paths.home())}
-              style={{
-                position: "relative",
-                top: "7px",
-                cursor: "pointer",
-                ...(isCollapsed ? { right: "17px" } : { left: "45px" }),
-                transition: "all 0.7s ease",
-              }}
-            />
-          </Toolbar>
-          <Box sx={{ overflow: "auto", marginTop: "3rem" }}>
+          <Box sx={{ overflow: "auto" }}>
             <List>
               {drawerItems
                 .filter((item) => item.label !== "Admin" || authenticated)
@@ -155,7 +135,11 @@ export default function DashBoardLayout({ children }: Props) {
                           }}
                         >
                           <ListItemIcon>{icon}</ListItemIcon>
-                          {!isCollapsed && <ListItemText primary={tDashboard(label.toLocaleLowerCase())} />}
+                          {!isCollapsed && (
+                            <ListItemText
+                              primary={tDashboard(label.toLocaleLowerCase())}
+                            />
+                          )}
                         </ListItemButton>
                       </ListItem>
                     </Tooltip>
@@ -167,7 +151,7 @@ export default function DashBoardLayout({ children }: Props) {
         <Box
           sx={{
             position: "fixed",
-            top: "10%",
+            top: "50%",
             left: isCollapsed ? 68 : 220,
             transition: "left 0.3s ease",
             zIndex: 3,
@@ -203,7 +187,7 @@ export default function DashBoardLayout({ children }: Props) {
             height: "100vh",
             overflowY: "auto",
             px: 0,
-            mx: 0
+            mx: 0,
           }}
         >
           <Box sx={{ flexGrow: 1, px: 0, mx: 0 }}>{children}</Box>
