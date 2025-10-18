@@ -13,6 +13,7 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 import { Container, Button, CircularProgress, Box } from "@mui/material";
 import { SideDrawer } from "@/components/sideDrawer";
+import { SplashScreen } from "@/components/loading-screen";
 
 import {
   getTrainRoutesByName,
@@ -39,6 +40,7 @@ import {
 } from "@/shared/utils";
 import AddStationClickHandler from "./AddStationClickHandler";
 import toast from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
@@ -70,6 +72,8 @@ export default function MapContainerView() {
   const [shouldRecenter, setShouldRecenter] = useState(false);
 
   const [addingStationMode, setAddingStationMode] = useState(false);
+
+  const tLive = useTranslations("Live");
 
 
   const toggleDrawer = (open: boolean) => {
@@ -356,7 +360,7 @@ export default function MapContainerView() {
         setLiveMapCenter({
           lat: 41.6,
           lng: 21.7,
-          zoom: 8,
+          zoom: 9,
         });
         setShouldRecenter(true);
       })
@@ -375,7 +379,7 @@ export default function MapContainerView() {
     : [41.9981, 21.4254];
 
   if (!isMounted || loading) {
-    return <p>Loading train data...</p>;
+    return <SplashScreen/>
   }
 
   return (
@@ -397,18 +401,18 @@ export default function MapContainerView() {
         onClick={() => toggleDrawer(true)}
         style={{
           position: "absolute",
-          top: 16,
-          right: 16,
+          top: 26,
+          right: 65,
           zIndex: 1000,
         }}
       >
-        Open Drawer
+        {tLive("open-drawer")}
       </Button>
 
       <MapContainer
         center={centerPosition}
         zoom={routeData?.zoomLevel ?? liveMapCenter?.zoom ?? 13}
-        style={{ height: "100%", width: "100%" }}
+        style={{ height: "100%", width: "100%", transition: "none", }}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
