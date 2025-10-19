@@ -11,7 +11,7 @@ export default function HomeView() {
 
   return (
     <>
-      <Box sx={{ position: "relative" }}>
+      <Box sx={{ position: "relative", zIndex: -1, width: '100%' }}>
         <video
           autoPlay
           loop

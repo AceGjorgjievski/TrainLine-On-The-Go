@@ -82,7 +82,7 @@ export default function DashBoardLayout({ children }: Props) {
               transition: "width 0.3s ease",
               boxSizing: "border-box",
             },
-            zIndex: 3,
+            zIndex: 1,
           }}
         >
           <Box sx={{ overflow: "auto" }}>
