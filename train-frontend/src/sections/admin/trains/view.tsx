@@ -299,7 +299,7 @@ export default function TrainsAdminView() {
                   display: "flex",
                   justifyContent: "flex-end",
                   mt: 2,
-                  mb: 2,
+                  marginBottom: '8rem',
                 }}
               >
                 <Box

@@ -22,11 +22,7 @@ import {
   Stack,
   CircularProgress,
   TablePagination,
-  Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  Typography
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { EditTrainRouteModal } from "./edit-train-route-modal";
@@ -129,15 +125,6 @@ export default function TrainRoutesAdminView() {
   const renderSortIcon = (key: SortKey) => {
     if (sortKey !== key || sortOrder === "") return null;
     return sortOrder === "asc" ? "▲" : "▼";
-  };
-
-  const confirmDelete = async () => {
-    if (!routeToDelete) return;
-
-    await deleteTrainRoute(routeToDelete.id);
-    setAllRoutes((prev) => prev.filter((r) => r.id !== routeToDelete.id));
-    setRouteToDelete(null);
-    setConfirmDeleteOpen(false);
   };
 
   return (
@@ -296,7 +283,7 @@ export default function TrainRoutesAdminView() {
                   display: "flex",
                   justifyContent: "flex-end",
                   mt: 2,
-                  mb: 2,
+                  marginBottom: '8rem',
                 }}
               >
                 <Box

@@ -80,7 +80,7 @@ export default function TimeTableView() {
             pt: 2,
             pb: 1,
             mt: 5,
-            mb: 2,
+            marginBottom: '8rem',
             border: "2px solid",
           }}
         >
