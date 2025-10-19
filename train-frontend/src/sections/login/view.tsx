@@ -3,15 +3,19 @@
 import { useAuthContext } from "@/auth/hooks";
 import {
   Button,
-  Container,
+  Toolbar,
+  CardContent,
+  Card,
   FormControl,
   TextField,
   Typography,
   Box,
 } from "@mui/material";
+import Image from "next/image";
 import { useState } from "react";
 import { Link, usePathname, useRouter } from "../../../i18n/routing";
 import { paths } from "@/routes/paths";
+import { useTranslations } from "next-intl";
 
 export default function LoginView() {
   const [username, setUsername] = useState<string>("");
@@ -22,10 +26,15 @@ export default function LoginView() {
   const pathName = usePathname();
 
   const { login } = useAuthContext();
+  const tLogin = useTranslations("Login");
 
   const onSubmit = async () => {
     try {
       setError(null);
+      if (username.trim() === "" || password.trim() === "") {
+        setError("Username and password cannot be empty.");
+        return;
+      }
       sessionStorage.removeItem("accessToken");
       await login(username, password);
 
@@ -33,7 +42,7 @@ export default function LoginView() {
         router.replace(paths.home());
       }
     } catch (err) {
-      setError("Login failed");
+      setError("Login error: " + err);
       console.log(err);
     }
   };
@@ -52,88 +61,106 @@ export default function LoginView() {
         px: { xs: 2, sm: 4, md: 8, lg: 16 },
       }}
     >
-      <Container
-        maxWidth="sm"
+      <Card
         sx={{
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
-          p: { xs: 3, sm: 4 },
-          borderRadius: 2,
-          boxShadow: 3,
           width: "100%",
-          maxWidth: "500px",
+          maxWidth: 550,
+          backgroundColor: "rgba(255, 255, 255, 0.9)",
+          boxShadow: 6,
+          borderRadius: 3,
+          height: 600,
         }}
       >
-        <Typography
-          variant="h5"
-          align="center"
-          gutterBottom
-          sx={{
-            mt: 3,
-            mb: 3,
-          }}
-        >
-          Login Page
-        </Typography>
+        <CardContent>
+          <Typography
+            variant="h5"
+            align="center"
+            gutterBottom
+            sx={{ mt: 5, mb: 8 }}
+          >
+            {tLogin("title")}
+          </Typography>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSubmit();
-          }}
-        >
-          <FormControl fullWidth sx={{ gap: 3 }}>
-            <TextField
-              required
-              id="username"
-              label="Username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
-            />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              onSubmit();
+            }}
+          >
+            <FormControl fullWidth sx={{ gap: 3 }}>
+              <TextField
+                required
+                label={tLogin("username")}
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+              />
 
-            <TextField
-              required
-              id="password"
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-            />
+              <TextField
+                required
+                label={tLogin("password")}
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+              />
 
-            {error && (
-              <Typography color="error" variant="body2">
-                {error}
-              </Typography>
-            )}
+              {error && (
+                <Typography
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  color="error"
+                  variant="body2"
+                >
+                  {error}
+                </Typography>
+              )}
 
-            <Button
-              variant="contained"
-              type="submit"
-              sx={{
-                mt: 3,
-              }}
-            >
-              Log in
-            </Button>
-            <Link href={paths.home()} passHref>
-              <Typography
-                variant="body2"
-                align="center"
+              <Button variant="contained" type="submit" sx={{ mt: 5 }}>
+                {tLogin("button-login")}
+              </Button>
+
+              <Link href={paths.home()} passHref>
+                <Typography
+                  variant="body2"
+                  align="center"
+                  sx={{
+                    textDecoration: "underline",
+                    color: "primary.main",
+                    cursor: "pointer",
+                  }}
+                >
+                  {tLogin("link-home-page")}
+                </Typography>
+              </Link>
+              <Toolbar
                 sx={{
-                  mt: 2,
-                  textDecoration: "underline",
-                  color: "primary.main",
-                  cursor: "pointer",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                Go to Home Page
-              </Typography>
-            </Link>
-          </FormControl>
-        </form>
-      </Container>
+                <Image
+                  src="/images/train-logo.png"
+                  alt="Logo"
+                  width={150}
+                  height={70}
+                  onClick={() => router.push(paths.home())}
+                  style={{
+                    cursor: "pointer",
+                    transition: "all 0.7s ease",
+                    textShadow: "inherit",
+                  }}
+                />
+              </Toolbar>
+            </FormControl>
+          </form>
+        </CardContent>
+      </Card>
     </Box>
   );
 }

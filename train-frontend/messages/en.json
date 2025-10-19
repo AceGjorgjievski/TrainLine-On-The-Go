@@ -201,5 +201,12 @@
       }
     },
     "submit": "Submit"
+  },
+  "Login": {
+    "title": "Login Page",
+    "username": "Username",
+    "password": "Password",
+    "button-login": "Log in",
+    "link-home-page": "Go to Home Page"
   }
 }
