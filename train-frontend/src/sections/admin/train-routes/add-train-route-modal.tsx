@@ -16,6 +16,7 @@ import {
   Select,
   Container,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -43,11 +44,12 @@ export function AddTrainRouteModal({
     stationStops: [] as number[],
   });
   const [, forceUpdate] = useState(0);
+  const tToaster = useTranslations("Toaster");
 
   const handleSubmit = async () => {
     try {
       const newRoute = await addTrainRoute(formDataRef.current);
-      toast.success("Added successfully!")
+      toast.success(tToaster("add"))
       onSave(newRoute);
       onClose();
     } catch (err) {

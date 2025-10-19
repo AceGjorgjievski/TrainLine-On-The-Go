@@ -11,6 +11,7 @@ import {
 import { TrainStop } from "@/types";
 import { deleteTrainStop } from "@/services";
 import toast from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 interface Props {
   open: boolean;
@@ -27,11 +28,13 @@ export default function DeleteTrainStopDialog({
 }: Props) {
   const name = stop?.name;
   const id = stop?.id;
+  const tToaster = useTranslations("Toaster");
+  
 
   const onDelete = async () => {
     try {
       await deleteTrainStop(id!);
-      toast.success("Deleted successfully!");
+      toast.success(tToaster("delete"));
       onConfirm(id!);
       onClose();
     } catch (error) {

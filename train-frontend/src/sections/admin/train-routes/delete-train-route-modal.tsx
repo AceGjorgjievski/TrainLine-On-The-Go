@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 
 interface Props {
@@ -23,11 +24,12 @@ export function DeleteTrainRouteModal({
   trainRoute,
 }: Props) {
   const id = trainRoute?.id;
+  const tToaster = useTranslations("Toaster");
 
   const onDelete = async () => {
     try {
       await deleteTrainRoute(id!);
-      toast.success("Deleted successfully!");
+      toast.success(tToaster("delete"));
       onConfirm(id!);
       onClose();
     } catch (error) {

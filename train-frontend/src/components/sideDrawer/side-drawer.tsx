@@ -47,6 +47,7 @@ export default function SideDrawer({
   );
   const tSideDrawer = useTranslations("Side-Drawer");
   const tSideDrawerAdmin = useTranslations("Side-Drawer.question.admin");
+  const tToaster = useTranslations("Toaster");
 
   const handleRouteChange = (event: SelectChangeEvent) => {
     setRoute(event.target.value as RouteKey);
@@ -75,7 +76,7 @@ export default function SideDrawer({
       toast(
         () => (
           <span>
-            <b>Click Anywhere on the map to add new station</b>
+            <b>{tToaster("add-new-station-before")}</b>
           </span>
         ),
         { duration: 3700 }

@@ -160,7 +160,26 @@
     }
   },
   "Live": {
-    "open-drawer": "Settings"
+    "open-drawer": "Settings",
+    "live-marker": {
+      "route-name": "Route name",
+      "previous-station": "Previous station",
+      "next-station": "Next station",
+      "status": "Status",
+      "on-time": "ON TIME"
+    },
+    "stop-marker": {
+      "station": "Station",
+      "station-number": "Station number",
+      "latitude": "Latitude",
+      "longitude": "Longitude"
+    },
+    "add-station": {
+      "title": "Name of the station",
+      "name-input-label": "Station name",
+      "cancel-button": "Cancel",
+      "save-button": "Save"
+    }
   },
   "Side-Drawer": {
     "title": "Choose Options",
@@ -208,5 +227,12 @@
     "password": "Password",
     "button-login": "Log in",
     "link-home-page": "Go to Home Page"
+  },
+  "Toaster": {
+    "add-new-station-before": "Click Anywhere on the map to add new station.",
+    "add-new-station-after": "Successfully added new Train Stop!",
+    "add": "Added successfully!",
+    "update": "Updated successfully!",
+    "delete": "Deleted successfully!"
   }
 }

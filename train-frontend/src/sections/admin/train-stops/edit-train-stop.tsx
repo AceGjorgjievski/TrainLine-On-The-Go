@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 
 import { editTrainStop } from "@/services";
 import toast from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 interface Props {
   open: boolean;
@@ -38,6 +39,8 @@ export default function EditTrainStopModal({
     latitude: 0,
     longitude: 0,
   });
+  const tToaster = useTranslations("Toaster");
+
 
   useEffect(() => {
     if (open && trainStop) {
@@ -54,7 +57,7 @@ export default function EditTrainStopModal({
     try {
       const updatedTrainStop = await editTrainStop(formData);
 
-      toast.success("Updated successfully!");
+      toast.success(tToaster("update"));
       onSave(updatedTrainStop);
       onClose();
     } catch (error) {

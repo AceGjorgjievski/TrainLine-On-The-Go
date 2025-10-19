@@ -36,7 +36,7 @@
     "title-form": "Одберете насока",
     "radio-option-one": "Поаѓање од Скопје",
     "radio-option-two": "Пристигање во Скопје",
-    "admin-option": "All Station Stops"
+    "admin-option": "Сите железнички станици"
   },
   "Timetable": {
     "title": "Возен ред",
@@ -160,7 +160,26 @@
     }
   },
   "Live": {
-    "open-drawer": "Поставки"
+    "open-drawer": "Поставки",
+    "live-marker": {
+      "route-name": "Име на рута",
+      "previous-station": "Претходна станица",
+      "next-station": "Следна станица",
+      "status": "Статус",
+      "on-time": "НАВРЕМЕ"
+    },
+    "stop-marker": {
+      "station": "Станица",
+      "station-number": "Број на станица",
+      "latitude": "Географска ширина",
+      "longitude": "Географска должина"
+    },
+    "add-station": {
+      "title": "Име на новата станица",
+      "name-input-label": "Име на новата станица",
+      "cancel-button": "Откажи",
+      "save-button": "Зачувај"
+    }
   },
   "Side-Drawer": {
     "title": "Одберете Опции",
@@ -208,5 +227,12 @@
     "password": "Лозинка",
     "button-login": "Нјави се",
     "link-home-page": "Оди на почетна страница"
+  },
+  "Toaster": {
+    "add-new-station-before": "Кликнете било каде на мапата за да додадете нова станица.",
+    "add-new-station-after": "Успешно додадена нова станица!",
+    "add": "Успешно додадено!",
+    "update": "Успешно ажурирано!",
+    "delete": "Успешно избришано!"
   }
 }

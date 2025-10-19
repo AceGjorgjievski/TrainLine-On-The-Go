@@ -74,6 +74,7 @@ export default function MapContainerView() {
   const [addingStationMode, setAddingStationMode] = useState(false);
 
   const tLive = useTranslations("Live");
+  const tToaster = useTranslations("Toaster");
 
 
   const toggleDrawer = (open: boolean) => {
@@ -470,7 +471,7 @@ export default function MapContainerView() {
               };
               await addTrainStop(newTrainStop);
               setAddingStationMode(false);
-              toast.success("Successfully added new Train Stop !")
+              toast.success(tToaster("add-new-station-after"))
             }}
             onCancel={() => {
               setAddingStationMode(false);

@@ -16,6 +16,7 @@ import {
   Select,
   Container,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -45,6 +46,7 @@ export function EditTrainRouteModal({
     stationStops: [] as number[],
   });
   const [, forceUpdate] = useState(0);
+  const tToaster = useTranslations("Toaster");
 
   useEffect(() => {
     if (open) {
@@ -69,7 +71,7 @@ export function EditTrainRouteModal({
       };
 
       const updatedRoute = await editTrainRoute(route.id, payload);
-      toast.success("Updated successfully!");
+      toast.success(tToaster("update"));
       onSave(updatedRoute);
       onClose();
     } catch (err) {
