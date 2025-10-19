@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import TrainsAdminView from "./trains/view";
 import TrainStopsAdminView from "./train-stops/view";
 import TrainRoutesAdminView from "./train-routes/view";
+import { useTranslations } from "next-intl";
 
 const TrainsView = () => <TrainsAdminView />;
 const TrainStopsView = () => <TrainStopsAdminView />;
@@ -12,22 +13,19 @@ const TrainRoutesView = () => <TrainRoutesAdminView />;
 
 const adminCards = [
   {
-    label: "View All Trains",
-    key: "trains",
+    key: "view-all-trains",
     color: colors.purple[700],
     hoverColor: colors.purple[500],
     component: <TrainsView />,
   },
   {
-    label: "View All Train Stops",
-    key: "trainStops",
+    key: "view-all-train-stops",
     color: colors.purple[700],
     hoverColor: colors.purple[500],
     component: <TrainStopsView />,
   },
   {
-    label: "View All Train Routes",
-    key: "trainRoutes",
+    key: "view-all-train-routes",
     color: colors.purple[700],
     hoverColor: colors.purple[500],
     component: <TrainRoutesView />,
@@ -42,6 +40,7 @@ export default function AdminDashboardView() {
   }, []);
 
   const selectedCard = adminCards.find((card) => card.key === selectedKey);
+  const tAdminTrains = useTranslations("AdminPage");
 
   return (
     <>
@@ -81,9 +80,29 @@ export default function AdminDashboardView() {
               },
             }}
           >
-            <Typography variant="h6" fontWeight="bold" color="white">
-              {card.label}
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                color="white"
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%"
+                }}
+              >
+                {tAdminTrains(card.key + ".title")}
+              </Typography>
+            </Box>
           </Paper>
         ))}
       </Box>

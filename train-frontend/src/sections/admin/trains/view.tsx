@@ -26,6 +26,7 @@ import {
   Typography,
 } from "@mui/material";
 import { DirectionSelector } from "@/shared/components";
+import { useTranslations } from "next-intl";
 
 const statusOrder = {
   ACTIVE: 0,
@@ -47,6 +48,8 @@ export default function TrainsAdminView() {
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const tAdminTrains = useTranslations("AdminPage");
 
   useEffect(() => {
     const fetchTrains = async () => {
@@ -173,8 +176,8 @@ export default function TrainsAdminView() {
                 sx={{ fontWeight: "bold", textAlign: "center" }}
               >
                 {direction === "departure"
-                  ? "Departures from Skopje"
-                  : "Arrivals in Skopje"}
+                  ? tAdminTrains("view-all-trains.direction-departure")
+                  : tAdminTrains("view-all-trains.direction-arrival")}
               </Typography>
             </Container>
             <Divider
@@ -198,7 +201,7 @@ export default function TrainsAdminView() {
                         <Typography
                           sx={{ fontWeight: "bold", textAlign: "center" }}
                         >
-                          ID
+                          {tAdminTrains("table.id")}
                         </Typography>
                       </TableCell>
                       <TableCell
@@ -208,14 +211,14 @@ export default function TrainsAdminView() {
                         <Typography
                           sx={{ fontWeight: "bold", textAlign: "center" }}
                         >
-                          Name {renderSortIcon("name")}
+                          {tAdminTrains("table.name")} {renderSortIcon("name")}
                         </Typography>
                       </TableCell>
                       <TableCell>
                         <Typography
                           sx={{ fontWeight: "bold", textAlign: "center" }}
                         >
-                          Speed (km/h)
+                          {tAdminTrains("table.speed")} (km/h)
                         </Typography>
                       </TableCell>
                       <TableCell
@@ -225,7 +228,7 @@ export default function TrainsAdminView() {
                         <Typography
                           sx={{ fontWeight: "bold", textAlign: "center" }}
                         >
-                          Route Name {renderSortIcon("trainRouteName")}
+                          {tAdminTrains("table.route-name")} {renderSortIcon("trainRouteName")}
                         </Typography>
                       </TableCell>
                       <TableCell
@@ -233,7 +236,7 @@ export default function TrainsAdminView() {
                         sx={{ cursor: "pointer", textDecoration: "underline" }}
                       >
                         <Typography sx={{ fontWeight: "bold" }}>
-                          Status {renderSortIcon("trainStatus")}
+                          {tAdminTrains("table.status")} {renderSortIcon("trainStatus")}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -253,7 +256,7 @@ export default function TrainsAdminView() {
                         </TableCell>
                         <TableCell>
                           <Typography sx={{ textAlign: "center" }}>
-                            {train.name}
+                            {tAdminTrains("table." + train.name.split(" ")[0].toLocaleLowerCase()) + " " + train.name.split(" ")[1]}
                           </Typography>
                         </TableCell>
                         <TableCell>
@@ -263,7 +266,7 @@ export default function TrainsAdminView() {
                         </TableCell>
                         <TableCell>
                           <Typography sx={{ textAlign: "center" }}>
-                            {train.trainRouteName}
+                            {tAdminTrains("routes." + train.trainRouteName.toLowerCase().replace(/\s+/g, "").replace("-", "-"))}
                           </Typography>
                         </TableCell>
                         <TableCell>
@@ -283,10 +286,10 @@ export default function TrainsAdminView() {
                             }}
                           >
                             {train.trainStatus === "ACTIVE"
-                              ? "Active"
+                              ? tAdminTrains("table.button-active")
                               : train.trainStatus === "INACTIVE"
-                              ? "Inactive"
-                              : "Upcoming"}
+                              ? tAdminTrains("table.button-inactive")
+                              : tAdminTrains("table.button-upcoming")}
                           </Typography>
                         </TableCell>
                       </TableRow>
@@ -321,6 +324,7 @@ export default function TrainsAdminView() {
                       setPage(0);
                     }}
                     rowsPerPageOptions={[5, 10, 25]}
+                    labelRowsPerPage={tAdminTrains("table.rows-per-page")}
                   />
                 </Box>
               </Box>
