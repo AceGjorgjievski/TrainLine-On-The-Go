@@ -10,6 +10,7 @@ import {
   Container,
   Button,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -25,11 +26,13 @@ export function AddTrainStopModal({ open, onClose, onSave }: Props) {
     latitude: 0,
     longitude: 0,
   });
+  const tAdminTrains = useTranslations("AdminPage");
+  const tToaster = useTranslations("Toaster");
 
   const handleSubmit = async () => {
     try {
       const newTrainStop = await addTrainStop(formData);
-      toast.success("Added successfully!");
+      toast.success(tToaster("add"));
       onSave(newTrainStop);
       onClose();
     } catch (err) {
@@ -74,12 +77,12 @@ export function AddTrainStopModal({ open, onClose, onSave }: Props) {
             }}
           >
             <Typography variant="h6" gutterBottom textAlign="center">
-              Add New Train Stop
+              {tAdminTrains("view-all-train-stops.add-train-stop.title")}
             </Typography>
             <Box sx={{ flex: 1, overflowY: "auto", pr: 1 }}>
               <TextField
                 required
-                label="Train Stop Name"
+                label={tAdminTrains("view-all-train-stops.add-train-stop.train-stop-name")}
                 value={formData.name}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, name: e.target.value }))
@@ -90,7 +93,7 @@ export function AddTrainStopModal({ open, onClose, onSave }: Props) {
 
               <TextField
                 required
-                label="Longitude"
+                label={tAdminTrains("view-all-train-stops.add-train-stop.longitude")}
                 type="number"
                 value={formData.longitude}
                 onChange={(e) =>
@@ -105,7 +108,7 @@ export function AddTrainStopModal({ open, onClose, onSave }: Props) {
 
               <TextField
                 required
-                label="Latitude"
+                label={tAdminTrains("view-all-train-stops.add-train-stop.latitude")}
                 type="number"
                 value={formData.latitude}
                 onChange={(e) =>
@@ -120,7 +123,7 @@ export function AddTrainStopModal({ open, onClose, onSave }: Props) {
             </Box>
             <Box mt={3} display="flex" justifyContent="space-between">
               <Button variant="outlined" onClick={onClose}>
-                Cancel
+                {tAdminTrains("view-all-train-stops.add-train-stop.cancel-button")}
               </Button>
               <Button
                 variant="contained"
@@ -134,7 +137,7 @@ export function AddTrainStopModal({ open, onClose, onSave }: Props) {
                   formData.latitude === 0
                 }
               >
-                Add
+                {tAdminTrains("view-all-train-stops.add-train-stop.add-button")}
               </Button>
             </Box>
           </Container>

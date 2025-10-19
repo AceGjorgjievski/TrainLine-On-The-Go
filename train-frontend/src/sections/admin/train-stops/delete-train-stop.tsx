@@ -29,7 +29,7 @@ export default function DeleteTrainStopDialog({
   const name = stop?.name;
   const id = stop?.id;
   const tToaster = useTranslations("Toaster");
-  
+  const tAdminTrains = useTranslations("AdminPage");
 
   const onDelete = async () => {
     try {
@@ -44,18 +44,22 @@ export default function DeleteTrainStopDialog({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Confirm Deletion</DialogTitle>
+      <DialogTitle>
+        {tAdminTrains("view-all-train-stops.delete-train-stop.title")}
+      </DialogTitle>
       <DialogContent>
-        Are you sure you want to delete{" "}
+        {tAdminTrains("view-all-train-stops.delete-train-stop.title-description")} {" "}
         <Typography component="span" fontWeight="bold">
           {name}
         </Typography>
         ?
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose}>
+          {tAdminTrains("view-all-train-stops.delete-train-stop.cancel-button")}
+        </Button>
         <Button onClick={onDelete} variant="contained" color="error">
-          Delete
+          {tAdminTrains("view-all-train-stops.delete-train-stop.delete-button")}
         </Button>
       </DialogActions>
     </Dialog>

@@ -8,6 +8,7 @@ import {
   Typography,
   colors,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
 type SortKey = "trainStop.name" | "stationSequenceNumber";
 
 interface Props {
@@ -30,6 +31,8 @@ export default function TrainRouteStopTable({
     page * rowsPerPage + rowsPerPage
   );
 
+  const tAdminTrains = useTranslations("AdminPage");
+
   return (
     <Table>
       <TableHead>
@@ -44,7 +47,7 @@ export default function TrainRouteStopTable({
             align="center"
           >
             <Typography sx={{ fontWeight: "bold", textAlign: "center" }}>
-              Station Name {handleSortIcon("trainStop.name")}
+              {tAdminTrains("table.name")} {handleSortIcon("trainStop.name")}
             </Typography>
           </TableCell>
           <TableCell
@@ -56,7 +59,7 @@ export default function TrainRouteStopTable({
             }}
           >
             <Typography sx={{ fontWeight: "bold", textAlign: "center" }}>
-              Sequence {handleSortIcon("stationSequenceNumber")}
+              {tAdminTrains("table.sequence")} {handleSortIcon("stationSequenceNumber")}
             </Typography>
           </TableCell>
         </TableRow>
@@ -71,7 +74,7 @@ export default function TrainRouteStopTable({
           >
             <TableCell align="center">
               <Typography sx={{ textAlign: "center" }}>
-                {stop.trainStop.name}
+                {tAdminTrains("stations." + stop.trainStop.name)}
               </Typography>
             </TableCell>
             <TableCell width={100}>

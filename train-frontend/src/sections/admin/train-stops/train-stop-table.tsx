@@ -10,6 +10,7 @@ import {
   colors,
   Stack,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 type SortKey = "trainStop.name" | "stationSequenceNumber";
 
@@ -36,6 +37,7 @@ export default function TrainStopTable({
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+  const tAdminTrains = useTranslations("AdminPage");
 
   return (
     <Table>
@@ -51,12 +53,12 @@ export default function TrainStopTable({
             align="center"
           >
             <Typography sx={{ fontWeight: "bold", textAlign: "center" }}>
-              Station Name {handleSortIcon("trainStop.name")}
+              {tAdminTrains("table.name")} {handleSortIcon("trainStop.name")}
             </Typography>
           </TableCell>
           <TableCell align="center">
             <Typography sx={{ fontWeight: "bold", textAlign: "center" }}>
-              Actions
+              {tAdminTrains("table.button-action")}
             </Typography>
           </TableCell>
         </TableRow>
@@ -70,16 +72,10 @@ export default function TrainStopTable({
             }}
           >
             <TableCell align="center">
-              <Typography sx={{ textAlign: "center" }}>{stop.name}</Typography>
+              <Typography sx={{ textAlign: "center" }}>
+                {tAdminTrains("stations." + stop.name)}
+              </Typography>
             </TableCell>
-            {/* <TableCell align="center">
-              <Button onClick={() => onEdit(stop)} color="warning">
-                Edit
-              </Button>
-              <Button onClick={() => onDelete(stop)} color="error">
-                Delete
-              </Button>
-            </TableCell> */}
             <TableCell>
               <Stack direction="row" spacing={2} justifyContent="center">
                 <Button
@@ -90,7 +86,7 @@ export default function TrainStopTable({
                     onEdit(stop);
                   }}
                 >
-                  Edit
+                  {tAdminTrains("table.button-edit")}
                 </Button>
                 <Button
                   variant="contained"
@@ -100,7 +96,7 @@ export default function TrainStopTable({
                     onDelete(stop);
                   }}
                 >
-                  Delete
+                  {tAdminTrains("table.button-delete")}
                 </Button>
               </Stack>
             </TableCell>

@@ -40,7 +40,7 @@ export default function EditTrainStopModal({
     longitude: 0,
   });
   const tToaster = useTranslations("Toaster");
-
+  const tAdminTrains = useTranslations("AdminPage");
 
   useEffect(() => {
     if (open && trainStop) {
@@ -102,12 +102,12 @@ export default function EditTrainStopModal({
             }}
           >
             <Typography variant="h6" gutterBottom textAlign="center">
-              Add New Train Stop
+              {tAdminTrains("view-all-train-stops.edit-train-stop.title")}
             </Typography>
             <Box sx={{ flex: 1, overflowY: "auto", pr: 1 }}>
               <TextField
                 required
-                label="Train Stop Name"
+                label={tAdminTrains("view-all-train-stops.edit-train-stop.train-stop-name")}
                 defaultValue={formData.name}
                 onChange={(e) => (formData.name = e.target.value)}
                 fullWidth
@@ -115,7 +115,7 @@ export default function EditTrainStopModal({
               />
               <TextField
                 required
-                label="Latitude"
+                label={tAdminTrains("view-all-train-stops.edit-train-stop.longitude")}
                 type="number"
                 defaultValue={formData.longitude}
                 onChange={(e) =>
@@ -126,7 +126,7 @@ export default function EditTrainStopModal({
               />
               <TextField
                 required
-                label="Latitude"
+                label={tAdminTrains("view-all-train-stops.edit-train-stop.latitude")}
                 type="number"
                 defaultValue={formData.latitude}
                 onChange={(e) =>

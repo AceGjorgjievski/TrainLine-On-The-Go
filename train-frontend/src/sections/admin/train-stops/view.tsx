@@ -31,6 +31,8 @@ import TrainRouteStopTable from "./train-route-stop-table";
 import EditTrainStopModal from "./edit-train-stop";
 import DeleteTrainStopDialog from "./delete-train-stop";
 import { AddTrainStopModal } from "./add-train-stop";
+import { useTranslations } from "next-intl";
+import TrainsAdminPage from "@/app/[locale]/admin/trains/page";
 
 type SortKey = "trainStop.name" | "stationSequenceNumber";
 type SortOrder = "asc" | "desc" | "";
@@ -69,6 +71,7 @@ export default function TrainStopsAdminView() {
     null
   );
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const tAdminTrains = useTranslations("AdminPage");
 
   const handleDirectionChange = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -189,17 +192,17 @@ export default function TrainStopsAdminView() {
       }}
     >
       <FormControl sx={{ mb: 3, width: "200px" }}>
-        <InputLabel id="route-select-label">Choose Train Route</InputLabel>
+        <InputLabel id="route-select-label">{tAdminTrains("view-all-train-stops.choose-train-route")}</InputLabel>
         <Select
           labelId="route-select-label"
           id="route-select"
           value={route}
-          label="Choose Train Route"
+          label={tAdminTrains("view-all-train-stops.choose-train-route")}
           onChange={handleRouteChange}
         >
           {Object.entries(renderRoutes).map(([key, value]) => (
             <MenuItem key={key} value={value}>
-              {value}
+              {tAdminTrains("routes." + value.toLowerCase().replace(/\s+/g, "").replace("-", "-"))}
             </MenuItem>
           ))}
         </Select>
@@ -235,7 +238,7 @@ export default function TrainStopsAdminView() {
           }}
         >
           <TextField
-            label="Search Station"
+            label={tAdminTrains("view-all-train-stops.search-station")}
             variant="outlined"
             fullWidth
             value={searchTerm}
@@ -271,7 +274,7 @@ export default function TrainStopsAdminView() {
               size="small"
               onClick={() => setIsAddModalOpen(true)}
             >
-              Add New Train Stop
+              {tAdminTrains("view-all-train-stops.add-new-train-stop-button")}
             </Button>
           </Box>
           <TableContainer
