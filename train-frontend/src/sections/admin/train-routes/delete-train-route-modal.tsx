@@ -25,6 +25,7 @@ export function DeleteTrainRouteModal({
 }: Props) {
   const id = trainRoute?.id;
   const tToaster = useTranslations("Toaster");
+  const tAdminTrains = useTranslations("AdminPage");
 
   const onDelete = async () => {
     try {
@@ -39,15 +40,19 @@ export function DeleteTrainRouteModal({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Confirm Deletion</DialogTitle>
+      <DialogTitle>
+        {tAdminTrains("view-all-train-routes.delete-train-route.title")}
+      </DialogTitle>
       <DialogContent>
-        Are you sure you want to delete route{" "}
+        {tAdminTrains("view-all-train-routes.delete-train-route.title-description")} {" "}
         <strong>{trainRoute?.name}</strong>?
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose}>
+          {tAdminTrains("view-all-train-routes.delete-train-route.cancel-button")}
+        </Button>
         <Button onClick={onDelete} variant="contained" color="error">
-          Delete
+          {tAdminTrains("view-all-train-routes.delete-train-route.delete-button")}
         </Button>
       </DialogActions>
     </Dialog>

@@ -32,7 +32,6 @@ import EditTrainStopModal from "./edit-train-stop";
 import DeleteTrainStopDialog from "./delete-train-stop";
 import { AddTrainStopModal } from "./add-train-stop";
 import { useTranslations } from "next-intl";
-import TrainsAdminPage from "@/app/[locale]/admin/trains/page";
 
 type SortKey = "trainStop.name" | "stationSequenceNumber";
 type SortOrder = "asc" | "desc" | "";
@@ -354,6 +353,7 @@ export default function TrainStopsAdminView() {
                   setPage(0);
                 }}
                 rowsPerPageOptions={[5, 10, 25]}
+                labelRowsPerPage={tAdminTrains("table.rows-per-page")}
               />
             </Box>
           </Box>

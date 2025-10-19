@@ -47,6 +47,8 @@ export function EditTrainRouteModal({
   });
   const [, forceUpdate] = useState(0);
   const tToaster = useTranslations("Toaster");
+  const tAdminTrains = useTranslations("AdminPage");
+  
 
   useEffect(() => {
     if (open) {
@@ -112,19 +114,18 @@ export function EditTrainRouteModal({
             }}
           >
             <Typography variant="h6" gutterBottom textAlign="center">
-              Edit Train Route
+              {tAdminTrains("view-all-train-routes.edit-train-route.title")}
             </Typography>
-
             <Box sx={{ flex: 1, overflowY: "auto", pr: 1 }}>
               <TextField
-                label="Route Name"
+                label={tAdminTrains("view-all-train-routes.edit-train-route.train-route-name")}
                 defaultValue={formDataRef.current.name}
                 onChange={(e) => (formDataRef.current.name = e.target.value)}
                 fullWidth
                 margin="normal"
               />
               <TextField
-                label="Latitude"
+                label={tAdminTrains("view-all-train-routes.edit-train-route.latitude")}
                 type="number"
                 defaultValue={formDataRef.current.centerLatitude}
                 onChange={(e) =>
@@ -136,7 +137,7 @@ export function EditTrainRouteModal({
                 margin="normal"
               />
               <TextField
-                label="Longitude"
+                label={tAdminTrains("view-all-train-routes.edit-train-route.longitude")}
                 type="number"
                 defaultValue={formDataRef.current.centerLongitude}
                 onChange={(e) =>
@@ -148,7 +149,7 @@ export function EditTrainRouteModal({
                 margin="normal"
               />
               <TextField
-                label="Zoom Level"
+                label={tAdminTrains("view-all-train-routes.edit-train-route.zoom-level")}
                 type="number"
                 defaultValue={formDataRef.current.zoomLevel}
                 onChange={(e) =>
@@ -158,7 +159,7 @@ export function EditTrainRouteModal({
                 margin="normal"
               />
               <TextField
-                label="Total Route Time (minutes)"
+                label={tAdminTrains("view-all-train-routes.edit-train-route.total-route-time")}
                 type="number"
                 defaultValue={formDataRef.current.totalRouteTime}
                 onChange={(e) =>
@@ -170,7 +171,7 @@ export function EditTrainRouteModal({
                 margin="normal"
               />
               <TextField
-                label="Route Distance (km)"
+                label={tAdminTrains("view-all-train-routes.edit-train-route.route-distance")}
                 type="number"
                 defaultValue={formDataRef.current.routeDistance}
                 onChange={(e) =>
@@ -183,7 +184,9 @@ export function EditTrainRouteModal({
               />
 
               <FormControl fullWidth margin="normal" required>
-                <InputLabel id="stationStops-label">Train Stops</InputLabel>
+                <InputLabel id="stationStops-label">
+                  {tAdminTrains("view-all-train-routes.edit-train-route.train-stops")}
+                </InputLabel>
                 <Select
                   labelId="stationStops-label"
                   multiple
@@ -193,13 +196,13 @@ export function EditTrainRouteModal({
                       .value as number[];
                     forceUpdate((n) => n + 1);
                   }}
-                  input={<OutlinedInput label="Train Stops" />}
+                  input={<OutlinedInput label={tAdminTrains("view-all-train-routes.edit-train-route.train-stops")} />}
                   renderValue={(selected) => (
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                       {selected.map((id) => {
                         const stop = trainStops.find((s) => s.id === id);
                         return (
-                          <Chip key={id} label={stop?.name || id} />
+                          <Chip key={id} label={tAdminTrains("stations." + stop?.name) || id} />
                         );
                       })}
                     </Box>
@@ -227,7 +230,7 @@ export function EditTrainRouteModal({
                           alignItems: "center",
                         }}
                       >
-                        {stop?.name}
+                        {tAdminTrains("stations." + stop?.name)}
                         {formDataRef.current.stationStops.includes(stop.id) && (
                           <Chip
                             label={
@@ -248,7 +251,7 @@ export function EditTrainRouteModal({
 
               <FormControl fullWidth margin="normal" required>
                 <Typography variant="subtitle1" gutterBottom>
-                  Is Working?
+                  {tAdminTrains("view-all-train-routes.edit-train-route.is-working")}
                 </Typography>
                 <Box display="flex" gap={2}>
                   <Button
@@ -261,7 +264,7 @@ export function EditTrainRouteModal({
                       forceUpdate((n) => n + 1);
                     }}
                   >
-                    Yes
+                    {tAdminTrains("view-all-train-routes.edit-train-route.yes-button")}
                   </Button>
                   <Button
                     variant={
@@ -273,7 +276,7 @@ export function EditTrainRouteModal({
                       forceUpdate((n) => n + 1);
                     }}
                   >
-                    No
+                    {tAdminTrains("view-all-train-routes.edit-train-route.no-button")}
                   </Button>
                 </Box>
               </FormControl>
@@ -281,7 +284,7 @@ export function EditTrainRouteModal({
 
             <Box mt={3} display="flex" justifyContent="space-between">
               <Button variant="outlined" onClick={onClose}>
-                Cancel
+                {tAdminTrains("view-all-train-routes.edit-train-route.cancel-button")}
               </Button>
               <Button
                 variant="contained"
@@ -296,7 +299,7 @@ export function EditTrainRouteModal({
                   formDataRef.current.stationStops.length === 0
                 }
               >
-                Save
+                {tAdminTrains("view-all-train-routes.edit-train-route.update-button")}
               </Button>
             </Box>
           </Container>

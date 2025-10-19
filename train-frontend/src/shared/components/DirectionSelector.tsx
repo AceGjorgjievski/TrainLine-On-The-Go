@@ -5,6 +5,7 @@ import {
   RadioGroup,
   Typography,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 type Props = {
   direction: "departure" | "arrival" | "all" | "";
@@ -17,6 +18,8 @@ export default function DirectionSelector({
   handleDirectionChange,
   includeAllOption = false
 }: Props) {
+  const tDirectionSelector = useTranslations("Direction-Selector");
+
   return (
     <Container
       sx={{
@@ -33,7 +36,7 @@ export default function DirectionSelector({
       }}
     >
       <Typography sx={{ fontWeight: "bold", mb: 1 }}>
-        Choose direction
+        {tDirectionSelector("title-form")}
       </Typography>
       <RadioGroup
         row
@@ -45,18 +48,18 @@ export default function DirectionSelector({
         <FormControlLabel
           value="departure"
           control={<Radio />}
-          label="Departure from Skopje"
+          label={tDirectionSelector("radio-option-one")}
         />
         <FormControlLabel
           value="arrival"
           control={<Radio />}
-          label="Arrival to Skopje"
+          label={tDirectionSelector("radio-option-two")}
         />
         {includeAllOption && (
           <FormControlLabel
             value="all"
             control={<Radio />}
-            label="All Station Stops"
+            label={tDirectionSelector("admin-option")}
           />
         )}
       </RadioGroup>

@@ -3,7 +3,6 @@
 import {
   getAllTrainStops,
   getDepartureTrainRoutes,
-  deleteTrainRoute,
   getArrivalTrainRoutes,
 } from "@/services";
 import { DirectionSelector } from "@/shared/components";
@@ -28,6 +27,7 @@ import { useEffect, useState } from "react";
 import { EditTrainRouteModal } from "./edit-train-route-modal";
 import { AddTrainRouteModal } from "./add-train-route-modal";
 import { DeleteTrainRouteModal } from "./delete-train-route-modal";
+import { useTranslations } from "next-intl";
 
 type SortKey = "name";
 type SortOrder = "asc" | "desc" | "";
@@ -57,6 +57,7 @@ export default function TrainRoutesAdminView() {
   const [routeToDelete, setRouteToDelete] = useState<TrainRouteDTO | null>(
     null
   );
+  const tAdminTrains = useTranslations("AdminPage");
 
   useEffect(() => {
     const fetchAllTrainStops = async () => {
@@ -154,7 +155,7 @@ export default function TrainRoutesAdminView() {
                   size="small"
                   onClick={() => setIsAddModalOpen(true)}
                 >
-                  Add New Route
+                  {tAdminTrains("view-all-train-routes.add-new-train-route-button")}
                 </Button>
               </Box>
 
@@ -182,7 +183,7 @@ export default function TrainRoutesAdminView() {
                         <Typography
                           sx={{ fontWeight: "bold", textAlign: "center" }}
                         >
-                          Route Name {renderSortIcon("name")}
+                          {tAdminTrains("table.route-name")} {renderSortIcon("name")}
                         </Typography>
                       </TableCell>
 
@@ -194,7 +195,7 @@ export default function TrainRoutesAdminView() {
                         <Typography
                           sx={{ fontWeight: "bold", textAlign: "center" }}
                         >
-                          Latitude
+                          {tAdminTrains("table.latitude")}
                         </Typography>
                       </TableCell>
                       <TableCell
@@ -205,7 +206,7 @@ export default function TrainRoutesAdminView() {
                         <Typography
                           sx={{ fontWeight: "bold", textAlign: "center" }}
                         >
-                          Longitude
+                          {tAdminTrains("table.longitude")}
                         </Typography>
                       </TableCell>
                       <TableCell
@@ -216,7 +217,7 @@ export default function TrainRoutesAdminView() {
                         <Typography
                           sx={{ fontWeight: "bold", textAlign: "center" }}
                         >
-                          Zoom Level
+                          {tAdminTrains("table.zoom-level")}
                         </Typography>
                       </TableCell>
                       <TableCell
@@ -227,7 +228,7 @@ export default function TrainRoutesAdminView() {
                         <Typography
                           sx={{ fontWeight: "bold", textAlign: "center" }}
                         >
-                          Action
+                          {tAdminTrains("table.button-action")}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -235,7 +236,9 @@ export default function TrainRoutesAdminView() {
                   <TableBody>
                     {paginatedRoutes.map((route, index) => (
                       <TableRow key={route.id || index}>
-                        <TableCell align="center">{route.name}</TableCell>
+                        <TableCell align="center">
+                          {tAdminTrains("routes." + route.name.toLowerCase().replace(/\s+/g, "").replace("-", "-"))}
+                        </TableCell>
                         <TableCell align="center">
                           {route.centerLatitude}
                         </TableCell>
@@ -258,7 +261,7 @@ export default function TrainRoutesAdminView() {
                                 setIsModalOpen(true);
                               }}
                             >
-                              Edit
+                              {tAdminTrains("table.button-edit")}
                             </Button>
                             <Button
                               variant="contained"
@@ -269,7 +272,7 @@ export default function TrainRoutesAdminView() {
                                 setConfirmDeleteOpen(true);
                               }}
                             >
-                              Delete
+                              {tAdminTrains("table.button-delete")}
                             </Button>
                           </Stack>
                         </TableCell>
@@ -305,31 +308,10 @@ export default function TrainRoutesAdminView() {
                       setPage(0);
                     }}
                     rowsPerPageOptions={[5, 10, 25]}
+                    labelRowsPerPage={tAdminTrains("table.rows-per-page")}
                   />
                 </Box>
               </Box>
-              {/* <Dialog
-                open={confirmDeleteOpen}
-                onClose={() => setConfirmDeleteOpen(false)}
-              >
-                <DialogTitle>Confirm Deletion</DialogTitle>
-                <DialogContent>
-                  Are you sure you want to delete route{" "}
-                  <strong>{routeToDelete?.name}</strong>?
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setConfirmDeleteOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={confirmDelete}
-                    variant="contained"
-                    color="error"
-                  >
-                    Delete
-                  </Button>
-                </DialogActions>
-              </Dialog> */}
               <DeleteTrainRouteModal
                 open={confirmDeleteOpen}
                 onClose={() => setConfirmDeleteOpen(false)}
