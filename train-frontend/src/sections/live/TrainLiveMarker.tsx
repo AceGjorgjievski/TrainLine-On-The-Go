@@ -1,6 +1,7 @@
 import { LiveTrainProgress } from "@/types";
 import { Box, Typography } from "@mui/material";
 import { Icon } from "leaflet";
+import { useTranslations } from "next-intl";
 import { Marker, Popup } from "react-leaflet";
 
 type Props = {
@@ -14,6 +15,9 @@ export default function TrainLiveMarker({ liveTrainProgress }: Props) {
     iconAnchor: [18, 35],
     popupAnchor: [0, -35],
   });
+  const tLiveLiveMaerker = useTranslations("Live.live-marker");
+  const tLiveStations = useTranslations("Timetable.stations");
+
 
   return (
     <>
@@ -36,16 +40,18 @@ export default function TrainLiveMarker({ liveTrainProgress }: Props) {
                   🚆 {train.trainName}
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 0.5 }}>
-                  <strong>Route Name:</strong> {train.routeName}
+                  <strong>{tLiveLiveMaerker("route-name")}: </strong> {train.routeName}
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 0.5 }}>
-                  <strong>Previous Station:</strong> {train.lastStationName}
+                  <strong>{tLiveLiveMaerker("previous-station")}: </strong>
+                  {tLiveStations(train!.lastStationName || '')}
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 0.5 }}>
-                  <strong>Next Station:</strong> {train.nextStationName}
+                  <strong>{tLiveLiveMaerker("next-station")}: </strong>
+                  {tLiveStations(train!.nextStationName || '')}
                 </Typography>
                 <Typography variant="body2" color="green">
-                  <strong>Status:</strong> ON TIME
+                  <strong>{tLiveLiveMaerker("status")}:</strong> {tLiveLiveMaerker("on-time")}
                 </Typography>
               </Box>
             </Popup>

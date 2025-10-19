@@ -1,5 +1,6 @@
 import { TrainRouteDTO, TrainRouteStop, TrainStop } from "@/types";
 import { Typography } from "@mui/material";
+import { useTranslations } from "next-intl";
 import { Marker, Popup } from "react-leaflet";
 
 type Props = {
@@ -7,6 +8,9 @@ type Props = {
 };
 
 export default function TrainStopMarker({ routeData }: Props) {
+  const tLiveStopMarker = useTranslations("Live.stop-marker");
+  const tLiveStations = useTranslations("Timetable.stations");
+
   return (
     <>
       {routeData?.stationStops?.map(
@@ -24,17 +28,17 @@ export default function TrainStopMarker({ routeData }: Props) {
                     fontWeight="bold"
                     gutterBottom
                   >
-                    🚉 Station: {stop.name}
+                    🚉 {tLiveStopMarker("station")}: {tLiveStations(stop.name)}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Station Number:</strong>{" "}
+                    <strong>{tLiveStopMarker("station-number")}:</strong>{" "}
                     {stopWrapper.stationSequenceNumber}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Latitude:</strong> {stop.latitude.toFixed(6)}
+                    <strong>{tLiveStopMarker("latitude")}:</strong> {stop.latitude.toFixed(6)}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Longitude:</strong> {stop.longitude.toFixed(6)}
+                    <strong>{tLiveStopMarker("longitude")}:</strong> {stop.longitude.toFixed(6)}
                   </Typography>
                 </div>
               </Popup>

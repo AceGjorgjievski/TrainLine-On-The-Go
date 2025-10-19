@@ -2,6 +2,7 @@ import { Box, TextField, Button, Typography } from "@mui/material";
 import { LatLngExpression } from "leaflet";
 import { useMapEvent, Marker, Popup, useMap } from "react-leaflet";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 type Props = {
   onSave: (data: { name: string; position: LatLngExpression }) => void;
@@ -12,6 +13,7 @@ export default function AddStationClickHandler({ onSave, onCancel }: Props) {
   const [stationPos, setStationPos] = useState<LatLngExpression | null>(null);
   const [stationName, setStationName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const tAddNewStation = useTranslations("Live.add-station");
 
   const map = useMap();
 
@@ -61,11 +63,11 @@ export default function AddStationClickHandler({ onSave, onCancel }: Props) {
           }}
         >
           <Typography variant="body2" gutterBottom>
-            Add Station Name
+            {tAddNewStation("title")}
           </Typography>
           <TextField
             autoFocus
-            label="Station Name"
+            label={tAddNewStation("name-input-label")}
             fullWidth
             variant="outlined"
             value={stationName}
@@ -73,9 +75,9 @@ export default function AddStationClickHandler({ onSave, onCancel }: Props) {
             margin="dense"
           />
           <Box mt={2} display="flex" justifyContent="space-between">
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel}>{tAddNewStation("cancel-button")}</Button>
             <Button onClick={handleSave} disabled={!stationName}>
-              Save
+              {tAddNewStation("save-button")}
             </Button>
           </Box>
         </Box>
