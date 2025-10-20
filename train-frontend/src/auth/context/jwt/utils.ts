@@ -1,5 +1,4 @@
 
-import { paths } from '@/routes/paths';
 import axios from '@/utils/axios';
 
 // ----------------------------------------------------------------------
@@ -47,14 +46,15 @@ export const tokenExpired = (exp: number) => {
   clearTimeout(expiredTimer);
 
   expiredTimer = setTimeout(() => {
-    alert('Token expired');
+    console.log('Token expired (setTimeout fired)');
+    // alert('Token expired');
 
-    sessionStorage.removeItem('accessToken');
+    // sessionStorage.removeItem('accessToken');
 
     const pathParts = window.location.pathname.split("/");
     const locale = pathParts[1];
 
-    window.location.href = paths.auth.jwt.login(locale);
+    // window.location.href = paths.auth.jwt.login(locale);
   }, timeLeft);
 };
 

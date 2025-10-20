@@ -33,6 +33,17 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        String uri = request.getRequestURI();
+
+        if (uri.startsWith("/api/train-stop-time/")
+                || uri.startsWith("/api/train-route/")
+                || uri.startsWith("/api/train-stop/")
+                || uri.equals("/api/login")
+                || uri.equals("/")
+                || uri.equals("/home")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         String header = request.getHeader(JwtAuthConstants.HEADER_STRING);
         if (header == null || !header.startsWith(JwtAuthConstants.TOKEN_PREFIX)) {

@@ -12,7 +12,7 @@ const plainAxios = axios.create({
 });
 
 
-let isRefreshing = false;
+// let isRefreshing = false;
 let failedQueue: any[] = [];
 
 const processQueue = (error: any, token: string | null = null) => {
@@ -47,6 +47,17 @@ axiosInstance.interceptors.response.use(
       console.log(
         "[Axios Interceptor] Access token expired. Attempting to refresh..."
       );
+      const pathParts = window.location.pathname.split("/");
+
+      // Ensure locale is at the first position and handle edge cases
+      const locale = pathParts[1] && (pathParts[1] === "en" || pathParts[1] === "mk") ? pathParts[1] : "en"; // default to "en" if locale not found
+
+      // Generate the login path using the correct locale
+      const loginPath = paths.login();
+
+      // Redirect to the login page with the locale
+      window.location.href = `/${locale}${loginPath}`;
+      /*
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -65,7 +76,7 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const res = await plainAxios.post(
+        const res = await axiosInstance.post(
           endpoints.auth.refresh,
           {}, // empty body, token comes from HTTP-only cookie
           { withCredentials: true }
@@ -100,7 +111,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
-      }
+      }*/
     }
 
     // Fallback error handler

@@ -3,13 +3,8 @@ import { useState, useEffect, useCallback } from 'react';
 
 import { useAuthContext } from '../hooks';
 import { paths } from '@/routes/paths';
-import { usePathname, useRouter } from '@/routes/hooks';
-
-// ----------------------------------------------------------------------
-
-const loginPaths: Record<string, (locale: string) => string> = {
-  jwt: (locale: string) => paths.login(locale),
-};
+import { useRouter } from '../../../i18n/routing';
+import { useLocale } from 'next-intl';
 
 // ----------------------------------------------------------------------
 
@@ -27,30 +22,30 @@ export default function AuthGuard({ children }: Props) {
 
 function Container({ children }: Props) {
   const router = useRouter();
-  const pathname = usePathname();
+  const locale = useLocale();
 
-  const { authenticated } = useAuthContext();
+  const { authenticated, loading } = useAuthContext();
 
   const [checked, setChecked] = useState(false);
 
   const check = useCallback(() => {
-    if (!authenticated) {
-      const pathParts = pathname!.split('/');
-      const locale = pathParts[1] || 'en';
-      const loginPath = loginPaths.jwt(locale);
+    if(loading) return;
 
-      router.replace(loginPath)
+    if (!authenticated) {
+      const loginPath = paths.login();
+
+      router.replace(loginPath, { locale })
     } else {
       setChecked(true);
     }
-  }, [authenticated, router, pathname]);
+  }, [authenticated, router, locale, loading]);
 
   useEffect(() => {
     check();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!checked) {
+  if (loading || !checked) {
     return null;
   }
 

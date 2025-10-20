@@ -1,5 +1,6 @@
 package mk.ukim.finki.trainbackend.config;
 
+import jakarta.servlet.DispatcherType;
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.trainbackend.config.filters.JWTAuthorizationFilter;
 import mk.ukim.finki.trainbackend.config.filters.JwtAuthenticationFilter;
@@ -40,21 +41,26 @@ public class JWTWebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers(
                                 "/",
                                 "/home",
                                 "/api/login",
                                 "/api/login/refresh",
                                 "/api/train/**",
-                                "/api/train-route/**",
                                 "/api/train-stop-time/**",
+                                "/api/train-route/**",
+                                "/api/train-stop/**",
                                 "/api/train-route-stop/**"
                         ).permitAll()
-                        .requestMatchers("/api/train-route/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(authorizationFilter(), JwtAuthenticationFilter.class);
+                .addFilterAfter(authorizationFilter(), JwtAuthenticationFilter.class)
+                .formLogin().disable()
+                .httpBasic().disable()
+                .logout().disable();
 
         return http.build();
     }
