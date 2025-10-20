@@ -1,5 +1,6 @@
 export async function apiGet<T>(url: string): Promise<T> {
   try {
+    console.log("url:", url);
     const response = await fetch(url, {
       method: 'GET',
       headers: {
