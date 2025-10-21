@@ -8,8 +8,8 @@ based on the official timetable from Macedonian Railways.
 ### Preview:
 ![img.png](./train-frontend/public/images/img.png)
 ![img_1.png](./train-frontend/public/images/img_1.png)
+![img_2.png](./train-frontend/public/images/img_2.png)
 ![img_3.png](./train-frontend/public/images/img_3.png)
-![img_4.png](./train-frontend/public/images/img_4.png)
 
 
 ### Tech stack:
