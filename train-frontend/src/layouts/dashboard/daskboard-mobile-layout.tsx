@@ -20,7 +20,6 @@ import { useAuthContext } from "@/auth/hooks";
 import { useSidebarContext } from "@/components/context";
 import { useTranslations } from "next-intl";
 import { drawerItems } from "./dashboard.data";
-import { useEffect } from "react";
 
 type Props = {
   children: React.ReactNode;
@@ -50,7 +49,7 @@ export default function DashBoardMobileLayout({ children }: Props) {
             flexShrink: 0,
             [`& .MuiDrawer-paper`]: {
               width: drawerWidth,
-              top: "88px",
+              top: "80px",
               overflowX: "hidden",
               transition: "width 0.3s ease",
               boxSizing: "border-box",
