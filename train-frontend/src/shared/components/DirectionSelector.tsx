@@ -1,3 +1,4 @@
+import { useResponsive } from "@/hooks";
 import {
   Container,
   FormControlLabel,
@@ -19,6 +20,7 @@ export default function DirectionSelector({
   includeAllOption = false
 }: Props) {
   const tDirectionSelector = useTranslations("Direction-Selector");
+  const isMdUp = useResponsive("up", "md");
 
   return (
     <Container
@@ -31,13 +33,19 @@ export default function DirectionSelector({
         borderRadius: 2,
         padding: 3,
         boxShadow: 10,
-        width: "fit-content",
+        width: isMdUp ? '600px' : '300px',
         border: '2px solid'
       }}
     >
       <Typography sx={{ fontWeight: "bold", mb: 1 }}>
         {tDirectionSelector("title-form")}
       </Typography>
+      <Container sx={{
+        width: 'fit-content',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
       <RadioGroup
         row
         aria-labelledby="direction-radio-group"
@@ -63,6 +71,8 @@ export default function DirectionSelector({
           />
         )}
       </RadioGroup>
+      </Container>
+
     </Container>
   );
 }

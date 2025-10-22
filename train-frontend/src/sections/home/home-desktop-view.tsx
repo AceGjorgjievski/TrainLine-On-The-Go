@@ -22,7 +22,6 @@ export default function HomeDesktopView() {
             height: "97vh",
             objectFit: "cover",
             display: "block",
-            marginLeft: "0rem",
             pointerEvents: "none",
           }}
         >
