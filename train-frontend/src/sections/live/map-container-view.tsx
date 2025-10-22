@@ -403,7 +403,7 @@ export default function MapContainerView() {
         style={{
           position: "absolute",
           top: 26,
-          right: 65,
+          right: 32,
           zIndex: 1000,
         }}
       >
