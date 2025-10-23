@@ -12,18 +12,15 @@ type Props = {
 };
 
 export default function DashBoardLayout({ children }: Props) {
-  const { isCollapsed, toggleCollapse } = useSidebarContext();
+  const { toggleCollapse } = useSidebarContext();
   const isSmUp = useResponsive("up", "sm");
 
   useEffect(() => {
-    if (!isSmUp && !isCollapsed) {
-      toggleCollapse();
-    }
 
-    if (isSmUp && isCollapsed) {
+    if (isSmUp) {
       toggleCollapse();
     }
-  }, [isSmUp]);
+  }, []);
 
   return (
     <>

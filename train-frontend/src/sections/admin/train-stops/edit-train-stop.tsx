@@ -84,7 +84,11 @@ export default function EditTrainStopModal({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 600,
+            width: {
+              md: 600,
+              sm: 400,
+              xs: 350
+            },
             maxHeight: "90vh",
             bgcolor: "background.paper",
             border: "2px solid #000",
@@ -95,7 +99,10 @@ export default function EditTrainStopModal({
         >
           <Container
             sx={{
-              width: 500,
+              width: {
+                md: 400,
+                sm: 320
+              },
               maxHeight: 600,
               display: "flex",
               flexDirection: "column",

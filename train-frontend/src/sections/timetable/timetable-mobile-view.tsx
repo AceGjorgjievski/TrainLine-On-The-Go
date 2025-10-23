@@ -86,7 +86,7 @@ export default function TimetableMobileView() {
             width: {
               lg: "900px",
               md: "650px",
-              xs: "350px",
+              xs: "280px",
             },
             overflowX: "auto",
           }}

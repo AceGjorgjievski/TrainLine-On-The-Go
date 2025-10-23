@@ -20,7 +20,6 @@ export default function DirectionSelector({
   includeAllOption = false
 }: Props) {
   const tDirectionSelector = useTranslations("Direction-Selector");
-  const isMdUp = useResponsive("up", "md");
 
   return (
     <Container
@@ -33,7 +32,11 @@ export default function DirectionSelector({
         borderRadius: 2,
         padding: 3,
         boxShadow: 10,
-        width: isMdUp ? '600px' : '300px',
+        width: {
+          md: '600px',
+          sm: '300px',
+          xs: '250px'
+        },
         border: '2px solid'
       }}
     >

@@ -48,11 +48,18 @@ export default function AdminDashboardView() {
         sx={{
           display: "flex",
           flexWrap: "wrap",
-          gap: 6,
+          gap: {
+            xs: 2,
+            sm: 5,
+          },
           justifyContent: "center",
           "& > :not(style)": {
-            mt: 4,
-            width: 220,
+            mt: 2,
+            width: {
+              md: '220px',
+              sm: '180px',
+              xs: '200px'
+            },
             height: 120,
           },
         }}
