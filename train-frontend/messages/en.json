@@ -216,7 +216,7 @@
       "admin": {
         "radio-option-one": "View All Active Trains",
         "radio-option-two": "Add New Train Station",
-        "radio-option-three": "TRegular Search"
+        "radio-option-three": "Regular Search"
       }
     },
     "submit": "Submit"

@@ -15,8 +15,10 @@ export default function TrainLiveMarker({ liveTrainProgress }: Props) {
     iconAnchor: [18, 35],
     popupAnchor: [0, -35],
   });
-  const tLiveLiveMaerker = useTranslations("Live.live-marker");
+  const tLiveLiveMarker = useTranslations("Live.live-marker");
   const tLiveStations = useTranslations("Timetable.stations");
+  const tTrainRoutes = useTranslations("Timetable");
+  const tAdminPage = useTranslations("AdminPage");
 
 
   return (
@@ -37,21 +39,23 @@ export default function TrainLiveMarker({ liveTrainProgress }: Props) {
                   variant="subtitle1"
                   sx={{ fontWeight: "bold", mb: 1 }}
                 >
-                  🚆 {train.trainName}
+                  🚆
+                  {tAdminPage("table." + train.trainName.split(" ")[0].toLocaleLowerCase()) + " " + train.trainName.split(" ")[1]}
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 0.5 }}>
-                  <strong>{tLiveLiveMaerker("route-name")}: </strong> {train.routeName}
+                  <strong>{tLiveLiveMarker("route-name")}: </strong> 
+                  {tTrainRoutes("routes." + train.routeName.toLowerCase().replace(/\s+/g, "").replace("-", "-"))}
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 0.5 }}>
-                  <strong>{tLiveLiveMaerker("previous-station")}: </strong>
+                  <strong>{tLiveLiveMarker("previous-station")}: </strong>
                   {tLiveStations(train!.lastStationName || '')}
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 0.5 }}>
-                  <strong>{tLiveLiveMaerker("next-station")}: </strong>
+                  <strong>{tLiveLiveMarker("next-station")}: </strong>
                   {tLiveStations(train!.nextStationName || '')}
                 </Typography>
                 <Typography variant="body2" color="green">
-                  <strong>{tLiveLiveMaerker("status")}:</strong> {tLiveLiveMaerker("on-time")}
+                  <strong>{tLiveLiveMarker("status")}:</strong> {tLiveLiveMarker("on-time")}
                 </Typography>
               </Box>
             </Popup>
