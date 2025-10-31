@@ -174,7 +174,7 @@ export default function TrainRoutesAdminView() {
                     <TableRow>
                       <TableCell
                         sx={{
-                          width: "70%",
+                          width: "24%",
                           cursor: "pointer",
                           textDecoration: "underline",
                         }}
@@ -189,7 +189,7 @@ export default function TrainRoutesAdminView() {
 
                       <TableCell
                         sx={{
-                          width: "70%",
+                          width: "24%",
                         }}
                       >
                         <Typography
@@ -200,7 +200,7 @@ export default function TrainRoutesAdminView() {
                       </TableCell>
                       <TableCell
                         sx={{
-                          width: "70%",
+                          width: "24%",
                         }}
                       >
                         <Typography
@@ -211,7 +211,7 @@ export default function TrainRoutesAdminView() {
                       </TableCell>
                       <TableCell
                         sx={{
-                          width: "70%",
+                          width: "24%",
                         }}
                       >
                         <Typography
@@ -222,7 +222,7 @@ export default function TrainRoutesAdminView() {
                       </TableCell>
                       <TableCell
                         sx={{
-                          width: "30%",
+                          width: "24%",
                         }}
                       >
                         <Typography

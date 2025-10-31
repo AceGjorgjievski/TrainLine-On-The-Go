@@ -197,50 +197,64 @@ export default function TrainsAdminView() {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>
-                        <Typography
-                          sx={{ fontWeight: "bold", textAlign: "center" }}
-                        >
+                      <TableCell align="center" sx={{ width: "20%" }}>
+                        <Typography sx={{ fontWeight: "bold" }}>
                           {tAdminTrains("table.id")}
                         </Typography>
                       </TableCell>
+
                       <TableCell
+                        align="center"
                         onClick={() => handleSort("name")}
-                        sx={{ cursor: "pointer", textDecoration: "underline" }}
+                        sx={{
+                          cursor: "pointer",
+                          textDecoration: "underline",
+                          width: "17%",
+                        }}
                       >
-                        <Typography
-                          sx={{ fontWeight: "bold", textAlign: "center" }}
-                        >
+                        <Typography sx={{ fontWeight: "bold" }}>
                           {tAdminTrains("table.name")} {renderSortIcon("name")}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Typography
-                          sx={{ fontWeight: "bold", textAlign: "center" }}
-                        >
+
+                      <TableCell align="center" sx={{ width: "20%" }}>
+                        <Typography sx={{ fontWeight: "bold" }}>
                           {tAdminTrains("table.speed")} (km/h)
                         </Typography>
                       </TableCell>
+
                       <TableCell
+                        align="center"
                         onClick={() => handleSort("trainRouteName")}
-                        sx={{ cursor: "pointer", textDecoration: "underline" }}
-                      >
-                        <Typography
-                          sx={{ fontWeight: "bold", textAlign: "center" }}
-                        >
-                          {tAdminTrains("table.route-name")} {renderSortIcon("trainRouteName")}
-                        </Typography>
-                      </TableCell>
-                      <TableCell
-                        onClick={() => handleSort("trainStatus")}
-                        sx={{ cursor: "pointer", textDecoration: "underline" }}
+                        sx={{
+                          cursor: "pointer",
+                          textDecoration: "underline",
+                          width: "20%",
+                        }}
                       >
                         <Typography sx={{ fontWeight: "bold" }}>
-                          {tAdminTrains("table.status")} {renderSortIcon("trainStatus")}
+                          {tAdminTrains("table.route-name")}{" "}
+                          {renderSortIcon("trainRouteName")}
+                        </Typography>
+                      </TableCell>
+
+                      <TableCell
+                        align="center"
+                        onClick={() => handleSort("trainStatus")}
+                        sx={{
+                          cursor: "pointer",
+                          textDecoration: "underline",
+                          width: "24%",
+                        }}
+                      >
+                        <Typography sx={{ fontWeight: "bold" }}>
+                          {tAdminTrains("table.status")}{" "}
+                          {renderSortIcon("trainStatus")}
                         </Typography>
                       </TableCell>
                     </TableRow>
                   </TableHead>
+
                   <TableBody>
                     {paginatedTrains.map((train, index) => (
                       <TableRow
@@ -256,7 +270,12 @@ export default function TrainsAdminView() {
                         </TableCell>
                         <TableCell>
                           <Typography sx={{ textAlign: "center" }}>
-                            {tAdminTrains("table." + train.name.split(" ")[0].toLocaleLowerCase()) + " " + train.name.split(" ")[1]}
+                            {tAdminTrains(
+                              "table." +
+                                train.name.split(" ")[0].toLocaleLowerCase()
+                            ) +
+                              " " +
+                              train.name.split(" ")[1]}
                           </Typography>
                         </TableCell>
                         <TableCell>
@@ -266,10 +285,16 @@ export default function TrainsAdminView() {
                         </TableCell>
                         <TableCell>
                           <Typography sx={{ textAlign: "center" }}>
-                            {tAdminTrains("routes." + train.trainRouteName.toLowerCase().replace(/\s+/g, "").replace("-", "-"))}
+                            {tAdminTrains(
+                              "routes." +
+                                train.trainRouteName
+                                  .toLowerCase()
+                                  .replace(/\s+/g, "")
+                                  .replace("-", "-")
+                            )}
                           </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell sx={{ textAlign: "center" }}>
                           <Typography
                             sx={{
                               backgroundColor: getStatusColor(
@@ -302,7 +327,7 @@ export default function TrainsAdminView() {
                   display: "flex",
                   justifyContent: "flex-end",
                   mt: 2,
-                  marginBottom: '8rem',
+                  marginBottom: "8rem",
                 }}
               >
                 <Box

@@ -67,7 +67,7 @@ export default function DashBoardDesktopLayout({ children }: Props) {
                   const selected = pathName === path;
                   return (
                     <Tooltip
-                      title={isCollapsed ? label : ""}
+                      title={isCollapsed ? tDashboard(label.toLocaleLowerCase()) : ""}
                       placement="right"
                       key={index}
                       arrow
