@@ -12,7 +12,7 @@ export type ViewOptions = "stations" | "live";
 
 export type FormData = {
   direction: Direction;
-  route: RouteKey;
+  route: RouteKey | string;
   viewOption: ViewOptions;
   showAllLiveTrains?: boolean;
   addNewTrainStation?: boolean;
