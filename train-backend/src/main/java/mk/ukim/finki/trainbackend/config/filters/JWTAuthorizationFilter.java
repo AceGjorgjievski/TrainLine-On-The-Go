@@ -35,7 +35,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             throws IOException, ServletException {
         String uri = request.getRequestURI();
 
-        if (uri.startsWith("/api/train-stop-time/")
+        if (uri.startsWith("/api/train/")
+                || uri.startsWith("/api/train-stop-time/")
                 || uri.startsWith("/api/train-route/")
                 || uri.startsWith("/api/train-stop/")
                 || uri.equals("/api/login")

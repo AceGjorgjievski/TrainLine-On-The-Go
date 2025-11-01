@@ -56,11 +56,12 @@ public class JWTWebSecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
+                .logout(logout -> logout.disable())
                 .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(authorizationFilter(), JwtAuthenticationFilter.class)
-                .formLogin().disable()
-                .httpBasic().disable()
-                .logout().disable();
+                .addFilterAfter(authorizationFilter(), JwtAuthenticationFilter.class);
+
 
         return http.build();
     }
