@@ -205,7 +205,9 @@
           "skopje-kochani": "Skopje - Kochani",
           "kochani-skopje": "Kochani - Skopje",
           "skopje-prishtina": "Skopje - Prishtina",
-          "prishtina-skopje": "Prishtina - Skopje"
+          "prishtina-skopje": "Prishtina - Skopje",
+          "skopje-strumica": "Skopje - Strumica",
+          "strumica-skopje": "Strumica - Skopje"
         }
       },
       "mode": {
@@ -233,7 +235,9 @@
     "add-new-station-after": "Successfully added new Train Stop!",
     "add": "Added successfully!",
     "update": "Updated successfully!",
-    "delete": "Deleted successfully!"
+    "delete": "Deleted successfully!",
+    "no-trains-on-route": "There are no active trains on this route",
+    "no-all-trains-on-route": "There are no active trains at the moment"
   },
   "AdminPage": {
     "view-all-trains": {

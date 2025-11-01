@@ -1,6 +1,6 @@
 "use client";
 
-import { Direction, FormData, RouteKey, ViewOptions } from "@/types";
+import { Direction, FormData, ViewOptions } from "@/types";
 import {
   Button,
   Drawer,
@@ -12,13 +12,14 @@ import {
   RadioGroup,
   FormControlLabel,
 } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import RouteDirection from "./routeDirectionFormControl";
 import DepartureArrival from "./departureArrivalFormControl";
 import StationLiveTypeFormControl from "./stationLiveTypeFormControl";
 import { useAuthContext } from "@/auth/hooks";
 import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
+import { checkIfJsonExists } from "@/shared/utils";
 
 type Props = {
   drawerOpen: boolean;
@@ -38,19 +39,34 @@ export default function SideDrawer({
   onSubmit,
 }: Props) {
   const [viewOption, setViewOption] = useState<ViewOptions | "">("");
-  const [route, setRoute] = useState<RouteKey | "">("");
+  const [route, setRoute] = useState<string | "">("");
   const [direction, setDirection] = useState<Direction | "">("");
 
   const { authenticated } = useAuthContext();
   const [mode, setMode] = useState<AdminMode>(
     authenticated ? "" : "Regular Search"
   );
+  const [jsonAvailable, setJsonAvailable] = useState<boolean>(false);
   const tSideDrawer = useTranslations("Side-Drawer");
   const tSideDrawerAdmin = useTranslations("Side-Drawer.question.admin");
   const tToaster = useTranslations("Toaster");
 
+  useEffect(() => {
+    const verifyJson = async () => {
+      if (!route || !direction) {
+        setJsonAvailable(false);
+        return;
+      }
+
+      const exists = await checkIfJsonExists(route, direction);
+      setJsonAvailable(exists);
+    };
+
+    verifyJson();
+  }, [route, direction]);
+
   const handleRouteChange = (event: SelectChangeEvent) => {
-    setRoute(event.target.value as RouteKey);
+    setRoute(event.target.value);
   };
 
   const handleStationLiveTypeChange = (
@@ -155,6 +171,7 @@ export default function SideDrawer({
         {mode === "Regular Search" && route && (
           <StationLiveTypeFormControl
             viewOption={viewOption}
+            jsonAvailable={jsonAvailable}
             handleStationLiveTypeChange={handleStationLiveTypeChange}
           />
         )}
@@ -165,7 +182,11 @@ export default function SideDrawer({
           onClick={handleSubmit}
           disabled={
             !mode ||
-            (mode === "Regular Search" && (!direction || !route || !viewOption))
+            (mode === "Regular Search" &&
+              (!direction ||
+                !route ||
+                !viewOption ||
+                (!jsonAvailable && viewOption === "live")))
           }
         >
           {tSideDrawer("submit")}

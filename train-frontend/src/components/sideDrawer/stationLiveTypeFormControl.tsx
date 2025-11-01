@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 
 type Props = {
   viewOption: ViewOptions | "" | undefined;
+  jsonAvailable: boolean;
   handleStationLiveTypeChange: (
     event: React.ChangeEvent<HTMLInputElement>
   ) => void;
@@ -17,10 +18,11 @@ type Props = {
 
 export default function StationLiveTypeFormControl({
   viewOption,
+  jsonAvailable,
   handleStationLiveTypeChange,
 }: Props) {
-    const tSideDrawerMode = useTranslations("Side-Drawer.question.mode");
-  
+  const tSideDrawerMode = useTranslations("Side-Drawer.question.mode");
+
   return (
     <FormControl fullWidth sx={{ mb: 3 }}>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
@@ -34,8 +36,12 @@ export default function StationLiveTypeFormControl({
         />
         <FormControlLabel
           value="live"
-          control={<Radio />}
-          label={tSideDrawerMode("radio-option-two")}
+          control={<Radio disabled={!jsonAvailable} />}
+          label={
+            jsonAvailable
+              ? tSideDrawerMode("radio-option-two")
+              : `${tSideDrawerMode("radio-option-two")} (Unavailable)`
+          }
         />
       </RadioGroup>
     </FormControl>

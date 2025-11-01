@@ -5,6 +5,7 @@ import {
   Radio,
   RadioGroup,
   Typography,
+  Box,
 } from "@mui/material";
 import { useTranslations } from "next-intl";
 
@@ -17,7 +18,7 @@ type Props = {
 export default function DirectionSelector({
   direction,
   handleDirectionChange,
-  includeAllOption = false
+  includeAllOption = false,
 }: Props) {
   const tDirectionSelector = useTranslations("Direction-Selector");
 
@@ -33,49 +34,50 @@ export default function DirectionSelector({
         padding: 3,
         boxShadow: 10,
         width: {
-          md: '600px',
-          sm: '300px',
-          xs: '250px'
+          md: includeAllOption ? "750px" : "600px",
+          sm: "300px",
+          xs: "250px",
         },
-        border: '2px solid'
+        border: "2px solid",
       }}
     >
       <Typography sx={{ fontWeight: "bold", mb: 1 }}>
         {tDirectionSelector("title-form")}
       </Typography>
-      <Container sx={{
-        width: 'fit-content',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}>
-      <RadioGroup
-        row
-        aria-labelledby="direction-radio-group"
-        name="direction"
-        value={direction}
-        onChange={handleDirectionChange}
+      <Container
+        sx={{
+          width: "fit-content",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
-        <FormControlLabel
-          value="departure"
-          control={<Radio />}
-          label={tDirectionSelector("radio-option-one")}
-        />
-        <FormControlLabel
-          value="arrival"
-          control={<Radio />}
-          label={tDirectionSelector("radio-option-two")}
-        />
-        {includeAllOption && (
+        <RadioGroup
+          row
+          aria-labelledby="direction-radio-group"
+          name="direction"
+          value={direction}
+          onChange={handleDirectionChange}
+        >
           <FormControlLabel
-            value="all"
+            value="departure"
             control={<Radio />}
-            label={tDirectionSelector("admin-option")}
+            label={tDirectionSelector("radio-option-one")}
           />
-        )}
-      </RadioGroup>
+          <FormControlLabel
+            value="arrival"
+            control={<Radio />}
+            label={tDirectionSelector("radio-option-two")}
+          />
+          {includeAllOption && (
+            <FormControlLabel
+              value="all"
+              control={<Radio />}
+              label={tDirectionSelector("admin-option")}
+            />
+          )}
+        </RadioGroup>
       </Container>
-
     </Container>
   );
 }

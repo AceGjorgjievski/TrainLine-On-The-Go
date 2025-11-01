@@ -76,7 +76,6 @@ export default function MapContainerView() {
   const tLive = useTranslations("Live");
   const tToaster = useTranslations("Toaster");
 
-
   const toggleDrawer = (open: boolean) => {
     setDrawerOpen(open);
   };
@@ -170,7 +169,6 @@ export default function MapContainerView() {
 
       const intervalId = setInterval(() => {
         setLiveTrainProgress((prev) => {
-
           const updatedTrainProgress = prev.map((trainProgress, index) => {
             const currentTrain = { ...trainProgress };
 
@@ -244,7 +242,7 @@ export default function MapContainerView() {
       return;
     }
 
-    if(data.addNewTrainStation) {
+    if (data.addNewTrainStation) {
       setAddingStationMode(true);
       setLoading(false);
       return;
@@ -252,11 +250,11 @@ export default function MapContainerView() {
 
     const strategy = {
       departure: {
-        stations: () => fetchStations(data.route, data.direction),
+        stations: () => fetchStations(data.route),
         live: () => fetchLiveTrains(data.route, data.direction),
       },
       arrival: {
-        stations: () => fetchStations(data.route, data.direction),
+        stations: () => fetchStations(data.route),
         live: () => fetchLiveTrains(data.route, data.direction),
       },
     };
@@ -264,10 +262,10 @@ export default function MapContainerView() {
     strategy[data.direction][data.viewOption]();
   };
 
-  const fetchStations = (route: RouteKey, direction: Direction) => {
-    const fullName = getFullRouteName(route, direction);
+  const fetchStations = (route: string) => {
+    // const fullName = getFullRouteName(route, direction);
 
-    getTrainRoutesByName(fullName)
+    getTrainRoutesByName(route)
       .then((data) => {
         setRouteData(data);
       })
@@ -279,10 +277,10 @@ export default function MapContainerView() {
       });
   };
 
-  const fetchLiveTrains = (route: RouteKey, direction: Direction) => {
+  const fetchLiveTrains = (route: RouteKey | string, direction: Direction) => {
     setLoading(true);
 
-    const fullName = getFullRouteName(route, direction);
+    const fullName = getFullRouteName(route as RouteKey, direction);
     const fullJsonFileName = getJsonFilePath(route, direction);
 
     Promise.all([
@@ -294,13 +292,28 @@ export default function MapContainerView() {
       }),
     ])
       .then(([activeTrainData, routeJsonCoordData]) => {
+          if (!activeTrainData.length) {
+            toast(() => (
+              <span>
+                🚆 <b>{tToaster("no-trains-on-route")}</b>
+              </span>
+            ));
+          }
         setActiveTrains(activeTrainData);
-          setAllCoordMap((prev) => {
-            const newMap = new Map(prev);
-            const key = `${route}-${direction}`;
-            newMap.set(key, routeJsonCoordData);
-            return newMap;
-          });
+        setAllCoordMap((prev) => {
+
+          const newMap = new Map(prev);
+
+          const parsed = parseRouteName(fullName);
+          if (parsed.route && parsed.direction) {
+            const normalizedKey = `${parsed.route}-${parsed.direction}`;
+            newMap.set(normalizedKey, routeJsonCoordData);
+          } else {
+            console.error("Could not parse fullName for key:", fullName);
+          }
+
+          return newMap;
+        });
         if (activeTrainData.length > 0) {
           const firstTrain = activeTrainData[0];
           setLiveMapCenter({
@@ -325,6 +338,13 @@ export default function MapContainerView() {
 
     getAllActiveTrains()
       .then(async (data) => {
+          if (!data.length) {
+            toast(() => (
+              <span>
+                🚆 <b>{tToaster("no-all-trains-on-route")}</b>
+              </span>
+            ));
+          }
         setActiveTrains(data);
 
         const routeJsonsToFetch = new Map<
@@ -380,7 +400,7 @@ export default function MapContainerView() {
     : [41.9981, 21.4254];
 
   if (!isMounted || loading) {
-    return <SplashScreen/>
+    return <SplashScreen />;
   }
 
   return (
@@ -413,7 +433,7 @@ export default function MapContainerView() {
       <MapContainer
         center={centerPosition}
         zoom={routeData?.zoomLevel ?? liveMapCenter?.zoom ?? 13}
-        style={{ height: "100%", width: "100%", transition: "none", }}
+        style={{ height: "100%", width: "100%", transition: "none" }}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -471,7 +491,7 @@ export default function MapContainerView() {
               };
               await addTrainStop(newTrainStop);
               setAddingStationMode(false);
-              toast.success(tToaster("add-new-station-after"))
+              toast.success(tToaster("add-new-station-after"));
             }}
             onCancel={() => {
               setAddingStationMode(false);

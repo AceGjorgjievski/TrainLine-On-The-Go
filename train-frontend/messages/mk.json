@@ -205,7 +205,9 @@
           "skopje-kochani": "Скопје - Кочани",
           "kochani-skopje": "Кочани - Скопје",
           "skopje-prishtina": "Скопје - Приштина",
-          "prishtina-skopje": "Приштина - Скопје"
+          "prishtina-skopje": "Приштина - Скопје",
+          "skopje-strumica": "Скопје - Струмица",
+          "strumica-skopje": "Струмица - Скопје"
         }
       },
       "mode": {
@@ -233,7 +235,9 @@
     "add-new-station-after": "Успешно додадена нова станица!",
     "add": "Успешно додадено!",
     "update": "Успешно ажурирано!",
-    "delete": "Успешно избришано!"
+    "delete": "Успешно избришано!",
+    "no-trains-on-route": "Нема активни возови на оваа рута.",
+    "no-all-trains-on-route": "Нема активни возови во моментот."
   },
   "AdminPage": {
     "view-all-trains": {
