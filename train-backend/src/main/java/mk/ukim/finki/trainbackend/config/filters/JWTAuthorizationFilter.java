@@ -35,7 +35,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             throws IOException, ServletException {
         String uri = request.getRequestURI();
 
-        if (uri.startsWith("/api/train/")
+        if (!uri.startsWith("/api/train/active")
                 || uri.startsWith("/api/train-stop-time/")
                 || uri.startsWith("/api/train-route/")
                 || uri.startsWith("/api/train-stop/")
@@ -81,6 +81,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
         UserDetailsDto userDetails = new ObjectMapper().readValue(user, UserDetailsDto.class);
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userDetails.getRole().name());
+        System.out.println("authority: " + authority);
         return new UsernamePasswordAuthenticationToken(
                 userDetails.getUsername(),
                 null,
