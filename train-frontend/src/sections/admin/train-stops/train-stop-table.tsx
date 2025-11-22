@@ -48,7 +48,7 @@ export default function TrainStopTable({
             sx={{
               cursor: "pointer",
               textDecoration: "underline",
-              width: 200,
+              width: "24%",
             }}
             align="center"
           >
@@ -56,7 +56,9 @@ export default function TrainStopTable({
               {tAdminTrains("table.name")} {handleSortIcon("trainStop.name")}
             </Typography>
           </TableCell>
-          <TableCell align="center">
+          <TableCell align="center" sx={{
+            width: "24%"
+          }}>
             <Typography sx={{ fontWeight: "bold", textAlign: "center" }}>
               {tAdminTrains("table.button-action")}
             </Typography>

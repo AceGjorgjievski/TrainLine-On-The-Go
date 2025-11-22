@@ -56,7 +56,9 @@
       "skopje-kochani": "Skopje - Kochani",
       "kochani-skopje": "Kochani - Skopje",
       "skopje-prishtina": "Skopje - Prishtina",
-      "prishtina-skopje": "Prishtina - Skopje"
+      "prishtina-skopje": "Prishtina - Skopje",
+      "skopje-strumica": "Skopje - Strumica",
+      "strumica-skopje": "Strumica - Skopje"
     },
     "stations": {
       "Skopje": "Skopje",
@@ -156,7 +158,8 @@
       "Strogomište": "Strogomište",
       "Dlapkin Dol": "Dlapkin Dol",
       "Blace": "Blace",
-      "Orašje": "Orašje"
+      "Orašje": "Orašje",
+      "Strumica": "Strumica"
     }
   },
   "Live": {
@@ -346,7 +349,9 @@
       "skopje-kochani": "Skopje - Kochani",
       "kochani-skopje": "Kochani - Skopje",
       "skopje-prishtina": "Skopje - Prishtina",
-      "prishtina-skopje": "Prishtina - Skopje"
+      "prishtina-skopje": "Prishtina - Skopje",
+      "skopje-strumica": "Skopje - Strumica",
+      "strumica-skopje": "Strumica - Skopje"
     },
     "stations": {
       "Skopje": "Skopje",
