@@ -1,4 +1,4 @@
-# TrainLine-On-The-Go – Bachelor's Degree Project
+# TrainLine-On-The-Go
 
 
 ### 📝 About
