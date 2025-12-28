@@ -215,7 +215,7 @@
       },
       "mode": {
         "name": "Што сакате да прикажете?",
-        "radio-option-one": "Мапа со железнички станици",
+        "radio-option-one": "Приказ на железнички станици",
         "radio-option-two": "Следење на возови во живо"
       },
       "admin": {
@@ -307,7 +307,7 @@
         "yes-button": "Да",
         "no-button": "Не",
         "cancel-button": "Откажи",
-        "update-button": "Додади"
+        "update-button": "Ажурирај"
       },
       "delete-train-route": {
         "title": "Потврди бришење",
